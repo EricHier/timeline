@@ -1,0 +1,47 @@
+{
+  "name": "@webwriter/timeline",
+  "description": "Create/learn with a digital timeline and test your knowledge.",
+  "license": "MIT",
+  "version": "0.0.1-local",
+  "author": "Nura Zimmermann <nura.zimmermann@rwth-aachen.de>",
+  "keywords": [
+    "webwriter-widget",
+    "timeline",
+    "history"
+  ],
+  "dependencies": {
+    "@shoelace-style/shoelace": "^2.17.1",
+    "@webwriter/lit": "^2.0.0",
+    "lit": "^3.2.1",
+    "tempus-dominus": "^6.0.0"
+  },
+  "scripts": {
+    "prepublishOnly": "npx @webwriter/build"
+  },
+  "exports": {
+    "./widgets/webwriter-timeline.*": {
+      "source": "./widgets/webwriter-timeline.ts",
+      "default": "./dist/webwriter-timeline.*"
+    },
+    "./widgets/event-container.*": {
+      "source": "./event-container.ts",
+      "default": "./dist/event-container.*"
+    },
+    "./widgets/timeline-date.*": {
+      "source": "./timeline-date.ts",
+      "default": "./dist/timeline-date.*"
+    },
+    "./package.json": "./package.json"
+  },
+  "editingConfig": {
+    "./widgets/webwriter-timeline": {
+      "content": "flow*"
+    },
+    "./widgets/event-container": {
+      "content": "flow*"
+    },
+    "./widgets/timeline-date": {
+      "content": "flow*"
+    }
+  }
+}
