@@ -95,7 +95,7 @@ export class TimelineInput extends LitElementWw {
         `;
       } 
       
-      //type date
+      //type: date
       else {
         return html`
       <sl-input
@@ -108,6 +108,7 @@ export class TimelineInput extends LitElementWw {
         ?required=${this.required}
         @sl-change=${this.checkInput}
         clearable
+        valueAsString
       ></sl-input>
         `;
       }

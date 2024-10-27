@@ -23,7 +23,7 @@ export class TimelineDialog extends LitElementWw {
   @property({ type: String }) accessor placeholder = "";
   @property({ type: Boolean, reflect: true }) accessor required = false;
   @property({ type: String }) accessor type: "input" | "textarea";
-  @property({ type: Boolean }) accessor readToFill;
+  @property({ type: Boolean }) accessor readToFill = false;
   @property({ type: Boolean }) accessor checkboxChecked = false;
 
 
@@ -37,6 +37,10 @@ export class TimelineDialog extends LitElementWw {
   sl-dialog::part(overlay) {
     position: absolute;
   }
+
+  .dialog-width{
+      width: 100%,
+    }
   `;
 
   static get scopedElements() {
@@ -49,7 +53,10 @@ export class TimelineDialog extends LitElementWw {
       "sl-checkbox": SlCheckbox,
       "sl-dialog": SlDialog,
     };
+
+    
   }
+
 
   private eventManager = new EventManager();
 
@@ -62,18 +69,18 @@ export class TimelineDialog extends LitElementWw {
         return html`
           <sl-dialog id="timelineID" class="dialog-width" label="Add a Timline Event" style="--width: 50vw;">
 
-                <timeline-input type="input" label="Title" id="eventTitle" @sl-change=${this.enableSaveButton} placeholder="Enter the title"> </timeline-input>
+                <timeline-input type="input" label="Title" id="eventTitle" @sl-change=${this.enableSaveButton} placeholder="Enter the title" required> </timeline-input>
                 
-                <timeline-input  type="textarea" label="Description" id="eventDescription" @sl-change=${this.enableSaveButton} placeholder="Enter the description"> </timeline-input>
+                <timeline-input  type="textarea" label="Description" id="eventDescription" @sl-change=${this.enableSaveButton} placeholder="Enter the description" required> </timeline-input>
                 
-                <timeline-input label="Start date" id="eventStartDate" placeholder="Enter the date"> </timeline-input>
+                <timeline-input label="Start date" id="eventStartDate" @sl-change=${this.enableSaveButton} placeholder="Enter the date" valueAsString required> </timeline-input>
 
-                ${this.checkboxChecked ? html` <timeline-input label="End date" id="eventEndDate" placeholder="Enter the date"> </timeline-input>  ` : ''}    
+                ${this.checkboxChecked ? html` <timeline-input label="End date" id="eventEndDate" placeholder="Enter the date" valueAsString> </timeline-input>  ` : ''}    
 
               <br />
               <sl-checkbox id="time-period" ?checked="${this.checkboxChecked}" @sl-change="${this.checkboxChecking}">Add End Date</sl-checkbox>
   
-              <sl-button id="savingButton" slot="footer" variant="primary" ?disabled="${!this.readToFill}" @click="${this.eventManager.addEvent}">Save</sl-button>
+              <sl-button id="savingButton" slot="footer" variant="primary" ?disabled="${!this.readToFill}" @click="${() => this.eventManager.addEvent(this.checkboxChecked)}">Save</sl-button>
               <sl-button id="closingButton" slot="footer" variant="primary" @click="${this.hideDialog}">Close</sl-button>
 
           </sl-dialog>       
@@ -97,27 +104,31 @@ export class TimelineDialog extends LitElementWw {
   //reset input values 
   resetDialog(){
     const input = this.shadowRoot?.querySelectorAll("timeline-input");
-
+    const checkbox = this.shadowRoot?.querySelector("#time-period") as SlCheckbox;
     input.forEach((input: TimelineInput) => {
       input.value = ""; 
     });
+    checkbox.checked = false;
+    this.checkboxChecked = false;
   }
 
   //check if input values are empty, if not readToFill = true and #saveButton not disabled
   enableSaveButton(){
     const input_title = this.shadowRoot?.getElementById("eventTitle") as TimelineInput;
     const input_description = this.shadowRoot?.getElementById("eventDescription") as TimelineInput;
+    const input_startDate = this.shadowRoot?.getElementById("eventStartDate") as TimelineInput;
 
-    if (input_title.value !== "" && input_description.value !== "") {
+    if (input_title.value !== "" && input_description.value !== ""&& input_startDate.value !== "") {
       this.readToFill = true;
     } else {
       this.readToFill = false;
     }
   }
 
+  //everytime checkbox is checked, set checkboxChecked =true and show enddate
   checkboxChecking(event) {
-    const addEndDate = (event.target) as SlCheckbox;
-    this.checkboxChecked = addEndDate.checked;
+    const cb_EndDate = this.shadowRoot?.querySelector("#time-period") as SlCheckbox;
+    this.checkboxChecked = cb_EndDate.checked;
   }
 
 }

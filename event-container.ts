@@ -11,9 +11,11 @@ import {
 @customElement("event-container")
 export class EventContainer extends LitElementWw {
 
-@property({type: String, attribute: true, reflect: true }) accessor event_title : string = 'Title';
-@property({type: String, attribute: true, reflect: true }) accessor event_description : string = 'Description';
-@property({type: String, attribute: true, reflect: true }) accessor event_date : string = 'Date';
+@property({type: String, attribute: true, reflect: true }) accessor event_title : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_description : string;
+
+@property({type: String, attribute: true, reflect: true }) accessor event_startDate : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_endDate : string;
 
 @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
 
@@ -25,48 +27,52 @@ static get styles() {
   
   .border {
       border: 1px solid lightgray;
-      width: 100%;
-      min-height: xxpx;
+      width: 99%;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
+      border-radius: 5px;
+      
   }
   
   .page {
     display: flex;
     flex-direction: column;
-    gap: 10px; 
-    padding: 10px;
+    padding: 5px;
     box-sizing: border-box;
     width: 100%;
     height: 100%;
   }
 `}
 
+// add properties to slot, each in a <p>
 protected firstUpdated(_changedProperties: PropertyValues): void {
+  const parTitle = document.createElement("p");
+  parTitle.textContent = this.event_title;
+  this.shadowRoot.querySelector('slot[name="eventSlot"]').appendChild(parTitle);
 
-  // console.log("First updated called");
-  // debugger; 
-  
-  // const parTitle = document.createElement("p");
-  // parTitle.textContent = this.event_title;
-  // this.shadowRoot.querySelector("slot").appendChild(parTitle);
-  // debugger; 
-  
-  // const parDescription = document.createElement("p");
-  // parDescription.textContent = this.event_description;
-  // this.shadowRoot.querySelector("slot").appendChild(parDescription);
-  
-  // console.log("First updated complete");
+  const parDescription = document.createElement("p");
+  parDescription.textContent = this.event_description;
+  this.shadowRoot.querySelector('slot[name="eventSlot"]').appendChild(parDescription);
 
+  const parStartDate = document.createElement("p");
+  parStartDate.textContent = this.event_startDate;
+  this.shadowRoot.querySelector('slot[name="eventSlot"]').appendChild(parStartDate);
+
+  if(this.event_endDate !== undefined){
+    const parEndDate = document.createElement("p");
+    parEndDate.textContent = this.event_endDate;
+    this.shadowRoot.querySelector('slot[name="eventSlot"]').appendChild(parEndDate);
+  }
 }
 
   render() {
     return html`
       <div class="border">
-        <p class ="page">${this.event_title}</p> <br />
-        <p class ="page">${this.event_description}</p>
+        <slot class="page" name="eventSlot"></slot>
       </div>
     `;
-  }
+  }  
+
 }

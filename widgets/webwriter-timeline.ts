@@ -9,6 +9,7 @@ import "@shoelace-style/shoelace/dist/themes/light.css";
 import {
   SlButton,
   SlDialog,
+  SlIcon,
 } from "@shoelace-style/shoelace";
 
 import { EventContainer } from "../event-container";
@@ -25,7 +26,14 @@ export class WebWriterTimeline extends LitElementWw {
 
   static get styles() {
     return css`
+    .border {
+      border: 1px solid lightgray;
+      border-radius: 5px;
+      min-height: 700px;
+      width: 100%,
+      }
     `;
+   
   }
 
   static get scopedElements() {
@@ -34,7 +42,7 @@ export class WebWriterTimeline extends LitElementWw {
       "event-container": EventContainer,
       "timeline-input": TimelineInput,
       "timeline-dialog": TimelineDialog,
-
+      
       "sl-button": SlButton,
     };
   }
@@ -44,18 +52,19 @@ export class WebWriterTimeline extends LitElementWw {
 
   render() {
     return html`
-      <div>
-        <h4>My Timeline</h4>       
+      <div class="border">
+        <h4>   My Timeline</h4>       
       
         <timeline-dialog id="timelineID"></timeline-dialog>
 
-        <sl-button id="addButton" @click=${this.openingTLDialog}>Add Event</sl-button> <br />
+        <sl-button id="addButton" @click=${this.openingTLDialog} >Add Event</sl-button> <br />
 
         <slot></slot>
       </div>
     `;
   }
 
+  // open dialog, dealing with input and event storage in sub-structures
   openingTLDialog(){
     const dialog = this.shadowRoot?.querySelector("#timelineID") as TimelineDialog;
     dialog.showDialog();
