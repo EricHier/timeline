@@ -24,7 +24,7 @@ export class TimelineDialog extends LitElementWw {
   @property({ type: Boolean, reflect: true }) accessor required = false;
   @property({ type: String }) accessor type: "input" | "textarea";
   @property({ type: Boolean }) accessor readToFill;
-
+  @property({ type: Boolean }) accessor checkboxChecked = false;
 
 
   static styles = css`
@@ -68,18 +68,15 @@ export class TimelineDialog extends LitElementWw {
                 
                 <timeline-input label="Start date" id="eventStartDate" placeholder="Enter the date"> </timeline-input>
 
-                <timeline-input label="End date" id="eventEndDate" placeholder="Enter the date" > </timeline-input>             
+                ${this.checkboxChecked ? html` <timeline-input label="End date" id="eventEndDate" placeholder="Enter the date"> </timeline-input>  ` : ''}    
 
               <br />
-              <sl-checkbox id="time-period">Add End Date</sl-checkbox>
+              <sl-checkbox id="time-period" ?checked="${this.checkboxChecked}" @sl-change="${this.checkboxChecking}">Add End Date</sl-checkbox>
   
               <sl-button id="savingButton" slot="footer" variant="primary" ?disabled="${!this.readToFill}" @click="${this.eventManager.addEvent}">Save</sl-button>
               <sl-button id="closingButton" slot="footer" variant="primary" @click="${this.hideDialog}">Close</sl-button>
 
-          </sl-dialog>
-
-
-         
+          </sl-dialog>       
         `;
       } 
 
@@ -118,5 +115,9 @@ export class TimelineDialog extends LitElementWw {
     }
   }
 
+  checkboxChecking(event) {
+    const addEndDate = (event.target) as SlCheckbox;
+    this.checkboxChecked = addEndDate.checked;
+  }
 
 }

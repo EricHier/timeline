@@ -51,8 +51,7 @@ export class WebWriterTimeline extends LitElementWw {
 
         <sl-button id="addButton" @click=${this.openingTLDialog}>Add Event</sl-button> <br />
 
-        <slot>
-        </slot>
+        <slot></slot>
       </div>
     `;
   }
