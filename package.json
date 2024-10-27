@@ -31,6 +31,10 @@
       "source": "./tl-dialog.ts",
       "default": "./dist/tl-dialog.*"
     },
+    "./widgets/event-manager.*": {
+      "source": "./event-manager.ts",
+      "default": "./dist/event-manager.*"
+    },
     "./widgets/tl-input.*": {
       "source": "./tl-input.ts",
       "default": "./dist/tl-input.*"
@@ -45,6 +49,9 @@
       "content": "flow*"
     },
     "./widgets/tl-input": {
+      "content": "flow*"
+    },
+    "./widgets/event-manager": {
       "content": "flow*"
     }
   }

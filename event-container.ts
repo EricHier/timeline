@@ -4,16 +4,6 @@ import {customElement, property} from "lit/decorators.js"
 
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import {
-  SlOption,
-  SlSelect,
-  SlButton,
-  SlRange,
-  SlCheckbox,
-  SlInput,
-  SlColorPicker,
-  SlDivider,
-  SlButtonGroup,
-  SlIcon,
 } from "@shoelace-style/shoelace";
 
 
@@ -25,9 +15,10 @@ export class EventContainer extends LitElementWw {
 @property({type: String, attribute: true, reflect: true }) accessor event_description : string = 'Description';
 @property({type: String, attribute: true, reflect: true }) accessor event_date : string = 'Date';
 
+@property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
 
-@property({ type: Number, attribute: true, reflect: true })
-accessor tabIndex = -1;
+
+
 
 static get styles() {
   return css`
@@ -49,30 +40,34 @@ static get styles() {
     box-sizing: border-box;
     width: 100%;
     height: 100%;
+    color: red;
+
   }
 `}
 
 protected firstUpdated(_changedProperties: PropertyValues): void {
-    const parTitle = document.createElement("p");
-    parTitle.textContent = this.event_title;
-    this.appendChild(parTitle)
 
-    const parDescription = document.createElement("p");
-    parDescription.textContent = this.event_description;
-    this.appendChild(parDescription)
+  // console.log("First updated called");
+  // debugger; 
+  
+  // const parTitle = document.createElement("p");
+  // parTitle.textContent = this.event_title;
+  // this.shadowRoot.querySelector("slot").appendChild(parTitle);
+  // debugger; 
+  
+  // const parDescription = document.createElement("p");
+  // parDescription.textContent = this.event_description;
+  // this.shadowRoot.querySelector("slot").appendChild(parDescription);
+  
+  // console.log("First updated complete");
 
-    const parDate = document.createElement("p");
-    parDate.textContent = this.event_date;
-    this.appendChild(parDate)
 }
-
-
 
   render() {
     return html`
       <div class="border">
-        <slot class = "page"> 
-        </slot>
+        <p class ="page">${this.event_title}</p> <br />
+        <p class ="page">${this.event_description}</p>
       </div>
     `;
   }

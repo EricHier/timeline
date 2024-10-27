@@ -118,8 +118,4 @@ export class TimelineInput extends LitElementWw {
     this.value = event.target.value;
   }
 
-  resetInput(event){
-    this.value = "";
-  }
-
 }
