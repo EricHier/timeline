@@ -27,9 +27,13 @@
       "source": "./event-container.ts",
       "default": "./dist/event-container.*"
     },
-    "./widgets/timeline-date.*": {
-      "source": "./timeline-date.ts",
-      "default": "./dist/timeline-date.*"
+    "./widgets/tl-dialog.*": {
+      "source": "./tl-dialog.ts",
+      "default": "./dist/tl-dialog.*"
+    },
+    "./widgets/tl-input.*": {
+      "source": "./tl-input.ts",
+      "default": "./dist/tl-input.*"
     },
     "./package.json": "./package.json"
   },
@@ -40,7 +44,7 @@
     "./widgets/event-container": {
       "content": "flow*"
     },
-    "./widgets/timeline-date": {
+    "./widgets/tl-input": {
       "content": "flow*"
     }
   }
