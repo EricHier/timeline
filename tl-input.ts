@@ -15,43 +15,24 @@ import {
 
 export class TimelineInput extends LitElementWw {
 
+  @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   @property({ type: String }) accessor label = "";
   @property({ type: String }) accessor id = "";
   @property({ type: String }) accessor value = "";
   @property({ type: String }) accessor placeholder = "";
   @property({ type: Boolean, reflect: true }) accessor required = false;
+  @property({ type: Boolean, reflect: true }) accessor disabled;
   @property({ type: String }) accessor type: "input" | "textarea";
 
 
 
   static styles = css`
-  :host {
-      display: block;
-      margin-bottom: 20px;
-    }
-
-    .label-on-left {
-      --label-width: 6.1rem;
-      --gap-width: 1rem;
-    }
-
-    .label-on-left + sl-input.label-on-left {
-      margin-top: var(--sl-spacing-medium);
-    }
-
-    .label-on-left::part(form-control) {
-      display: grid;
-      grid-template-columns: var(--label-width) 1fr;
-      gap: var(--sl-spacing-3x-small) var(--gap-width);
-      align-items: center;
-    }
-
-    .label-on-left::part(label) {
-      text-align: right;
-    }
-
-    .label-on-left::part(help-text) {
-      grid-column: 2;
+    :host {
+        display: block;
+        margin-bottom: 20px;
+      }
+    .half-input {
+      min-width: 45%;
     }
   `;
 
@@ -70,7 +51,6 @@ export class TimelineInput extends LitElementWw {
      if (this.type === "textarea"){ 
         return html`
         <sl-textarea 
-        class="label-on-left"
           label=${this.label}  
           id=${this.id}
           .value=${this.value}
@@ -83,7 +63,6 @@ export class TimelineInput extends LitElementWw {
      } else if (this.type === "input"){
         return html`
       <sl-input
-        class="label-on-left"
         label=${this.label}  
         id=${this.id}
         .value=${this.value}
@@ -99,7 +78,7 @@ export class TimelineInput extends LitElementWw {
       else {
         return html`
       <sl-input
-        class="label-on-left"
+        class="half-input"
         type="date"
         label=${this.label}  
         id=${this.id}
@@ -109,6 +88,7 @@ export class TimelineInput extends LitElementWw {
         @sl-change=${this.checkInput}
         clearable
         valueAsString
+        ?disabled=${this.disabled}
       ></sl-input>
         `;
       }

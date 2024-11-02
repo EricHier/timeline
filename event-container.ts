@@ -14,7 +14,7 @@ export class EventContainer extends LitElementWw {
 @property({type: String, attribute: true, reflect: true }) accessor event_title : string;
 @property({type: String, attribute: true, reflect: true }) accessor event_description : string;
 
-@property({type: String, attribute: true, reflect: true }) accessor event_startDate : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_startDate : string="";
 @property({type: String, attribute: true, reflect: true }) accessor event_endDate : string;
 
 @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
@@ -39,23 +39,18 @@ static get styles() {
   .page {
     display: flex;
     flex-direction: column;
-    padding: 5px;
     box-sizing: border-box;
     width: 100%;
-    height: 100%;
+    height: 50%;
+    background-color: white;
+    border: grey;
+    padding-left: 5px;
+
   }
 `}
 
 // add properties to slot, each in a <p>
 protected firstUpdated(_changedProperties: PropertyValues): void {
-  const parTitle = document.createElement("p");
-  parTitle.textContent = this.event_title;
-  this.shadowRoot.querySelector('slot[name="eventSlot"]').appendChild(parTitle);
-
-  const parDescription = document.createElement("p");
-  parDescription.textContent = this.event_description;
-  this.shadowRoot.querySelector('slot[name="eventSlot"]').appendChild(parDescription);
-
   const parStartDate = document.createElement("p");
   parStartDate.textContent = this.event_startDate;
   this.shadowRoot.querySelector('slot[name="eventSlot"]').appendChild(parStartDate);
@@ -65,6 +60,16 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
     parEndDate.textContent = this.event_endDate;
     this.shadowRoot.querySelector('slot[name="eventSlot"]').appendChild(parEndDate);
   }
+
+  const parTitle = document.createElement("p");
+  parTitle.textContent = this.event_title;
+  this.shadowRoot.querySelector('slot[name="eventSlot"]').appendChild(parTitle);
+
+  const parDescription = document.createElement("p");
+  parDescription.textContent = this.event_description;
+  this.shadowRoot.querySelector('slot[name="eventSlot"]').appendChild(parDescription);
+
+  
 }
 
   render() {

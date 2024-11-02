@@ -1,8 +1,8 @@
 import {LitElement, html, PropertyValues, css} from "lit"
 import {LitElementWw} from "@webwriter/lit"
 import {customElement, property} from "lit/decorators.js"
-// import { TempusDominus } from "tempus-dominus";
-// import "tempus-dominus/dist/css/tempus-dominus.css";
+import { TempusDominus } from '@eonasdan/tempus-dominus';
+import '@eonasdan/tempus-dominus/dist/css/tempus-dominus.css';
 
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
@@ -22,8 +22,6 @@ import { EventManager } from "../event-manager";
 export class WebWriterTimeline extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   
-
-
   static get styles() {
     return css`
     .border {
@@ -32,7 +30,24 @@ export class WebWriterTimeline extends LitElementWw {
       min-height: 700px;
       width: 100%,
       }
+
+      .body {
+        --dot-bg: white;
+        --dot-color: gray;
+        --dot-size: 1px;
+        --dot-space: 22px;
+        background:
+        linear-gradient(90deg, var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
+        linear-gradient(var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
+        var(--dot-color);
+        border: 1px solid lightgray;
+        border-radius: 5px;
+        min-height: 500px;
+        width: 80%,
+      }
+    
     `;
+    
    
   }
 
@@ -54,12 +69,14 @@ export class WebWriterTimeline extends LitElementWw {
     return html`
       <div class="border">
         <h4>   My Timeline</h4>       
-      
+        <div class="body" class="innerborder">
+          <slot></slot>
+        </div>
         <timeline-dialog id="timelineID"></timeline-dialog>
-
+        
         <sl-button id="addButton" @click=${this.openingTLDialog} >Add Event</sl-button> <br />
 
-        <slot></slot>
+        
       </div>
     `;
   }
@@ -69,4 +86,5 @@ export class WebWriterTimeline extends LitElementWw {
     const dialog = this.shadowRoot?.querySelector("#timelineID") as TimelineDialog;
     dialog.showDialog();
   }
+
 }

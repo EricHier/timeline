@@ -13,7 +13,10 @@
     "@shoelace-style/shoelace": "^2.17.1",
     "@webwriter/lit": "^2.0.0",
     "lit": "^3.2.1",
-    "tempus-dominus": "^6.0.0"
+    "flatpickr": "^4.6.13",
+    "@eonasdan/tempus-dominus": "^6.9.11",
+    "@popperjs/core": "^2.11.8"
+     
   },
   "scripts": {
     "prepublishOnly": "npx @webwriter/build"
