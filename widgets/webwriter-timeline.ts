@@ -1,8 +1,6 @@
 import {LitElement, html, PropertyValues, css} from "lit"
 import {LitElementWw} from "@webwriter/lit"
 import {customElement, property} from "lit/decorators.js"
-import { TempusDominus } from '@eonasdan/tempus-dominus';
-import '@eonasdan/tempus-dominus/dist/css/tempus-dominus.css';
 
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
