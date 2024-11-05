@@ -27,24 +27,17 @@ export class WebWriterTimeline extends LitElementWw {
       border-radius: 5px;
       min-height: 700px;
       width: 100%,
-      }
+    }
 
-      .body {
-        --dot-bg: white;
-        --dot-color: gray;
-        --dot-size: 1px;
-        --dot-space: 22px;
-        background:
-        linear-gradient(90deg, var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
-        linear-gradient(var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
-        var(--dot-color);
-        border: 1px solid lightgray;
-        border-radius: 5px;
-        min-height: 500px;
-        width: 80%,
-      }
+    #parent >* {
+      margin-left: 10px;
+    }
     
-    `;
+    h4 {
+      text-align: center; 
+    }
+    
+  `;
     
    
   }
@@ -65,16 +58,12 @@ export class WebWriterTimeline extends LitElementWw {
 
   render() {
     return html`
-      <div class="border">
-        <h4>   My Timeline</h4>       
-        <div class="body" class="innerborder">
-          <slot></slot>
-        </div>
+      <div class="border" id="parent">
+        <h4>My Timeline</h4>       
+        
+        <slot></slot>
         <timeline-dialog id="timelineID"></timeline-dialog>
-        
         <sl-button id="addButton" @click=${this.openingTLDialog} >Add Event</sl-button> <br />
-
-        
       </div>
     `;
   }

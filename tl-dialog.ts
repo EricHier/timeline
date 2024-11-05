@@ -29,44 +29,45 @@ export class TimelineDialog extends LitElementWw {
   @property({ type: Boolean }) accessor readToFill = false;
   @property({ type: Boolean }) accessor useTimePeriod = false;
 
-  static styles = css`
+  static styles = css` 
    
-    sl-dialog::part(base) {
-      position: absolute;
-      height: 700px;
-    }
-
-    sl-dialog::part(overlay) {
-      position: absolute;
-    }
-
-    .dialog-width{
-      width: 100%,
-    }
-
-    .timeline-input-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr; 
-      gap: 16px;
-      width: 100%;
-    }
-
-    timeline-input {
-      width: 100%;
-      min-width: 0; 
-    }
-
-    @media (max-width: 600px) {
-      .inputs-container {
-        grid-template-columns: 1fr; 
-        gap: 8px;
+      sl-dialog::part(base) {
+        position: absolute;
+        height: 700px;
       }
-    }
 
-    timeline-input[disabled] {
-      --sl-input-label-color: #888888;
-    }
+      sl-dialog::part(overlay) {
+        position: absolute;
+      }
+
+      .dialog-width{
+        width: 100%,
+      }
+
+      .timeline-input-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr; 
+        gap: 16px;
+        width: 100%;
+      }
+
+      timeline-input {
+        width: 100%;
+        min-width: 0; 
+      }
+
+      @media (max-width: 600px) {
+        .inputs-container {
+          grid-template-columns: 1fr; 
+          gap: 8px;
+        }
+      }
+
+      timeline-input[disabled] {
+        --sl-input-label-color: #888888;
+      }
   `;
+
 
   static get scopedElements() {
     return {      
@@ -84,34 +85,33 @@ export class TimelineDialog extends LitElementWw {
     
   }
 
-
   private eventManager = new EventManager();
 
   protected firstUpdated(_changedProperties: PropertyValues): void {}
 
-
   render() {
-        return html`
-          <sl-dialog id="timelineID" class="dialog-width" label="Add a Timline Event" style="--width: 50vw;">
+    return html`
+      <sl-dialog id="timelineID" class="dialog-width" label="Add a Timline Event" style="--width: 50vw;">
+        <timeline-input type="input" label="Title" id="eventTitle" @sl-change=${this.enableSaveButton} placeholder="Enter the title" required> </timeline-input>
+        <timeline-input  type="textarea" label="Description" id="eventDescription" @sl-change=${this.enableSaveButton} placeholder="Enter the description" required> </timeline-input>
+        <br />
 
-                <timeline-input type="input" label="Title" id="eventTitle" @sl-change=${this.enableSaveButton} placeholder="Enter the title" required> </timeline-input>
-                <timeline-input  type="textarea" label="Description" id="eventDescription" @sl-change=${this.enableSaveButton} placeholder="Enter the description" required> </timeline-input>
-                <br />
+        <div class="container">
+          <timeline-toggle id="#time-period" .useTimePeriod="${this.useTimePeriod}" @toggle-change="${(e: CustomEvent) => {this.useTimePeriod = e.detail.useTimePeriod;}}"></timeline-toggle>
+          <br />
 
-                <div class="container">
-                  <timeline-toggle id="#time-period" .useTimePeriod="${this.useTimePeriod}" @toggle-change="${(e: CustomEvent) => {this.useTimePeriod = e.detail.useTimePeriod;}}"></timeline-toggle>
-                  <br />
-                  <div class="timeline-input-container">
-                    <timeline-input label=${this.useTimePeriod ? "Start date" : "Date"} id="eventStartDate" @sl-change=${this.enableSaveButton} valueAsString required></timeline-input>
-                    <timeline-input label="End Date" id="eventEndDate" valueAsString ?disabled=${!this.useTimePeriod}></timeline-input>
-                  </div>
-                </div>            
+          <div class="timeline-input-container">
+            <timeline-input label=${this.useTimePeriod ? "Start date" : "Date"} id="eventStartDate" @sl-change=${this.enableSaveButton} valueAsString required></timeline-input>
+            <timeline-input label="End Date" id="eventEndDate" valueAsString ?disabled=${!this.useTimePeriod}></timeline-input>
+          </div>
 
-              <sl-button class="dialog-footer" id="resetButton" slot="footer" variant="default"  @click="${this.resetDialog}">Reset</sl-button>
-              <sl-button id="savingButton" slot="footer" variant="primary"  ?disabled="${!this.readToFill}" @click="${() => this.eventManager.addEvent(this.useTimePeriod)}">Add Event</sl-button>
-          </sl-dialog>       
-        `;
-      } 
+        </div>            
+
+        <sl-button class="dialog-footer" id="resetButton" slot="footer" variant="default"  @click="${this.resetDialog}">Reset</sl-button>
+        <sl-button id="savingButton" slot="footer" variant="primary"  ?disabled="${!this.readToFill}" @click="${() => this.eventManager.addEvent()}">Add Event</sl-button>
+      </sl-dialog>       
+    `;
+  } 
       
   // show dialog to enter input
   public showDialog() {
@@ -141,10 +141,8 @@ export class TimelineDialog extends LitElementWw {
     const input_description = this.shadowRoot?.getElementById("eventDescription") as TimelineInput;
     const input_startDate = this.shadowRoot?.getElementById("eventStartDate") as TimelineInput;
 
-    if (input_title.value !== "" && input_description.value !== ""&& input_startDate.value !== "") {
-      this.readToFill = true;
-    } else {
-      this.readToFill = false;
-    }
+    (input_title.value !== "" && input_description.value !== ""&& input_startDate.value !== "") 
+    ?this.readToFill = true
+    :this.readToFill = false; 
   }
 }

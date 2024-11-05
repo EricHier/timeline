@@ -28,8 +28,8 @@ export class TimelineInput extends LitElementWw {
 
   static styles = css`
     :host {
-        display: block;
-        margin-bottom: 20px;
+      display: block;
+      margin-bottom: 20px;
       }
     .half-input {
       min-width: 45%;
@@ -48,8 +48,8 @@ export class TimelineInput extends LitElementWw {
 
 
   render() {
-     if (this.type === "textarea"){ 
-        return html`
+    if (this.type === "textarea"){ 
+      return html`
         <sl-textarea 
           label=${this.label}  
           id=${this.id}
@@ -59,40 +59,40 @@ export class TimelineInput extends LitElementWw {
           @sl-change=${this.checkInput}
           clearable
         ></sl-textarea>
-        `;
-     } else if (this.type === "input"){
-        return html`
-      <sl-input
-        label=${this.label}  
-        id=${this.id}
-        .value=${this.value}
-        placeholder=${this.placeholder}
-        ?required=${this.required}
-        @sl-change=${this.checkInput}
-        clearable
-      ></sl-input>
-        `;
-      } 
+      `;
+    } else if (this.type === "input"){
+      return html`
+        <sl-input
+          label=${this.label}  
+          id=${this.id}
+          .value=${this.value}
+          placeholder=${this.placeholder}
+          ?required=${this.required}
+          @sl-change=${this.checkInput}
+          clearable
+        ></sl-input>
+      `;
+    } 
       
       //type: date
-      else {
-        return html`
-      <sl-input
-        class="half-input"
-        type="date"
-        label=${this.label}  
-        id=${this.id}
-        .value=${this.value}
-        placeholder=${this.placeholder}
-        ?required=${this.required}
-        @sl-change=${this.checkInput}
-        clearable
-        valueAsString
-        ?disabled=${this.disabled}
-      ></sl-input>
-        `;
-      }
+    else {
+      return html`
+        <sl-input
+          class="half-input"
+          type="date"
+          label=${this.label}  
+          id=${this.id}
+          .value=${this.value}
+          placeholder=${this.placeholder}
+          ?required=${this.required}
+          @sl-change=${this.checkInput}
+          clearable
+          valueAsString
+          ?disabled=${this.disabled}
+        ></sl-input>
+      `;
     }
+  }
 
 
   checkInput(event){

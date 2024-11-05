@@ -37,28 +37,16 @@ constructor(title: string, description: string, startDate: string, endDate: stri
 
 static get styles() {
   return css`
-  
-  .border {
-      border: 1px solid lightgray;
-      width: 99%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      border-radius: 5px;
-      
+   .title-style {
+    font-weight: bold;
+    color: #333;
   }
-  
-  .page {
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    width: 100%;
-    height: 50%;
-    background-color: white;
-    border: grey;
-    padding-left: 5px;
 
+  .date-style {
+    color: #666;
+  }
+  .position{
+    margin-left: 10px;
   }
 `}
 
@@ -97,10 +85,14 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
 
   render() {
     return html`
-      <div class="border">
-        <sl-details summary=${"Timeline Event: " + this.event_title + " Date: " + this.event_startDate + "-" + this.event_endDate}>
-          <slot class="page"></slot>
-        </sl-details>       
+      <div class="position">
+        <sl-details>
+          <span slot="summary">
+            <span class="title-style">${this.event_title}</span>
+            <span class="date-style">${this.event_startDate}${this.event_endDate ? '-' + this.event_endDate : ''}</span>
+          </span>
+          <slot></slot>
+        </sl-details>  
       </div>
     `;
   }  

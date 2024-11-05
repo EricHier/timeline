@@ -100,10 +100,10 @@ export class TimelineToggle extends LitElementWw {
   protected firstUpdated(_changedProperties: PropertyValues): void {}
 
   render() {
-     return html`
+    return html`
       <div class="toggle" @click="${this.toggleState}">
         
-        <input type="checkbox"  id="time-period"  .checked="${this.useTimePeriod}" />
+        <input type="checkbox"  id="time-period" .checked="${this.useTimePeriod}" />
         <label for="time-period"></label>
         
         <div class="labels-container">
@@ -117,11 +117,7 @@ export class TimelineToggle extends LitElementWw {
 
   toggleState() {
     this.useTimePeriod = !this.useTimePeriod;
-    this.dispatchEvent(new CustomEvent('toggle-change', {
-      detail: { useTimePeriod: this.useTimePeriod },
-      bubbles: true,
-      composed: true
-    }));
+    this.dispatchEvent(new CustomEvent('toggle-change', { detail: { useTimePeriod: this.useTimePeriod }, bubbles: true, composed: true }));
   }
 
 }
