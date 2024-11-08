@@ -15,7 +15,8 @@ import { EventManager } from "./event-manager";
 import { EventContainer } from "./event-container";
 import { WebWriterTimeline } from "./widgets/webwriter-timeline";
 import { TimelineToggle } from "./tl-toggle";
- 
+import { CustomDatePicker } from "./custom-datepicker";
+
 @customElement("timeline-dialog")
 export class TimelineDialog extends LitElementWw {
 
@@ -30,7 +31,7 @@ export class TimelineDialog extends LitElementWw {
   @property({ type: Boolean }) accessor useTimePeriod = false;
 
   static styles = css` 
-   
+
       sl-dialog::part(base) {
         position: absolute;
         height: 700px;
@@ -55,6 +56,10 @@ export class TimelineDialog extends LitElementWw {
         width: 100%;
         min-width: 0; 
       }
+      custom-date-picker {
+        width: 100%;
+        min-width: 0; 
+      }
 
       @media (max-width: 600px) {
         .inputs-container {
@@ -66,6 +71,10 @@ export class TimelineDialog extends LitElementWw {
       timeline-input[disabled] {
         --sl-input-label-color: #888888;
       }
+      custom-date-picker[disabled] {
+        --sl-input-label-color: #888888;
+      }
+      
   `;
 
 
@@ -75,6 +84,7 @@ export class TimelineDialog extends LitElementWw {
       "timeline-toggle": TimelineToggle,
       "event-container": EventContainer,
       "event-manager": EventManager,
+      "custom-date-picker":CustomDatePicker,
 
       "sl-button": SlButton,
       "sl-checkbox": SlCheckbox,
@@ -93,18 +103,15 @@ export class TimelineDialog extends LitElementWw {
     return html`
       <sl-dialog id="timelineID" class="dialog-width" label="Add a Timline Event" style="--width: 50vw;">
         <timeline-input type="input" label="Title" id="eventTitle" @sl-change=${this.enableSaveButton} placeholder="Enter the title" required> </timeline-input>
-        <timeline-input  type="textarea" label="Description" id="eventDescription" @sl-change=${this.enableSaveButton} placeholder="Enter the description" required> </timeline-input>
         <br />
 
         <div class="container">
           <timeline-toggle id="#time-period" .useTimePeriod="${this.useTimePeriod}" @toggle-change="${(e: CustomEvent) => {this.useTimePeriod = e.detail.useTimePeriod;}}"></timeline-toggle>
           <br />
-
           <div class="timeline-input-container">
-            <timeline-input label=${this.useTimePeriod ? "Start date" : "Date"} id="eventStartDate" @sl-change=${this.enableSaveButton} valueAsString required></timeline-input>
-            <timeline-input label="End Date" id="eventEndDate" valueAsString ?disabled=${!this.useTimePeriod}></timeline-input>
+            <custom-date-picker .useTimePeriod="${this.useTimePeriod}" label=${this.useTimePeriod ? "Start date" : "Date"} id="eventStartDate" @sl-change=${this.enableSaveButton}></custom-date-picker>
+            <custom-date-picker .useTimePeriod="${this.useTimePeriod}" label="End Date" id="eventEndDate" endDate="true"></custom-date-picker>
           </div>
-
         </div>            
 
         <sl-button class="dialog-footer" id="resetButton" slot="footer" variant="default"  @click="${this.resetDialog}">Reset</sl-button>
@@ -128,21 +135,31 @@ export class TimelineDialog extends LitElementWw {
 
   //reset input values 
   resetDialog(){
-    const input = this.shadowRoot?.querySelectorAll("timeline-input");
-    input.forEach((input: TimelineInput) => {
+    const inputs = this.shadowRoot?.querySelectorAll("timeline-input");
+    const dates = this.shadowRoot?.querySelectorAll("custom-date-picker");
+
+    this.useTimePeriod = false;
+
+    // reset title, description
+    inputs.forEach((input: TimelineInput ) => {
       input.value = ""; 
     });
-    this.useTimePeriod = false;
+
+    // reset dates
+    dates.forEach((date: CustomDatePicker) => {
+      date.reset(); 
+    }); 
   }
 
   //check if input values are empty, if not readToFill = true and #saveButton not disabled
   enableSaveButton(){
     const input_title = this.shadowRoot?.getElementById("eventTitle") as TimelineInput;
-    const input_description = this.shadowRoot?.getElementById("eventDescription") as TimelineInput;
-    const input_startDate = this.shadowRoot?.getElementById("eventStartDate") as TimelineInput;
+    const input_startDate = this.shadowRoot?.getElementById("eventStartDate") as CustomDatePicker;
 
-    (input_title.value !== "" && input_description.value !== ""&& input_startDate.value !== "") 
+    (input_title.value !== "" && input_startDate.year !== "") 
     ?this.readToFill = true
     :this.readToFill = false; 
   }
+
+  
 }

@@ -101,18 +101,18 @@ export class TimelineToggle extends LitElementWw {
 
   render() {
     return html`
-      <div class="toggle" @click="${this.toggleState}">
-        
-        <input type="checkbox"  id="time-period" .checked="${this.useTimePeriod}" />
-        <label for="time-period"></label>
-        
-        <div class="labels-container">
-          <span class="label label-left">Single Date</span>
-          <span class="label label-right">Time Period</span>
-        </div>
-
+    <div class="toggle" @click="${this.toggleState}">
+      
+      <input type="checkbox"  id="time-period" .checked="${this.useTimePeriod}" />
+      <label for="time-period"></label>
+      
+      <div class="labels-container">
+        <span class="label label-left">Single Date</span>
+        <span class="label label-right">Time Period</span>
       </div>
-    `;
+
+    </div>
+  `;
   }
 
   toggleState() {

@@ -8,6 +8,7 @@ import { EventContainer } from "./event-container";
 import { TimelineInput } from "./tl-input";
 import{ TimelineDialog} from "./tl-dialog";
 import { WebWriterTimeline } from "./widgets/webwriter-timeline";
+import { CustomDatePicker } from "./custom-datepicker";
 
 @customElement("event-manager")
 
@@ -23,6 +24,7 @@ export class EventManager extends LitElementWw {
       "timeline-input": TimelineInput,
       "timeline-dialog": TimelineDialog,
       "webwriter-timelin": WebWriterTimeline,
+      "custom-datepicker":CustomDatePicker,
     };
   }
 
@@ -39,21 +41,17 @@ export class EventManager extends LitElementWw {
   addEvent(){
     const eventDisplayElement = document.querySelector('webwriter-timeline') as WebWriterTimeline;
     const tldialog = eventDisplayElement.shadowRoot.querySelector("timeline-dialog") as TimelineDialog;
-
-   
+    
     var input_title = tldialog.shadowRoot.querySelector("#eventTitle") as TimelineInput;
-    var input_description = tldialog.shadowRoot.querySelector("#eventDescription") as TimelineInput;
-    var input_startDate = tldialog.shadowRoot.querySelector("#eventStartDate") as TimelineInput; 
-    var input_endDate = tldialog.shadowRoot.querySelector("#eventEndDate") as TimelineInput; 
-  
-    const timeline_event = new EventContainer(input_title.value, input_description.value, input_startDate.value, input_endDate.value);
+    var input_startDate = tldialog.shadowRoot.querySelector("#eventStartDate") as CustomDatePicker; 
+    var input_endDate = tldialog.shadowRoot.querySelector("#eventEndDate") as CustomDatePicker; 
+
+    const timeline_event = new EventContainer(input_title.value, input_startDate.date, input_endDate.date);
 
     // this is needed because webwriter slot initialization
     timeline_event.setAttribute("event_title", input_title.value);
-    timeline_event.setAttribute("event_description", input_description.value);
-    timeline_event.setAttribute("event_startDate", input_startDate.value);
-    timeline_event.setAttribute("event_endDate", input_endDate.value);
-
+    timeline_event.setAttribute("event_startDate", input_startDate.date);
+    timeline_event.setAttribute("event_endDate", input_endDate.date);
    
     eventDisplayElement.appendChild(timeline_event);
     tldialog.hideDialog();

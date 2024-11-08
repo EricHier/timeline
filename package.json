@@ -12,8 +12,10 @@
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "@shoelace-style/shoelace": "^2.17.1",
+    "@tabler/icons": "^3.21.0",
     "@webwriter/lit": "^2.0.0",
-    "lit": "^3.2.1"
+    "lit": "^3.2.1",
+    "lit-flatpickr": "^0.4.0"
   },
   "scripts": {
     "prepublishOnly": "npx @webwriter/build"

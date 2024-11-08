@@ -63,6 +63,7 @@ export class WebWriterTimeline extends LitElementWw {
         
         <slot></slot>
         <timeline-dialog id="timelineID"></timeline-dialog>
+       
         <sl-button id="addButton" @click=${this.openingTLDialog} >Add Event</sl-button> <br />
       </div>
     `;

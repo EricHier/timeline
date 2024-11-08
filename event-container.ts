@@ -77,7 +77,7 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
   // this.appendChild(parTitle);
 
   const parDescription = document.createElement("p");
-  parDescription.textContent = this.event_description;
+  // parDescription.textContent = this.event_description;
   // parDescription.setAttribute("slot","slot");
   this.appendChild(parDescription);
   
