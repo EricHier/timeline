@@ -18,21 +18,24 @@ export class EventContainer extends LitElementWw {
 
 @property({type: String, attribute: true, reflect: true }) accessor event_startDate : string;
 @property({type: String, attribute: true, reflect: true }) accessor event_endDate : string;
+// @property({
+//   hasChanged(newVal:string, oldVal: string){
+//     console.log("End date has changed, new val: ", newVal, " , old val: ", oldVal);
+//     // method to check for valid date and hasChanged inside and dispatch custom event (for start date)
+//     return true; //hasChanged
+//   },
+//   type: String, attribute: true, reflect: true }) 
+//   accessor event_startDate : string = "";
+
 
 @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
 
 constructor(title: string, description: string, startDate: string, endDate: string = "") {
-        super();
-        // this.event_id = id;
-        this.event_title = title;
-        this.event_description = description;
-        this.event_startDate = startDate; 
-        this.event_endDate = endDate;
-
-        // this.setAttribute("event_title", title);
-        // this.setAttribute("event_description", description);
-        // this.setAttribute("event_startDate", startDate);
-        // this.setAttribute("event_endDate", endDate);
+  super();
+  this.event_title = title;
+  this.event_description = description;
+  this.event_startDate = startDate; 
+  this.event_endDate = endDate;
 }
 
 static get styles() {
@@ -56,31 +59,8 @@ static get scopedElements() {
   };
 }
 
-// add properties to slot, each in a <p>
 protected firstUpdated(_changedProperties: PropertyValues): void {
-
-  // const parStartDate = document.createElement("p");
-  // parStartDate.textContent = this.event_startDate;
-  // parStartDate.setAttribute("slot","eventSlot");
-  // this.appendChild(parStartDate);
-
-  // if(this.event_endDate !== ""){
-  //   const parEndDate = document.createElement("p");
-  //   parEndDate.textContent = this.event_endDate;
-  //   parEndDate.setAttribute("slot","eventSlot");
-  //   this.appendChild(parEndDate);
-  // }
-
-  // const parTitle = document.createElement("p");
-  // parTitle.textContent = this.event_title;
-  // parTitle.setAttribute("slot","eventSlot");
-  // this.appendChild(parTitle);
-
-  const parDescription = document.createElement("p");
-  // parDescription.textContent = this.event_description;
-  // parDescription.setAttribute("slot","slot");
-  this.appendChild(parDescription);
-  
+  this.addParagraph();
 }
 
   render() {
@@ -89,12 +69,29 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
         <sl-details>
           <span slot="summary">
             <span class="title-style">${this.event_title}</span>
-            <span class="date-style">${this.event_startDate}${this.event_endDate ? '-' + this.event_endDate : ''}</span>
+            <span class="date-style">${this.event_startDate}${this.event_endDate == undefined ? '-' + this.event_endDate : ''}</span>
           </span>
           <slot></slot>
+          <sl-button @click="${this.addParagraph}">Add paragraph</sl-button>
+          <sl-button  @click="${this.removeEvent}">Remove</sl-button>
         </sl-details>  
       </div>
     `;
-  }  
+  } 
+  
+  addParagraph(){
+    const parDescription = document.createElement("p");
+    parDescription.textContent = "Add a description";
+    this.appendChild(parDescription);  
+  }
 
+
+  removeEvent() {
+    this.dispatchEvent(new CustomEvent('request-remove', {
+      detail: { title: this.event_title },
+      bubbles: true,  
+      composed: true
+    }));
+    console.log("Delete request started: " + this.event_title);
+  }
 }

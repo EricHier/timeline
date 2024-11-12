@@ -95,7 +95,7 @@ export class TimelineDialog extends LitElementWw {
     
   }
 
-  private eventManager = new EventManager();
+  
 
   protected firstUpdated(_changedProperties: PropertyValues): void {}
 
@@ -115,7 +115,7 @@ export class TimelineDialog extends LitElementWw {
         </div>            
 
         <sl-button class="dialog-footer" id="resetButton" slot="footer" variant="default"  @click="${this.resetDialog}">Reset</sl-button>
-        <sl-button id="savingButton" slot="footer" variant="primary"  ?disabled="${!this.readToFill}" @click="${() => this.eventManager.addEvent()}">Add Event</sl-button>
+        <sl-button id="savingButton" slot="footer" variant="primary"  ?disabled="${!this.readToFill}" @click="${() => this.addEvent()}">Add Event</sl-button>
       </sl-dialog>       
     `;
   } 
@@ -160,6 +160,22 @@ export class TimelineDialog extends LitElementWw {
     ?this.readToFill = true
     :this.readToFill = false; 
   }
+
+  addEvent(){
+    const title = this.shadowRoot.querySelector('#eventTitle');
+    const startDate = this.shadowRoot.querySelector('#eventStartDate');
+    const endDate = this.useTimePeriod ? this.shadowRoot.querySelector('#eventEndDate') : "";
+
+    this.dispatchEvent(new CustomEvent('request-add', {
+      detail: { title, startDate, endDate },
+      bubbles: true,  
+      composed: true
+    }));
+
+    console.log("Add request started: " + this.id);
+  }
+
+
 
   
 }

@@ -31,30 +31,51 @@ export class EventManager extends LitElementWw {
   protected firstUpdated(_changedProperties: PropertyValues): void {
   }
 
-
   render() {
     return html`
     `;
   } 
 
+
 //adding event to webwriter-timeline slot by creating event-container, enddate is optional
-  addEvent(){
-    const eventDisplayElement = document.querySelector('webwriter-timeline') as WebWriterTimeline;
-    const tldialog = eventDisplayElement.shadowRoot.querySelector("timeline-dialog") as TimelineDialog;
-    
-    var input_title = tldialog.shadowRoot.querySelector("#eventTitle") as TimelineInput;
-    var input_startDate = tldialog.shadowRoot.querySelector("#eventStartDate") as CustomDatePicker; 
-    var input_endDate = tldialog.shadowRoot.querySelector("#eventEndDate") as CustomDatePicker; 
+  addEvent(event){
+    const { title, startDate, endDate } = event.detail;
+    const timeline = document.querySelector('webwriter-timeline') as WebWriterTimeline;
+    const tldialog = timeline.shadowRoot.querySelector("timeline-dialog") as TimelineDialog;
 
-    const timeline_event = new EventContainer(input_title.value, input_startDate.date, input_endDate.date);
+    const timeline_event = new EventContainer(title.value, startDate.date, endDate.date);
 
-    // this is needed because webwriter slot initialization
-    timeline_event.setAttribute("event_title", input_title.value);
-    timeline_event.setAttribute("event_startDate", input_startDate.date);
-    timeline_event.setAttribute("event_endDate", input_endDate.date);
+    //needed because webwriter slot initialization
+    timeline_event.setAttribute("event_title", title.value);
+    timeline_event.setAttribute("event_startDate", startDate.date);
+    timeline_event.setAttribute("event_endDate", endDate.date);
    
-    eventDisplayElement.appendChild(timeline_event);
+    timeline.appendChild(timeline_event);
+
     tldialog.hideDialog();
+    // add event listener for custom event signal and sort entries  and cases like scaling time axis
+    // timeline_event.addEventListener(event){
+    // }
+
+    // this.sortEntries(); //check ob überflüssig mit eventlistener
+  }
+  
+  removeEvent(event){ 
+    const eventToRemove = event.detail.title; 
+    console.log("Delete request delivered: "+ eventToRemove);
+    const timeline = document.querySelector('webwriter-timeline') as WebWriterTimeline;
+    const eventContainer = timeline.querySelector(`event-container[id="${eventToRemove}"]`);
+    
+    if (eventContainer) {
+      timeline.removeChild(eventContainer);
+    }
   }
 
+  // sortEntries(){
+  //   const list = this.shadowRoot.querySelector('slot[name="event-slot"]');
+
+  //   [...list.children]
+  //     .sort((a:any, b:any) => a.date > b.date ? 1 : -1)
+  //     .forEach(node => list.appendChild(node));
+  // }
 }

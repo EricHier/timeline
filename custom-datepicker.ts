@@ -84,17 +84,14 @@ export class CustomDatePicker extends LitElement {
     `;
   }
 
-    reset(){
-        const dates = this.shadowRoot?.querySelectorAll("sl-input");
-        this.day="";
-        this.month="";
-        this.year="";
-        this.date="";
+  reset(){
+    const dates = this.shadowRoot?.querySelectorAll("sl-input");
+    this.day = this.month = this.year = this.date="";
 
-        dates.forEach((input:SlInput) => {
-            input.value= ""; 
-        });
-    }
+    dates.forEach((input:SlInput) => {
+        input.value= ""; 
+    });
+  }
 
   updateDay(e) {
     this.day = e.target.value;
@@ -104,6 +101,7 @@ export class CustomDatePicker extends LitElement {
 
   updateMonth(e) {
     this.month = e.target.value;
+    this.getMonthName();
     this.updateDate();
     this.focusNextField(e, 2);
   }
@@ -115,22 +113,37 @@ export class CustomDatePicker extends LitElement {
 
   focusNextField(e, maxLength) {
     const input = e.target;
-    if (input.value.length >= maxLength) { 
-      let nextInput = input.nextElementSibling; 
-      while (nextInput && !nextInput.matches('sl-input')) {  
-        nextInput = nextInput.nextElementSibling;  
+    if (input.value.length >= maxLength) {
+      let nextInput = input.nextElementSibling;
+      while (nextInput && !nextInput.matches('sl-input')) {
+        nextInput = nextInput.nextElementSibling;
       }
-      if (nextInput && nextInput.tagName.toLowerCase() === 'sl-input') {
-        nextInput.focus(); 
+      if (nextInput && nextInput.matches('sl-input')) {
+        nextInput.focus();
       }
     }
   }
+
   updateDate() {
     const partial_date = [];
-    if (this.day) partial_date.push(this.day);
-    if (this.month) partial_date.push(this.month);
-    if (this.year) partial_date.push(this.year);
-
-    this.date = partial_date.join('.');
+    
+    if (this.day) {
+      partial_date.push(this.day);
+    }
+    if (this.month) {
+      partial_date.push(this.getMonthName());
+    }
+    if (this.year) {
+      partial_date.push(this.year);
+    }
+    // debugger;
+    this.date = partial_date.join('. ');
   }
+
+  getMonthName() {
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    return months[parseInt(this.month) - 1] || this.month;
+  }
+
+  
 }

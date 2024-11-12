@@ -38,8 +38,6 @@ export class WebWriterTimeline extends LitElementWw {
     }
     
   `;
-    
-   
   }
 
   static get scopedElements() {
@@ -53,17 +51,25 @@ export class WebWriterTimeline extends LitElementWw {
     };
   }
 
+  private eventManager = new EventManager();
+
   protected firstUpdated(_changedProperties: PropertyValues): void {
+    this.addEventListener('request-add', (e) => this.eventManager.addEvent(e));
+    this.addEventListener('request-remove', (e) => this.eventManager.removeEvent(e));
+    // add eventlistener here which looks for events added so sort can be called
+
   }
+
 
   render() {
     return html`
       <div class="border" id="parent">
         <h4>My Timeline</h4>       
         
-        <slot></slot>
+
         <timeline-dialog id="timelineID"></timeline-dialog>
-       
+        <slot></slot>
+        <hr/>
         <sl-button id="addButton" @click=${this.openingTLDialog} >Add Event</sl-button> <br />
       </div>
     `;
@@ -74,5 +80,4 @@ export class WebWriterTimeline extends LitElementWw {
     const dialog = this.shadowRoot?.querySelector("#timelineID") as TimelineDialog;
     dialog.showDialog();
   }
-
 }
