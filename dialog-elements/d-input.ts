@@ -11,9 +11,9 @@ import {
 } from "@shoelace-style/shoelace";
 
 
-@customElement("timeline-input")
+@customElement("dialog-input")
 
-export class TimelineInput extends LitElementWw {
+export class DialogInput extends LitElementWw {
 
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   @property({ type: String }) accessor label = "";

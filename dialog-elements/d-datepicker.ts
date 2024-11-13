@@ -5,11 +5,11 @@ import "@shoelace-style/shoelace/dist/themes/light.css";
 import {
   SlInput,
 } from "@shoelace-style/shoelace";
-import { TimelineDialog } from './tl-dialog';
-import { EventManager } from './event-manager';
+import { TimelineDialog } from '../tl-dialog';
+import { EventManager } from '../event-manager';
 
-@customElement('custom-date-picker')
-export class CustomDatePicker extends LitElement {
+@customElement('dialog-date-picker')
+export class DialogDatePicker extends LitElement {
   @property({ type: String }) day = "";
   @property({ type: String }) month = "";
   @property({ type: String }) year = "";
@@ -84,6 +84,7 @@ export class CustomDatePicker extends LitElement {
     `;
   }
 
+  // reset all reactive properties and all input fields and
   reset(){
     const dates = this.shadowRoot?.querySelectorAll("sl-input");
     this.day = this.month = this.year = this.date="";
@@ -95,22 +96,19 @@ export class CustomDatePicker extends LitElement {
 
   updateDay(e) {
     this.day = e.target.value;
-    // this.updateDate();
     this.focusNextField(e, 2);
   }
 
   updateMonth(e) {
     this.month = e.target.value;
-    // this.getMonthName();
-    // this.updateDate();
     this.focusNextField(e, 2);
   }
 
   updateYear(e) {
     this.year = e.target.value;
-    // this.updateDate();
   }
 
+  // focus on next field automatically so they dont have to be selected one by one
   focusNextField(e, maxLength) {
     const input = e.target;
     if (input.value.length >= maxLength) {
@@ -124,25 +122,4 @@ export class CustomDatePicker extends LitElement {
     }
   }
 
-  // updateDate() {
-  //   const partial_date = [];
-    
-  //   if (this.day) {
-  //     partial_date.push(this.day);
-  //   }
-  //   if (this.month) {
-  //     partial_date.push(this.getMonthName());
-  //   }
-  //   if (this.year) {
-  //     partial_date.push(this.year);
-  //   }
-  //   this.date = partial_date.join('. ');
-  // }
-
-  // getMonthName() {
-  //   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  //   return months[parseInt(this.month) - 1] || this.month;
-  // }
-
-  
 }

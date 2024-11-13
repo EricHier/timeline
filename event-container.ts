@@ -92,13 +92,14 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
     `;
   } 
   
+  // on button press a paragraoh with "add description" is added to slot
   addParagraph(){
     const parDescription = document.createElement("p");
     parDescription.textContent = "Add a description";
     this.appendChild(parDescription);  
   }
 
-
+  // on button press event will be removed form slot
   removeEvent() {
     this.dispatchEvent(new CustomEvent("request-remove", {
       detail: { id: this.id },

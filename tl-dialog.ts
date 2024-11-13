@@ -10,12 +10,12 @@ import {
   SlSwitch,
 } from "@shoelace-style/shoelace";
 
-import { TimelineInput } from "./tl-input";
+import { DialogInput } from "./dialog-elements/d-input";
 import { EventManager } from "./event-manager";
 import { EventContainer } from "./event-container";
 import { WebWriterTimeline } from "./widgets/webwriter-timeline";
-import { TimelineToggle } from "./tl-toggle";
-import { CustomDatePicker } from "./custom-datepicker";
+import { DialogToggle } from "./dialog-elements/d-toggle";
+import {DialogDatePicker } from "./dialog-elements/d-datepicker";
 
 @customElement("timeline-dialog")
 export class TimelineDialog extends LitElementWw {
@@ -83,11 +83,11 @@ export class TimelineDialog extends LitElementWw {
 
   static get scopedElements() {
     return {      
-      "timeline-input": TimelineInput,
-      "timeline-toggle": TimelineToggle,
+      "timeline-input": DialogInput,
+      "timeline-toggle": DialogToggle,
       "event-container": EventContainer,
       "event-manager": EventManager,
-      "custom-date-picker":CustomDatePicker,
+      "custom-date-picker":DialogDatePicker,
 
       "sl-button": SlButton,
       "sl-checkbox": SlCheckbox,
@@ -130,45 +130,45 @@ export class TimelineDialog extends LitElementWw {
     dialog.show();
   }
 
-  //hide dialog after saving or closing, call resetDialog()
+  //hide dialog after saving or closing
   public hideDialog() {
     const dialog = this.shadowRoot?.querySelector(".dialog-width") as SlDialog;
     dialog.hide();
   }
 
-  //reset input values 
+  //reset input values before showing new dialog
   resetDialog(){
     const inputs = this.shadowRoot?.querySelectorAll("timeline-input");
     const dates = this.shadowRoot?.querySelectorAll("custom-date-picker");
 
     this.useTimePeriod = false;
 
-    // reset title, description
-    inputs.forEach((input: TimelineInput ) => {
+    // reset title ... and if used other input elements (adjust if only title will be used)
+    inputs.forEach((input: DialogInput ) => {
       input.value = ""; 
     });
 
-    // reset dates
-    // dates.forEach((date: CustomDatePicker) => {
-    //   date.reset(); 
-    // }); 
+    // reset start and end dates
+    dates.forEach((date: DialogDatePicker) => {
+      date.reset(); 
+    }); 
   }
 
   //check if input values are empty, if not readToFill = true and #saveButton not disabled
   enableSaveButton(){
-    const input_title = this.shadowRoot?.getElementById("eventTitle") as TimelineInput;
-    const input_startDate = this.shadowRoot?.getElementById("eventStartDate") as CustomDatePicker;
+    const input_title = this.shadowRoot?.getElementById("eventTitle") as DialogInput;
+    const input_startDate = this.shadowRoot?.getElementById("eventStartDate") as DialogDatePicker;
 
     (input_title.value !== "" && input_startDate.year !== "") 
     ?this.readToFill = true
     :this.readToFill = false; 
   }
 
-  // dispatch add event request to timeline component 
+  // dispatch add request to timeline component 
   addEvent() {
-    const title = this.shadowRoot.querySelector("#eventTitle") as TimelineInput;
-    const startDate = this.shadowRoot.querySelector("#eventStartDate") as CustomDatePicker;
-    const endDate= this.shadowRoot.querySelector("#eventEndDate") as CustomDatePicker;
+    const title = this.shadowRoot.querySelector("#eventTitle") as DialogInput;
+    const startDate = this.shadowRoot.querySelector("#eventStartDate") as DialogDatePicker;
+    const endDate= this.shadowRoot.querySelector("#eventEndDate") as DialogDatePicker;
 
     let eventDetails = {
         title: title.value,

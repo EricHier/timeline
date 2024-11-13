@@ -3,8 +3,8 @@ import {LitElementWw} from "@webwriter/lit"
 import {customElement, property} from "lit/decorators.js"
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
-@customElement("timeline-toggle")
-export class TimelineToggle extends LitElementWw {
+@customElement("dialog-toggle")
+export class DialogToggle extends LitElementWw {
 
   @property({ type: Boolean }) accessor useTimePeriod = false;
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;

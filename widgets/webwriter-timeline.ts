@@ -11,7 +11,7 @@ import {
 } from "@shoelace-style/shoelace";
 
 import { EventContainer } from "../event-container";
-import { TimelineInput } from "../tl-input";
+import { TimelineInput } from "../dialog-elements/d-input";
 import{ TimelineDialog} from "../tl-dialog";
 import { EventManager } from "../event-manager";
 
