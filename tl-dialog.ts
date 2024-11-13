@@ -104,7 +104,7 @@ export class TimelineDialog extends LitElementWw {
 
   render() {
     return html`
-      <sl-dialog id="timelineID" class="dialog-width" label="Add a Timline Event" style="--width: 50vw;">
+      <sl-dialog id="timelineID" class="dialog-width" label="Add a Timeline Event" style="--width: 50vw;">
         <timeline-input type="input" label="Title" id="eventTitle" @sl-change=${this.enableSaveButton} placeholder="Enter the title" required> </timeline-input>
         <br />
 
@@ -149,9 +149,9 @@ export class TimelineDialog extends LitElementWw {
     });
 
     // reset dates
-    dates.forEach((date: CustomDatePicker) => {
-      date.reset(); 
-    }); 
+    // dates.forEach((date: CustomDatePicker) => {
+    //   date.reset(); 
+    // }); 
   }
 
   //check if input values are empty, if not readToFill = true and #saveButton not disabled
@@ -164,21 +164,31 @@ export class TimelineDialog extends LitElementWw {
     :this.readToFill = false; 
   }
 
-  addEvent(){
-    const title = this.shadowRoot.querySelector("#eventTitle");
-    const startDate = this.shadowRoot.querySelector("#eventStartDate");
-    const endDate = this.useTimePeriod ? this.shadowRoot.querySelector("#eventEndDate") : "";
+  // dispatch add event request to timeline component 
+  addEvent() {
+    const title = this.shadowRoot.querySelector("#eventTitle") as TimelineInput;
+    const startDate = this.shadowRoot.querySelector("#eventStartDate") as CustomDatePicker;
+    const endDate= this.shadowRoot.querySelector("#eventEndDate") as CustomDatePicker;
 
+    let eventDetails = {
+        title: title.value,
+        startDay: startDate.day,
+        startMonth: startDate.month,
+        startYear: startDate.year,
+    };
+
+    if (this.useTimePeriod) {
+      eventDetails['endDay'] = endDate.day;
+      eventDetails['endMonth'] = endDate.month;
+      eventDetails['endYear'] = endDate.year;
+    }
     this.dispatchEvent(new CustomEvent("request-add", {
-      detail: { title, startDate, endDate },
-      bubbles: true,  
-      composed: true
+        detail: eventDetails,
+        bubbles: true,
+        composed: true
     }));
 
     console.log("Add request started: " + this.id);
   }
-
-
-
   
 }

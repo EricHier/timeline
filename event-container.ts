@@ -19,8 +19,11 @@ export class EventContainer extends LitElementWw {
 @property({type: String, attribute: true, reflect: true }) accessor event_title : string;
 @property({type: String, attribute: true, reflect: true }) accessor event_description : string;
 
+// @property({type: String, attribute: true, reflect: true }) accessor event_startDay  : string;
+// @property({type: String, attribute: true, reflect: true }) accessor event_startMonth : string;
+// @property({type: String, attribute: true, reflect: true }) accessor event_startYear : string;
+
 @property({type: String, attribute: true, reflect: true }) accessor event_startDate : string;
-@property({type: String, attribute: true, reflect: true }) accessor event_startDate_year : string;
 
 @property({type: String, attribute: true, reflect: true }) accessor event_endDate : string;
 // @property({
@@ -41,8 +44,6 @@ constructor(title: string, description: string, startDate: string, endDate: stri
   this.event_description = description;
   this.event_startDate = startDate; 
   this.event_endDate = endDate;
-  // this.event_startDate_year = startYear;
-
 }
 
 static get styles() {
@@ -78,7 +79,7 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
         <sl-details>
           <span slot="summary">
             <span class="title-style">${this.event_title}</span>
-            <span class="date-style">${this.event_startDate}${this.event_endDate == undefined ? "-" + this.event_endDate : ""}</span>
+            <span class="date-style">${this.event_startDate}${this.event_endDate == "" ? "-" + this.event_endDate : ""}</span>
           </span>
           <slot></slot>
           <sl-button variant="primary" outline @click="${this.addParagraph}">

@@ -70,8 +70,8 @@ export class WebWriterTimeline extends LitElementWw {
         
         <timeline-dialog id="timelineID"></timeline-dialog>
         <slot name="event-slot">
-          <!-- <input label="date" .value=${this.value}> <br />
-          <input label="date" .value=${this.value}> -->
+          <!-- <input label="date" > <br />
+          <input label="date" > -->
         </slot>
         <!-- <button @click=${this.sortEntries}></button> -->
         <hr/>
