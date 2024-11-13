@@ -74,6 +74,9 @@ export class TimelineDialog extends LitElementWw {
       custom-date-picker[disabled] {
         --sl-input-label-color: #888888;
       }
+      .endDate-disabled{
+        color: grey;
+      }
       
   `;
 
@@ -110,7 +113,7 @@ export class TimelineDialog extends LitElementWw {
           <br />
           <div class="timeline-input-container">
             <custom-date-picker .useTimePeriod="${this.useTimePeriod}" label=${this.useTimePeriod ? "Start date" : "Date"} id="eventStartDate" @sl-change=${this.enableSaveButton}></custom-date-picker>
-            <custom-date-picker .useTimePeriod="${this.useTimePeriod}" label="End Date" id="eventEndDate" endDate="true"></custom-date-picker>
+            <custom-date-picker .useTimePeriod="${this.useTimePeriod}" class="${!this.useTimePeriod ? 'endDate-disabled' : ''}" label="End Date" id="eventEndDate" endDate="true"></custom-date-picker>
           </div>
         </div>            
 
@@ -162,11 +165,11 @@ export class TimelineDialog extends LitElementWw {
   }
 
   addEvent(){
-    const title = this.shadowRoot.querySelector('#eventTitle');
-    const startDate = this.shadowRoot.querySelector('#eventStartDate');
-    const endDate = this.useTimePeriod ? this.shadowRoot.querySelector('#eventEndDate') : "";
+    const title = this.shadowRoot.querySelector("#eventTitle");
+    const startDate = this.shadowRoot.querySelector("#eventStartDate");
+    const endDate = this.useTimePeriod ? this.shadowRoot.querySelector("#eventEndDate") : "";
 
-    this.dispatchEvent(new CustomEvent('request-add', {
+    this.dispatchEvent(new CustomEvent("request-add", {
       detail: { title, startDate, endDate },
       bubbles: true,  
       composed: true

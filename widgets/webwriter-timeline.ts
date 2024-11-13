@@ -19,7 +19,7 @@ import { EventManager } from "../event-manager";
 
 export class WebWriterTimeline extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
-  
+
   static get styles() {
     return css`
     .border {
@@ -54,8 +54,10 @@ export class WebWriterTimeline extends LitElementWw {
   private eventManager = new EventManager();
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
-    this.addEventListener('request-add', (e) => this.eventManager.addEvent(e));
-    this.addEventListener('request-remove', (e) => this.eventManager.removeEvent(e));
+    this.addEventListener("request-add", (e) => this.eventManager.addEvent(e));
+    this.addEventListener("request-remove", (e) => this.eventManager.removeEvent(e));
+    // this.addEventListener("request-sort", () => this.eventManager.sortEvents());
+  
     // add eventlistener here which looks for events added so sort can be called
 
   }
@@ -66,9 +68,12 @@ export class WebWriterTimeline extends LitElementWw {
       <div class="border" id="parent">
         <h4>My Timeline</h4>       
         
-
         <timeline-dialog id="timelineID"></timeline-dialog>
-        <slot></slot>
+        <slot name="event-slot">
+          <!-- <input label="date" .value=${this.value}> <br />
+          <input label="date" .value=${this.value}> -->
+        </slot>
+        <!-- <button @click=${this.sortEntries}></button> -->
         <hr/>
         <sl-button id="addButton" @click=${this.openingTLDialog} >Add Event</sl-button> <br />
       </div>
@@ -79,5 +84,14 @@ export class WebWriterTimeline extends LitElementWw {
   openingTLDialog(){
     const dialog = this.shadowRoot?.querySelector("#timelineID") as TimelineDialog;
     dialog.showDialog();
+  }
+
+
+  sortEntries(){
+    const list = this.shadowRoot.querySelector('slot[name="event-slot"]');
+    debugger; 
+    [...list.children]
+      .sort((a:any, b:any) => a.date > b.date ? 1 : -1)
+      .forEach(node => list.appendChild(node));
   }
 }

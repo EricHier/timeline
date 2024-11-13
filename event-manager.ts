@@ -40,7 +40,7 @@ export class EventManager extends LitElementWw {
 //adding event to webwriter-timeline slot by creating event-container, enddate is optional
   addEvent(event){
     const { title, startDate, endDate } = event.detail;
-    const timeline = document.querySelector('webwriter-timeline') as WebWriterTimeline;
+    const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const tldialog = timeline.shadowRoot.querySelector("timeline-dialog") as TimelineDialog;
 
     const timeline_event = new EventContainer(title.value, startDate.date, endDate.date);
@@ -49,21 +49,28 @@ export class EventManager extends LitElementWw {
     timeline_event.setAttribute("event_title", title.value);
     timeline_event.setAttribute("event_startDate", startDate.date);
     timeline_event.setAttribute("event_endDate", endDate.date);
-   
+    timeline_event.setAttribute("slot", "event-slot");
+
     timeline.appendChild(timeline_event);
 
-    tldialog.hideDialog();
-    // add event listener for custom event signal and sort entries  and cases like scaling time axis
-    // timeline_event.addEventListener(event){
-    // }
+    // const appendEvent = new CustomEvent("request-append", { 
+    //   detail: { element: timeline_event }, 
+    //   bubbles: true,  
+    //   composed: true
+    // });
+    // console.log("Append request started: "+ appendEvent);
 
-    // this.sortEntries(); //check ob überflüssig mit eventlistener
+    // timeline.dispatchEvent(appendEvent);
+
+    tldialog.hideDialog();
+    
+    // this.sortEvents();
   }
   
   removeEvent(event){ 
-    const eventToRemove = event.detail.title; 
+    const eventToRemove = event.detail.id; 
     console.log("Delete request delivered: "+ eventToRemove);
-    const timeline = document.querySelector('webwriter-timeline') as WebWriterTimeline;
+    const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const eventContainer = timeline.querySelector(`event-container[id="${eventToRemove}"]`);
     
     if (eventContainer) {
@@ -71,11 +78,24 @@ export class EventManager extends LitElementWw {
     }
   }
 
-  // sortEntries(){
-  //   const list = this.shadowRoot.querySelector('slot[name="event-slot"]');
+  // dispatchSortEvents() {
+  //   this.dispatchEvent(new CustomEvent("request-sort", {
+  //     bubbles: true,  
+  //     composed: true
+  //   }));
+  //   console.log("Sort request dispatched");
+  // }
+
+  // sortEvents(){
+  //   const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
+  //   const list = timeline.shadowRoot.querySelector('slot[name="event-slot"]');   
+  //   console.log("sorting");
+  //   debugger;
 
   //   [...list.children]
-  //     .sort((a:any, b:any) => a.date > b.date ? 1 : -1)
+  //     .sort((a:EventContainer, b:EventContainer) => a.event_startDate > b.event_startDate ? 1 : -1)
   //     .forEach(node => list.appendChild(node));
+  //     console.log("sorted succesfully");
   // }
+
 }
