@@ -36,23 +36,14 @@ export class DatetManager extends LitElementWw {
     `;
   } 
 
-  // dispatchSortEvents() {
-  //   this.dispatchEvent(new CustomEvent("request-sort", {
-  //     bubbles: true,  
-  //     composed: true
-  //   }));
-  //   console.log("Sort request dispatched");
-  // }
-
-
-
-  sortEvents(){
+  sortEvents(event){
+    const { title, startDay, startMonth, startYear, endDay, endMonth, endYear } = event.detail;
     const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const list = timeline.shadowRoot.querySelector('slot[name="event-slot"]');   
     console.log("sorting");
     debugger;
-
     [...list.children]
+      
 
       // .sort((a:EventContainer, b:EventContainer) => a.event_startDate > b.event_startDate ? 1 : -1)
       // .forEach(node => list.appendChild(node));
@@ -63,12 +54,4 @@ export class DatetManager extends LitElementWw {
   //   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   //   return months[parseInt() - 1] || this.month;
   // }
-
-  validateDate(){
-
-  }
-
-  checkLeapYear(){
-
-  }
 }

@@ -18,9 +18,8 @@ export class DialogDatePicker extends LitElement {
   @property({ type: Boolean }) accessor endDate;
   @property({ type: Boolean }) accessor useTimePeriod = false;
 
-
   static styles = css`
-   .date-input {
+    .date-input {
         display: flex;
         align-items: center;
         border: 1px solid #d6d6da;
@@ -62,11 +61,15 @@ export class DialogDatePicker extends LitElement {
         font-weight: 400;
         margin-bottom: 0.5rem;
     }
+
+    .invalid {
+      --sl-input-border-color: var(--sl-color-danger-500) !important;
+      --sl-input-border-width: 1px !important;
+    }
   `;
 
   static get scopedElements() {
     return {
-      "sl-input": SlInput,
     };
   }
 
@@ -75,40 +78,129 @@ export class DialogDatePicker extends LitElement {
         <label>${this.label}</label> <br />
         <div class="${!this.useTimePeriod && this.endDate ? 'date-input-disabled' : 'date-input'}">
             <sl-icon-button src=${IconCalendarMonth}></sl-icon-button>        
-            <sl-input type="text" id="day" .value="${this.day}" @sl-input="${this.updateDay}" placeholder="DD" ?disabled="${!this.useTimePeriod&&this.endDate}" maxlength="2" valueAsString ></sl-input>
+            <sl-input 
+              type="text" 
+              id="day" 
+              .value="${this.day}" 
+              @sl-input="${this.updateDay}"
+              @keypress="${this.validateInput}"
+              placeholder="DD" 
+              ?disabled="${!this.useTimePeriod&&this.endDate}" 
+              maxlength="2" 
+              valueAsString
+            ></sl-input>
             <span class="divider">/</span>
-            <sl-input type="text" id="month" .value="${this.month}" @sl-input="${this.updateMonth}" placeholder="MM" ?disabled="${!this.useTimePeriod && this.endDate}" maxlength="2" valueAsString></sl-input>
+            <sl-input 
+              type="text" 
+              id="month" 
+              .value="${this.month}" 
+              @sl-input="${this.updateMonth}"
+              @keypress="${this.validateInput}"
+              placeholder="MM" 
+              ?disabled="${!this.useTimePeriod && this.endDate}" 
+              maxlength="2" 
+              valueAsString
+            ></sl-input>
             <span class="divider">/</span>
-            <sl-input type="text" id="year" .value="${this.year}" @sl-input="${this.updateYear}" placeholder="YYYY" ?disabled="${!this.useTimePeriod && this.endDate}" maxlength="4" valueAsString required></sl-input>
+            <sl-input 
+              type="text" 
+              id="year" 
+              .value="${this.year}" 
+              @sl-input="${this.updateYear}"
+              @keypress="${this.validateYearInput}"
+              placeholder="YYYY *"
+              ?disabled="${!this.useTimePeriod && this.endDate}" 
+              maxlength="5" 
+              valueAsString 
+              required
+            ></sl-input>
         </div>
     `;
   }
 
-  // reset all reactive properties and all input fields and
-  reset(){
-    const dates = this.shadowRoot?.querySelectorAll("sl-input");
-    this.day = this.month = this.year = this.date="";
-
-    dates.forEach((input:SlInput) => {
-        input.value= ""; 
-    });
+  // only numbers allowed for input
+  validateInput(e: KeyboardEvent) {
+    if (!/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
   }
 
+  // for year input "-"" sign and numbers are allowed and string length is adjusted
+  validateYearInput(e: KeyboardEvent) {
+    if (!/[0-9]/.test(e.key) && !(e.key === '-' && (e.target as SlInput).value === '')) {
+      e.preventDefault();
+    }
+  }
+
+  // day is number 01-31
+  validateDay(value: string): boolean {
+    const day = parseInt(value);
+    return day >= 1 && day <= 31;
+  }
+
+  // month is number 01-12
+  validateMonth(value: string): boolean {
+    const month = parseInt(value);
+    return month >= 1 && month <= 12;
+  }
+
+  // year is number with 4 digits and if "-" its 5 (todo: adjust maxlength in html)
+  validateYear(value: string): boolean {
+    const year = parseInt(value);
+    return value.length === 4 || (value.startsWith('-') && value.length === 5) || value.length === 0;
+  }
+
+  // TO DO: Add validation method to check for leap years:
+
+  // get value and add 0 if day is length 1 without leading 0 
   updateDay(e) {
     this.day = e.target.value;
-    this.focusNextField(e, 2);
+    
+    if (this.day.length === 1) {
+      this.day = `0${this.day}`;
+    } else {
+      this.day = this.day;
+    }
+
+    // TO DO: add warning if invalid 
+
+    if (this.validateDay(this.day)) {
+      this.focusNextField(e, 2);
+    }
   }
 
+  // get value and add 0 if day is length 1 without leading 0 
   updateMonth(e) {
     this.month = e.target.value;
-    this.focusNextField(e, 2);
+    
+    if (this.month.length === 1) {
+      this.month = `0${this.month}`;
+    } else {
+      this.month = this.month;
+    }
+
+    // TO DO: add warning if invalid 
+
+    if (this.validateMonth(this.month)) {
+      this.focusNextField(e, 2);
+    }
   }
 
   updateYear(e) {
     this.year = e.target.value;
+    
+    // TO DO: add warning if invalid 
   }
 
-  // focus on next field automatically so they dont have to be selected one by one
+  reset() {
+    const dates = this.shadowRoot?.querySelectorAll("sl-input");
+    this.day = this.month = this.year = this.date = "";
+
+    dates?.forEach((input: SlInput) => {
+      input.value = "";
+    });
+  }
+
   focusNextField(e, maxLength) {
     const input = e.target;
     if (input.value.length >= maxLength) {
@@ -121,5 +213,4 @@ export class DialogDatePicker extends LitElement {
       }
     }
   }
-
 }

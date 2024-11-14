@@ -46,7 +46,7 @@ export class EventManager extends LitElementWw {
     if (endYear) {
         endDate = endDay + ". " + endMonth + ". " + endYear;
     }
-
+debugger; 
     const timeline_event = new EventContainer(title, startDate, endDate);
       
     //needed because webwriter slot initialization, set input values to event container values
@@ -58,7 +58,7 @@ export class EventManager extends LitElementWw {
     timeline.appendChild(timeline_event);
     tldialog.hideDialog();
     
-    // this.sortEvents();
+    // this.sortEvents(event);
   }
   
   // dispatch remove request to timeline 

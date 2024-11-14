@@ -11,7 +11,7 @@ import {
 } from "@shoelace-style/shoelace";
 
 import { EventContainer } from "../event-container";
-import { TimelineInput } from "../dialog-elements/d-input";
+import { DialogInput } from "../dialog-elements/d-input";
 import{ TimelineDialog} from "../tl-dialog";
 import { EventManager } from "../event-manager";
 
@@ -44,7 +44,7 @@ export class WebWriterTimeline extends LitElementWw {
     return {
       "event-manager": EventManager,
       "event-container": EventContainer,
-      "timeline-input": TimelineInput,
+      "timeline-input": DialogInput,
       "timeline-dialog": TimelineDialog,
       
       "sl-button": SlButton,
@@ -57,9 +57,6 @@ export class WebWriterTimeline extends LitElementWw {
     this.addEventListener("request-add", (e) => this.eventManager.addEvent(e));
     this.addEventListener("request-remove", (e) => this.eventManager.removeEvent(e));
     // this.addEventListener("request-sort", () => this.eventManager.sortEvents());
-  
-    // add eventlistener here which looks for events added so sort can be called
-
   }
 
 
@@ -75,7 +72,9 @@ export class WebWriterTimeline extends LitElementWw {
         </slot>
         <!-- <button @click=${this.sortEntries}></button> -->
         <hr/>
-        <sl-button id="addButton" @click=${this.openingTLDialog} >Add Event</sl-button> <br />
+        <sl-button id="addButton" @click=${this.openingTLDialog} >Add Event</sl-button> 
+        <sl-button id="quizButton" @click=${this.startQuiz} >Start Quiz</sl-button> <br />
+
       </div>
     `;
   }
@@ -86,12 +85,17 @@ export class WebWriterTimeline extends LitElementWw {
     dialog.showDialog();
   }
 
-
+// to be deleted 
   sortEntries(){
     const list = this.shadowRoot.querySelector('slot[name="event-slot"]');
-    debugger; 
+    // debugger; 
     [...list.children]
       .sort((a:any, b:any) => a.date > b.date ? 1 : -1)
       .forEach(node => list.appendChild(node));
+  }
+
+  startQuiz(){
+    const list = this.shadowRoot.querySelector('slot[name="event-slot"]');
+    [...list.children]
   }
 }

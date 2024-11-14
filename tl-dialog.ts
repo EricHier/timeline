@@ -8,6 +8,9 @@ import {
   SlCheckbox,
   SlDialog,
   SlSwitch,
+  SlInput,
+  SlAlert,
+  SlIcon,
 } from "@shoelace-style/shoelace";
 
 import { DialogInput } from "./dialog-elements/d-input";
@@ -93,6 +96,9 @@ export class TimelineDialog extends LitElementWw {
       "sl-checkbox": SlCheckbox,
       "sl-dialog": SlDialog,
       "sl-switch": SlSwitch,
+      "sl-input": SlInput,
+      "sl-alert": SlAlert, 
+      "sl-icon": SlIcon,
     };
 
     
@@ -119,7 +125,14 @@ export class TimelineDialog extends LitElementWw {
 
         <sl-button class="dialog-footer" id="resetButton" slot="footer" variant="default"  @click="${this.resetDialog}">Reset</sl-button>
         <sl-button id="savingButton" slot="footer" variant="primary"  ?disabled="${!this.readToFill}" @click="${() => this.addEvent()}">Add Event</sl-button>
-      </sl-dialog>       
+        <!-- <div class="alert-toast">
+
+          <sl-alert variant="danger" duration="3000" closable>
+            <sl-icon slot="icon" name="exclamation-octagon"></sl-icon>
+            <strong>Invalid Date</strong><br /> sth.
+          </sl-alert>
+        </div> -->
+      </sl-dialog>  
     `;
   } 
       
@@ -190,5 +203,15 @@ export class TimelineDialog extends LitElementWw {
 
     console.log("Add request started: " + this.id);
   }
+ 
+  // showWarning(){
+  //   const container = document.querySelector('.alert-toast');
+
+  //   ['primary', 'success', 'neutral', 'warning', 'danger'].map(variant => {
+  //     const button = container.querySelector(`sl-button[variant="${variant}"]`);
+  //     const alert = container.querySelector(`sl-alert[variant="${variant}"]`);
   
+  //     // button.addEventListener('click', () => alert.toast());
+  //   });
+  // }
 }

@@ -37,9 +37,9 @@
       "source": "./event-manager.ts",
       "default": "./dist/event-manager.*"
     },
-    "./widgets/tl-input.*": {
-      "source": "./tl-input.ts",
-      "default": "./dist/tl-input.*"
+    "./widgets/d-input.*": {
+      "source": "./dialog-elements/d-input.ts",
+      "default": "./dist/dialog-elements/d-input.*"
     },
     "./package.json": "./package.json"
   },
@@ -50,7 +50,7 @@
     "./widgets/event-container": {
       "content": "flow*"
     },
-    "./widgets/tl-input": {
+    "./widgets/d-input": {
       "content": "flow*"
     },
     "./widgets/event-manager": {
