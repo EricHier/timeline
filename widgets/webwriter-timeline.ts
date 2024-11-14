@@ -31,6 +31,7 @@ export class WebWriterTimeline extends LitElementWw {
 
     #parent >* {
       margin-left: 10px;
+      margin-left: 10px;
     }
     
     h4 {
@@ -42,9 +43,11 @@ export class WebWriterTimeline extends LitElementWw {
 
   static get scopedElements() {
     return {
+      "dialog-input": DialogInput,
+
       "event-manager": EventManager,
       "event-container": EventContainer,
-      "timeline-input": DialogInput,
+      
       "timeline-dialog": TimelineDialog,
       
       "sl-button": SlButton,
@@ -66,11 +69,7 @@ export class WebWriterTimeline extends LitElementWw {
         <h4>My Timeline</h4>       
         
         <timeline-dialog id="timelineID"></timeline-dialog>
-        <slot name="event-slot">
-          <!-- <input label="date" > <br />
-          <input label="date" > -->
-        </slot>
-        <!-- <button @click=${this.sortEntries}></button> -->
+        <slot name="event-slot"></slot>
         <hr/>
         <sl-button id="addButton" @click=${this.openingTLDialog} >Add Event</sl-button> 
         <sl-button id="quizButton" @click=${this.startQuiz} >Start Quiz</sl-button> <br />
@@ -85,15 +84,7 @@ export class WebWriterTimeline extends LitElementWw {
     dialog.showDialog();
   }
 
-// to be deleted 
-  sortEntries(){
-    const list = this.shadowRoot.querySelector('slot[name="event-slot"]');
-    // debugger; 
-    [...list.children]
-      .sort((a:any, b:any) => a.date > b.date ? 1 : -1)
-      .forEach(node => list.appendChild(node));
-  }
-
+  // future quiz
   startQuiz(){
     const list = this.shadowRoot.querySelector('slot[name="event-slot"]');
     [...list.children]

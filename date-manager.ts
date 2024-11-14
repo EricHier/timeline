@@ -50,8 +50,9 @@ export class DatetManager extends LitElementWw {
       console.log("sorted succesfully");
   }
 
-  // getMonthName() {
-  //   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  //   return months[parseInt() - 1] || this.month;
-  // }
+  getMonthName(month: string): string {
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const monthIndex = typeof month === 'string' ? parseInt(month, 10) - 1 : month - 1;
+    return months[monthIndex] || month;
+  }
 }

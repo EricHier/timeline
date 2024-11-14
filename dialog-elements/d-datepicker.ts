@@ -18,6 +18,8 @@ export class DialogDatePicker extends LitElement {
   @property({ type: Boolean }) accessor endDate;
   @property({ type: Boolean }) accessor useTimePeriod = false;
 
+
+  // TO DO: Adjust width of input fields if window is sized down
   static styles = css`
     .date-input {
         display: flex;
@@ -135,7 +137,24 @@ export class DialogDatePicker extends LitElement {
   // day is number 01-31
   validateDay(value: string): boolean {
     const day = parseInt(value);
-    return day >= 1 && day <= 31;
+    const month = parseInt(this.month);
+    const year = parseInt(this.year);
+
+    if (month === 2) {
+      if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
+        console.log("Is leap year and February");
+        return day >= 1 && day <= 29; 
+      } else {
+        console.log("Not a leap year and February");
+        return day >= 1 && day <= 28; 
+      }
+    } else if (month === 4 || month === 6 || month === 9 || month === 11) {
+      console.log("Month with 30 days");
+      return day >= 1 && day <= 30; 
+    } else {
+      console.log("Month with 31 days");
+      return day >= 1 && day <= 31; 
+    }
   }
 
   // month is number 01-12
@@ -149,8 +168,6 @@ export class DialogDatePicker extends LitElement {
     const year = parseInt(value);
     return value.length === 4 || (value.startsWith('-') && value.length === 5) || value.length === 0;
   }
-
-  // TO DO: Add validation method to check for leap years:
 
   // get value and add 0 if day is length 1 without leading 0 
   updateDay(e) {
@@ -166,13 +183,20 @@ export class DialogDatePicker extends LitElement {
 
     if (this.validateDay(this.day)) {
       this.focusNextField(e, 2);
+    } else {
+      console.log("Unvalid day.");
+      
+      this.dispatchEvent(new CustomEvent("request-unvalid-day", {
+        detail: this.day,
+        bubbles: true,
+        composed: true
+      }));
     }
   }
 
   // get value and add 0 if day is length 1 without leading 0 
   updateMonth(e) {
     this.month = e.target.value;
-    
     if (this.month.length === 1) {
       this.month = `0${this.month}`;
     } else {
@@ -183,13 +207,40 @@ export class DialogDatePicker extends LitElement {
 
     if (this.validateMonth(this.month)) {
       this.focusNextField(e, 2);
+    } else {
+      console.log("Unvalid month.");
+      this.dispatchEvent(new CustomEvent("request-unvalid-month", {
+        detail: this.month,
+        bubbles: true,
+        composed: true
+      }));
     }
   }
 
+  // get value and add 0's if day is length < 4 (TO DO what with years starting with -)
   updateYear(e) {
     this.year = e.target.value;
     
     // TO DO: add warning if invalid 
+
+    if (this.year.length === 1) {
+      this.year = `000${this.year}`;
+    } else if (this.year.length === 2) {
+      this.year = `00${this.year}`;
+    } else if (this.year.length === 3) {
+      this.year = `0${this.year}`;
+    } else {
+      this.year = this.year;
+    }
+
+    if (!this.validateYear(this.year)) {
+      console.log("Unvalid year.");
+      this.dispatchEvent(new CustomEvent("request-unvalid-year", {
+        detail: this.year,
+        bubbles: true,
+        composed: true
+      }));
+    }
   }
 
   reset() {

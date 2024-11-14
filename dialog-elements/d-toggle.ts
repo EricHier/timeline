@@ -117,7 +117,11 @@ export class DialogToggle extends LitElementWw {
 
   toggleState() {
     this.useTimePeriod = !this.useTimePeriod;
-    this.dispatchEvent(new CustomEvent('toggle-change', { detail: { useTimePeriod: this.useTimePeriod }, bubbles: true, composed: true }));
+    this.dispatchEvent(new CustomEvent('toggle-change', { 
+      detail: { useTimePeriod: this.useTimePeriod }, 
+      bubbles: true, 
+      composed: true 
+    }));
   }
 
 }

@@ -9,6 +9,7 @@ import { DialogInput } from "./dialog-elements/d-input";
 import{ TimelineDialog} from "./tl-dialog";
 import { WebWriterTimeline } from "./widgets/webwriter-timeline";
 import { DialogDatePicker } from "./dialog-elements/d-datepicker";
+import { DatetManager } from "./date-manager";
 
 @customElement("event-manager")
 
@@ -25,8 +26,12 @@ export class EventManager extends LitElementWw {
       "timeline-dialog": TimelineDialog,
       "webwriter-timelin": WebWriterTimeline,
       "custom-datepicker":DialogDatePicker,
+      "date-manager": DatetManager,
     };
   }
+
+  private dateManager = new DatetManager();
+
 
   render() {
     return html`
@@ -39,14 +44,27 @@ export class EventManager extends LitElementWw {
     const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const tldialog = timeline.shadowRoot.querySelector("timeline-dialog") as TimelineDialog;
     const { title, startDay, startMonth, startYear, endDay, endMonth, endYear } = event.detail;
-    
-    const startDate = startDay + ". " + startMonth + ". " + startYear;
+    const startMonthName = this.dateManager.getMonthName(startMonth);
+    const endMonthName = this.dateManager.getMonthName(startMonth);
+
+    let startDate = "";
+    if(startDay){
+      startDate = startDay + ". " + startMonthName + ". " + startYear;
+    } else if (startMonth){
+      startDate = startMonthName + ". " + startYear;
+    } else {
+      startDate = startYear;
+    }
     
     let endDate = "";
-    if (endYear) {
-        endDate = endDay + ". " + endMonth + ". " + endYear;
+    if(endDay){
+      endDate = endDay + ". " + endMonthName + ". " + endYear;
+    } else if (endMonth){
+      endDate = endMonthName + ". " + endYear;
+    } else if(endYear) {
+      endDate = endYear;
     }
-debugger; 
+
     const timeline_event = new EventContainer(title, startDate, endDate);
       
     //needed because webwriter slot initialization, set input values to event container values

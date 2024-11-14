@@ -48,18 +48,18 @@ export class TimelineDialog extends LitElementWw {
         width: 100%,
       }
 
-      .timeline-input-container {
+      .dialog-input-container {
         display: grid;
         grid-template-columns: 1fr 1fr; 
         gap: 16px;
         width: 100%;
       }
 
-      timeline-input {
+      dialog-input {
         width: 100%;
         min-width: 0; 
       }
-      custom-date-picker {
+      dialog-date-picker {
         width: 100%;
         min-width: 0; 
       }
@@ -71,10 +71,10 @@ export class TimelineDialog extends LitElementWw {
         }
       }
 
-      timeline-input[disabled] {
+      dialog-input[disabled] {
         --sl-input-label-color: #888888;
       }
-      custom-date-picker[disabled] {
+      dialog-date-picker[disabled] {
         --sl-input-label-color: #888888;
       }
       .endDate-disabled{
@@ -85,13 +85,14 @@ export class TimelineDialog extends LitElementWw {
 
 
   static get scopedElements() {
-    return {      
-      "timeline-input": DialogInput,
-      "timeline-toggle": DialogToggle,
+    return { 
+      "dialog-date-picker":DialogDatePicker,    
+      "dialog-input": DialogInput,
+      "dialog-toggle": DialogToggle,
+      
       "event-container": EventContainer,
       "event-manager": EventManager,
-      "custom-date-picker":DialogDatePicker,
-
+      
       "sl-button": SlButton,
       "sl-checkbox": SlCheckbox,
       "sl-dialog": SlDialog,
@@ -106,32 +107,41 @@ export class TimelineDialog extends LitElementWw {
 
   
 
-  protected firstUpdated(_changedProperties: PropertyValues): void {}
+  private datePicker = new DialogDatePicker();
+
+  protected firstUpdated(_changedProperties: PropertyValues): void {
+    this.addEventListener("request-unvalid-day", this.showWarning)
+    
+    // this.addEventListener("request-unvalid-month", (e) => this.showWarning(e));
+    // this.addEventListener("request-unvalid-year", (e) => this.showWarning(e));
+
+    // this.addEventListener("request-sort", () => this.eventManager.sortEvents());
+  }
 
   render() {
     return html`
       <sl-dialog id="timelineID" class="dialog-width" label="Add a Timeline Event" style="--width: 50vw;">
-        <timeline-input type="input" label="Title" id="eventTitle" @sl-change=${this.enableSaveButton} placeholder="Enter the title" required> </timeline-input>
+        <dialog-input type="input" label="Title" id="eventTitle" @sl-change=${this.enableSaveButton} placeholder="Enter the title" required> </dialog-input>
         <br />
 
         <div class="container">
-          <timeline-toggle id="#time-period" .useTimePeriod="${this.useTimePeriod}" @toggle-change="${(e: CustomEvent) => {this.useTimePeriod = e.detail.useTimePeriod;}}"></timeline-toggle>
+          <dialog-toggle id="#time-period" .useTimePeriod="${this.useTimePeriod}" @toggle-change="${(e: CustomEvent) => {this.useTimePeriod = e.detail.useTimePeriod;}}"></dialog-toggle>
           <br />
-          <div class="timeline-input-container">
-            <custom-date-picker .useTimePeriod="${this.useTimePeriod}" label=${this.useTimePeriod ? "Start date" : "Date"} id="eventStartDate" @sl-change=${this.enableSaveButton}></custom-date-picker>
-            <custom-date-picker .useTimePeriod="${this.useTimePeriod}" class="${!this.useTimePeriod ? 'endDate-disabled' : ''}" label="End Date" id="eventEndDate" endDate="true"></custom-date-picker>
+          <div class="dialog-input-container">
+            <dialog-date-picker .useTimePeriod="${this.useTimePeriod}" label=${this.useTimePeriod ? "Start date" : "Date"} id="eventStartDate" @sl-change=${this.enableSaveButton}></dialog-date-picker>
+            <dialog-date-picker .useTimePeriod="${this.useTimePeriod}" class="${!this.useTimePeriod ? 'endDate-disabled' : ''}" label="End Date" id="eventEndDate" endDate="true"></dialog-date-picker>
           </div>
         </div>            
 
         <sl-button class="dialog-footer" id="resetButton" slot="footer" variant="default"  @click="${this.resetDialog}">Reset</sl-button>
         <sl-button id="savingButton" slot="footer" variant="primary"  ?disabled="${!this.readToFill}" @click="${() => this.addEvent()}">Add Event</sl-button>
-        <!-- <div class="alert-toast">
-
+        <div class="alert-toast">
           <sl-alert variant="danger" duration="3000" closable>
-            <sl-icon slot="icon" name="exclamation-octagon"></sl-icon>
-            <strong>Invalid Date</strong><br /> sth.
+              <sl-icon slot="icon" name="exclamation-octagon"></sl-icon>
+              <strong>Invalid Date:</strong> Check the day input.
           </sl-alert>
-        </div> -->
+      </div>
+
       </sl-dialog>  
     `;
   } 
@@ -151,8 +161,8 @@ export class TimelineDialog extends LitElementWw {
 
   //reset input values before showing new dialog
   resetDialog(){
-    const inputs = this.shadowRoot?.querySelectorAll("timeline-input");
-    const dates = this.shadowRoot?.querySelectorAll("custom-date-picker");
+    const inputs = this.shadowRoot?.querySelectorAll("dialog-input");
+    const dates = this.shadowRoot?.querySelectorAll("dialog-date-picker");
 
     this.useTimePeriod = false;
 
@@ -203,15 +213,16 @@ export class TimelineDialog extends LitElementWw {
 
     console.log("Add request started: " + this.id);
   }
- 
-  // showWarning(){
-  //   const container = document.querySelector('.alert-toast');
 
-  //   ['primary', 'success', 'neutral', 'warning', 'danger'].map(variant => {
-  //     const button = container.querySelector(`sl-button[variant="${variant}"]`);
-  //     const alert = container.querySelector(`sl-alert[variant="${variant}"]`);
-  
-  //     // button.addEventListener('click', () => alert.toast());
-  //   });
-  // }
+  // show warning if invalid date format added
+  showWarning(event) {
+    const unvalidDay = event.detail.day;
+    console.log("WARNING: Invalid input received for day: ", unvalidDay);
+
+    const alertToast = this.shadowRoot.querySelector('.alert-toast sl-alert') as SlAlert;
+    if (alertToast) {
+        alertToast.textContent = `Invalid Day: ${unvalidDay}`; 
+        alertToast.show(); 
+    }
+  }
 }
