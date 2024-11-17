@@ -36,33 +36,22 @@ export class DatetManager extends LitElementWw {
     `;
   } 
 
-  // sortEvents(event){
-  //   const { title, startDay, startMonth, startYear, endDay, endMonth, endYear } = event.detail;
-  //   const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
-  //   const list = timeline.shadowRoot.querySelector('slot[name="event-slot"]');   
-  //   console.log("sorting");
-  //   debugger;
-  //   [...list.children]
-      
-
-  //     // .sort((a:EventContainer, b:EventContainer) => a.event_startDate > b.event_startDate ? 1 : -1)
-  //     // .forEach(node => list.appendChild(node));
-  //     console.log("sorted succesfully");
-  // }
-
-  sortEvents(startDay, startMonth, startYear){
+  sortEvents(){
     debugger;
     const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
-    const slot = timeline.shadowRoot.querySelector('slot[name="event-slot"]');   
+    // const slot = timeline.shadowRoot.querySelector('slot[name="event-slot"]');   
     console.log("sorting");
 
-    [...slot.children]
+    // [...slot.children] use if events are appended inside slot
+  //     .sort((a: EventContainer, b:EventContainer) => {return a.getStartDate() > b.getStartDate() ? 1 : -1})
+  //     .forEach(node => slot.appendChild(node));
+  //     console.log("sorted succesfully");
+    // }
+    [...timeline.children]
       .sort((a: EventContainer, b:EventContainer) => {return a.getStartDate() > b.getStartDate() ? 1 : -1})
-      .forEach(node => slot.appendChild(node));
+      .forEach(node => timeline.appendChild(node));
       console.log("sorted succesfully");
-  }
-
-  ge
+    }
 
   getMonthName(month: string): string {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

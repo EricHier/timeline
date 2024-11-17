@@ -47,49 +47,61 @@ export class EventManager extends LitElementWw {
     const tlslot =  timeline.shadowRoot.querySelector('slot[name="event-slot"]');
 
     const { title, startDay, startMonth, startYear, endDay, endMonth, endYear } = event.detail;
-    // const startMonthName = this.dateManager.getMonthName(startMonth);
-    // const endMonthName = this.dateManager.getMonthName(startMonth);
+    const startMonthName = this.dateManager.getMonthName(startMonth);
+    const endMonthName = this.dateManager.getMonthName(endMonth);
 
     let startDate = "";
     if(startDay){
-      startDate = startDay + ". " + startMonth + ". " + startYear;
+      startDate = startDay + ". " + startMonthName + ". " + startYear;
     } else if (startMonth){
-      startDate = startMonth + ". " + startYear;
+      startDate = startMonthName + ". " + startYear;
     } else {
       startDate = startYear;
     }
     
     let endDate = "";
     if(endDay){
-      endDate = endDay + ". " + endMonth + ". " + endYear;
+      endDate = endDay + ". " + endMonthName + ". " + endYear;
     } else if (endMonth){
-      endDate = endMonth + ". " + endYear;
+      endDate = endMonthName + ". " + endYear;
     } else if(endYear) {
       endDate = endYear;
     }
 
-    const timeline_event = new EventContainer(title, startDate, endDate);
+    const timeline_event = new EventContainer(title, startDay, startMonth, startYear, startDate, endDay, endMonth, endYear, endDate);
       
     //needed because webwriter slot initialization, set input values to event container values
     timeline_event.setAttribute("event_title", title);
+
+    timeline_event.setAttribute("event_startDay", startDay);
+    timeline_event.setAttribute("event_startMonth", startMonth);
+    timeline_event.setAttribute("event_startYear", startYear);
     timeline_event.setAttribute("event_startDate", startDate);
+
+    timeline_event.setAttribute("event_endDay", endDay);
+    timeline_event.setAttribute("event_endMonth", endMonth);
+    timeline_event.setAttribute("event_endYear", endYear);
     timeline_event.setAttribute("event_endDate", endDate);
+
     timeline_event.setAttribute("slot", "event-slot");
     
-    tlslot.appendChild(timeline_event);
-    this.dateManager.sortEvents(startDay, startMonth, startYear);
+    // tlslot.appendChild(timeline_event); //if event should be inside the slot 
+    timeline.appendChild(timeline_event);
+
+    this.dateManager.sortEvents();
     tldialog.hideDialog();
-    
-    // this.sortEvents(event);
-  }
+    }
   
   // dispatch remove request to timeline 
   removeEvent(event){ 
     const eventToRemove = event.detail.id; 
     console.log("Delete request delivered: "+ eventToRemove);
     const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
+    const tlslot =  timeline.shadowRoot.querySelector('slot[name="event-slot"]');
+
+    // const eventContainer = tlslot.querySelector(`event-container[id="${eventToRemove}"]`); //if event should be inside the slot 
     const eventContainer = timeline.querySelector(`event-container[id="${eventToRemove}"]`);
-    
+
     if (eventContainer) {
       timeline.removeChild(eventContainer);
     }

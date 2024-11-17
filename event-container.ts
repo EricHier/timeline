@@ -19,14 +19,19 @@ export class EventContainer extends LitElementWw {
 @property({type: String, attribute: true, reflect: true }) accessor event_title : string;
 @property({type: String, attribute: true, reflect: true }) accessor event_description : string;
 
-// @property({type: String, attribute: true, reflect: true }) accessor event_startDay  : string;
-// @property({type: String, attribute: true, reflect: true }) accessor event_startMonth : string;
-// @property({type: String, attribute: true, reflect: true }) accessor event_startYear : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_startDay  : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_startMonth : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_startYear : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_startDate  : string;
 
-@property({type: String, attribute: true, reflect: true }) accessor event_startDate : string;
-@property({type: String, attribute: true, reflect: true }) accessor event_sort_startDate : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_endDay  : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_endMonth : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_endYear : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_endDate  : string;
 
-@property({type: String, attribute: true, reflect: true }) accessor event_endDate : string;
+
+// @property({type: String, attribute: true, reflect: true }) accessor event_startDate : string;
+// @property({type: String, attribute: true, reflect: true }) accessor event_endDate : string;
 // @property({
 //   hasChanged(newVal:string, oldVal: string){
 //     console.log("End date has changed, new val: ", newVal, " , old val: ", oldVal);
@@ -39,12 +44,19 @@ export class EventContainer extends LitElementWw {
 
 @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
 
-constructor(title: string, description: string, startDate: string, endDate: string = "") {
+constructor(title: string, startDay: string, startMonth: string, startYear: string, startDate: string, endDay: string = "", endMonth: string = "", endYear: string = "", endDate: string = "") {
   super();
   this.event_title = title;
-  this.event_description = description;
+  // this.event_description = description;
+  this.event_startDay = startDay; 
+  this.event_startMonth = startMonth; 
+  this.event_startYear = startYear; 
   this.event_startDate = startDate; 
-  this.event_endDate = endDate;
+
+  this.event_endDay = endDay; 
+  this.event_endMonth = endMonth; 
+  this.event_endYear = endYear; 
+  this.event_endDate = endDate; 
 }
 
 static get styles() {
@@ -74,9 +86,8 @@ static get scopedElements() {
 }
 // will run again in student view so do not use it 
 protected firstUpdated(_changedProperties: PropertyValues): void {
-  // this.addParagraph();
-  // console.log("first updated");
-}
+  this.addParagraph();
+ }
 
   render() {
     return html`
@@ -87,16 +98,16 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
             <span class="date-style">${this.event_startDate}${this.event_endDate != "" ? "–" + this.event_endDate : ""}</span>
           </span>
             <slot>
-              <p> <i>Click on button to add event content</i></p>
+              <!-- <p> <i>Click on button to add event content</i></p> -->
             </slot>
            
-            <div class="author-only">
+            <!-- <div class="author-only"> -->
               <sl-button variant="primary" outline @click="${this.addParagraph}">
                 <sl-icon src=${IconTextPlus} slot="prefix"></sl-icon></sl-button>
               <sl-button variant="danger" outline @click="${this.removeEvent}">
                 <sl-icon src=${IconTrash} slot="prefix"></sl-icon></sl-button>
               </sl-button>
-            </div>
+            <!-- </div> -->
         </sl-details>  
       </div>
     `;
@@ -119,26 +130,19 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
     console.log("Delete request started: " + this.id);
   }
 
+
+  // convert string into date for sorting dates 
   getStartDate(): Date {
-    debugger; 
-    const startDateElements = this.event_startDate.split(".", 3); // either: 01. 01. 2000 OR 01. 2000 OR 2000
-    console.log("Get start date: ", startDateElements);
-    let startDateOrder ="";
-    if(startDateElements.length == 3){
-      startDateOrder = startDateElements[2].trim() + "-" +startDateElements[1].trim() + "-" + startDateElements[0].trim();
-      // d = new Date(parseInt(startDateElements[2]), parseInt(startDateElements[1])-1, parseInt(startDateElements[0])); //01. 01. 2000
-      // console.log()
-    } else if (startDateElements.length == 2){
-      startDateOrder = startDateElements[1].trim() + "-" + startDateElements[0].trim();
-      // d = new Date(parseInt(startDateElements[1]), parseInt(startDateElements[0])-1, parseInt("01")); // 01. 2000
-    } else{
-      startDateOrder =  startDateElements[0].trim();
-      // d = new Date(parseInt(startDateElements[0]), parseInt("0"), parseInt("01")); // 2000
-    } 
-    var d = new Date( Date.parse(startDateOrder));
-    console.log(" start date is : ", d, "Start date order is: ", startDateOrder);
+    let startDate = "";
+    if(this.event_startDay){
+      startDate = this.event_startYear + "-" +this.event_startMonth + "-" + this.event_startDay;
+    } else if (this.event_startMonth){
+      startDate = this.event_startYear + "-" + this.event_startMonth ;
+    } else if(this.event_startYear) {
+      startDate = this.event_startYear;
+    }
+    var d = new Date( Date.parse(startDate));
+    console.log(" start date is : ", d);
     return d; 
-
   }
-
 }
