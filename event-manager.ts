@@ -39,28 +39,31 @@ export class EventManager extends LitElementWw {
   } 
 
 
+  
   //adding event to webwriter-timeline slot by creating event-container
   addEvent(event){
     const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const tldialog = timeline.shadowRoot.querySelector("timeline-dialog") as TimelineDialog;
+    const tlslot =  timeline.shadowRoot.querySelector('slot[name="event-slot"]');
+
     const { title, startDay, startMonth, startYear, endDay, endMonth, endYear } = event.detail;
-    const startMonthName = this.dateManager.getMonthName(startMonth);
-    const endMonthName = this.dateManager.getMonthName(startMonth);
+    // const startMonthName = this.dateManager.getMonthName(startMonth);
+    // const endMonthName = this.dateManager.getMonthName(startMonth);
 
     let startDate = "";
     if(startDay){
-      startDate = startDay + ". " + startMonthName + ". " + startYear;
+      startDate = startDay + ". " + startMonth + ". " + startYear;
     } else if (startMonth){
-      startDate = startMonthName + ". " + startYear;
+      startDate = startMonth + ". " + startYear;
     } else {
       startDate = startYear;
     }
     
     let endDate = "";
     if(endDay){
-      endDate = endDay + ". " + endMonthName + ". " + endYear;
+      endDate = endDay + ". " + endMonth + ". " + endYear;
     } else if (endMonth){
-      endDate = endMonthName + ". " + endYear;
+      endDate = endMonth + ". " + endYear;
     } else if(endYear) {
       endDate = endYear;
     }
@@ -73,7 +76,8 @@ export class EventManager extends LitElementWw {
     timeline_event.setAttribute("event_endDate", endDate);
     timeline_event.setAttribute("slot", "event-slot");
     
-    timeline.appendChild(timeline_event);
+    tlslot.appendChild(timeline_event);
+    this.dateManager.sortEvents(startDay, startMonth, startYear);
     tldialog.hideDialog();
     
     // this.sortEvents(event);

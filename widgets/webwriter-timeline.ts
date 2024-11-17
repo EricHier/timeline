@@ -31,13 +31,15 @@ export class WebWriterTimeline extends LitElementWw {
 
     #parent >* {
       margin-left: 10px;
-      margin-left: 10px;
+      margin-right: 10px;
     }
     
     h4 {
       text-align: center; 
     }
-    
+    :host(:not([contenteditable=true]):not([contenteditable=""])) .author-only {
+        display: none;
+    }
   `;
   }
 
@@ -68,11 +70,15 @@ export class WebWriterTimeline extends LitElementWw {
       <div class="border" id="parent">
         <h4>My Timeline</h4>       
         
-        <timeline-dialog id="timelineID"></timeline-dialog>
+        
         <slot name="event-slot"></slot>
         <hr/>
-        <sl-button id="addButton" @click=${this.openingTLDialog} >Add Event</sl-button> 
-        <sl-button id="quizButton" @click=${this.startQuiz} >Start Quiz</sl-button> <br />
+        <div class="author-only">
+          <timeline-dialog id="timelineID"></timeline-dialog>
+          <sl-button id="addButton" @click=${this.openingTLDialog}>Add Event</sl-button> 
+        </div>
+        <br />
+        <sl-button id="quizButton" @click=${this.startQuiz}>Start Quiz</sl-button> 
 
       </div>
     `;

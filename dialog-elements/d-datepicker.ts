@@ -184,8 +184,8 @@ export class DialogDatePicker extends LitElement {
     if (this.validateDay(this.day)) {
       this.focusNextField(e, 2);
     } else {
-      console.log("Unvalid day.");
-      
+      console.warn("Unvalid day.");
+      //  make warning visible in dialog with css + disable saving
       this.dispatchEvent(new CustomEvent("request-unvalid-day", {
         detail: this.day,
         bubbles: true,
@@ -208,7 +208,8 @@ export class DialogDatePicker extends LitElement {
     if (this.validateMonth(this.month)) {
       this.focusNextField(e, 2);
     } else {
-      console.log("Unvalid month.");
+      console.warn("Unvalid month.");
+      //  make warning visible in dialog with css + disable saving
       this.dispatchEvent(new CustomEvent("request-unvalid-month", {
         detail: this.month,
         bubbles: true,
@@ -234,11 +235,12 @@ export class DialogDatePicker extends LitElement {
     }
 
     if (!this.validateYear(this.year)) {
-      console.log("Unvalid year.");
+      console.warn("Unvalid year.");
+      //  make warning visible in dialog with css + disable saving
       this.dispatchEvent(new CustomEvent("request-unvalid-year", {
-        detail: this.year,
-        bubbles: true,
-        composed: true
+      detail: this.month,
+      bubbles: true,
+      composed: true
       }));
     }
   }

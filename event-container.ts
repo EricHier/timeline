@@ -24,6 +24,7 @@ export class EventContainer extends LitElementWw {
 // @property({type: String, attribute: true, reflect: true }) accessor event_startYear : string;
 
 @property({type: String, attribute: true, reflect: true }) accessor event_startDate : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_sort_startDate : string;
 
 @property({type: String, attribute: true, reflect: true }) accessor event_endDate : string;
 // @property({
@@ -59,6 +60,9 @@ static get styles() {
   .position{
     margin-left: 10px;
   }
+  :host(:not([contenteditable=true]):not([contenteditable=""])) .author-only {
+        display: none;
+  }
 `}
 
 static get scopedElements() {
@@ -68,9 +72,10 @@ static get scopedElements() {
     "sl-icon":SlIcon,
   };
 }
-
+// will run again in student view so do not use it 
 protected firstUpdated(_changedProperties: PropertyValues): void {
-  this.addParagraph();
+  // this.addParagraph();
+  // console.log("first updated");
 }
 
   render() {
@@ -81,12 +86,17 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
             <span class="title-style">${this.event_title}</span>
             <span class="date-style">${this.event_startDate}${this.event_endDate != "" ? "–" + this.event_endDate : ""}</span>
           </span>
-          <slot></slot>
-          <sl-button variant="primary" outline @click="${this.addParagraph}">
-            <sl-icon src=${IconTextPlus} slot="prefix"></sl-icon></sl-button>
-          <sl-button variant="danger" outline @click="${this.removeEvent}">
-            <sl-icon src=${IconTrash} slot="prefix"></sl-icon></sl-button>
-          </sl-button>
+            <slot>
+              <p> <i>Click on button to add event content</i></p>
+            </slot>
+           
+            <div class="author-only">
+              <sl-button variant="primary" outline @click="${this.addParagraph}">
+                <sl-icon src=${IconTextPlus} slot="prefix"></sl-icon></sl-button>
+              <sl-button variant="danger" outline @click="${this.removeEvent}">
+                <sl-icon src=${IconTrash} slot="prefix"></sl-icon></sl-button>
+              </sl-button>
+            </div>
         </sl-details>  
       </div>
     `;
@@ -95,7 +105,7 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
   // on button press a paragraoh with "add description" is added to slot
   addParagraph(){
     const parDescription = document.createElement("p");
-    parDescription.textContent = "Add a description";
+    parDescription.textContent = "Modify event content";
     this.appendChild(parDescription);  
   }
 
@@ -108,4 +118,27 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
     }));
     console.log("Delete request started: " + this.id);
   }
+
+  getStartDate(): Date {
+    debugger; 
+    const startDateElements = this.event_startDate.split(".", 3); // either: 01. 01. 2000 OR 01. 2000 OR 2000
+    console.log("Get start date: ", startDateElements);
+    let startDateOrder ="";
+    if(startDateElements.length == 3){
+      startDateOrder = startDateElements[2].trim() + "-" +startDateElements[1].trim() + "-" + startDateElements[0].trim();
+      // d = new Date(parseInt(startDateElements[2]), parseInt(startDateElements[1])-1, parseInt(startDateElements[0])); //01. 01. 2000
+      // console.log()
+    } else if (startDateElements.length == 2){
+      startDateOrder = startDateElements[1].trim() + "-" + startDateElements[0].trim();
+      // d = new Date(parseInt(startDateElements[1]), parseInt(startDateElements[0])-1, parseInt("01")); // 01. 2000
+    } else{
+      startDateOrder =  startDateElements[0].trim();
+      // d = new Date(parseInt(startDateElements[0]), parseInt("0"), parseInt("01")); // 2000
+    } 
+    var d = new Date( Date.parse(startDateOrder));
+    console.log(" start date is : ", d, "Start date order is: ", startDateOrder);
+    return d; 
+
+  }
+
 }
