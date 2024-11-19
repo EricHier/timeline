@@ -187,6 +187,11 @@ export class TimelineDialog extends LitElementWw {
     :this.readToFill = false; 
   }
 
+  disableSaveButton(event){
+    console.log("Event delivered, now disable saving: ", event.detail.month)
+    this.readToFill =false;
+  }
+
   // dispatch add request to timeline component 
   addEvent() {
     const title = this.shadowRoot.querySelector("#eventTitle") as DialogInput;

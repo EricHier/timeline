@@ -32,7 +32,6 @@ export class EventManager extends LitElementWw {
 
   private dateManager = new DatetManager();
 
-
   render() {
     return html`
     `;
@@ -47,26 +46,44 @@ export class EventManager extends LitElementWw {
     const tlslot =  timeline.shadowRoot.querySelector('slot[name="event-slot"]');
 
     const { title, startDay, startMonth, startYear, endDay, endMonth, endYear } = event.detail;
-    const startMonthName = this.dateManager.getMonthName(startMonth);
-    const endMonthName = this.dateManager.getMonthName(endMonth);
 
-    let startDate = "";
-    if(startDay){
-      startDate = startDay + ". " + startMonthName + ". " + startYear;
-    } else if (startMonth){
-      startDate = startMonthName + ". " + startYear;
-    } else {
-      startDate = startYear;
-    }
-    
+    let startDate = `${startYear}${startMonth ? `-${startMonth}` : ''}${startDay ? `-${startDay}` : ''}`;
     let endDate = "";
-    if(endDay){
-      endDate = endDay + ". " + endMonthName + ". " + endYear;
-    } else if (endMonth){
-      endDate = endMonthName + ". " + endYear;
-    } else if(endYear) {
-      endDate = endYear;
+    let endMonthName = "";
+    
+    if (endYear){
+      endDate = `${endYear ? `${endYear}` : ''}${endMonth ? `-${endMonth}` : ''}${endDay ? `-${endDay}` : ''}`;
+      this.dateManager.checkTermination(startDate, endDate);
+      endMonthName = this.dateManager.getMonthName(endMonth);
+      endDate= `${endDay ? `${endDay}. ` : ''}${endMonth ? `${endMonthName}. ` : ''}${endYear}`;
     }
+
+    if(this.dateManager.checkFormate( startDay, startMonth, endDay, endMonth)== false){
+      return;
+    }
+   
+
+
+    const startMonthName = this.dateManager.getMonthName(startMonth);
+    // const endMonthName = this.dateManager.getMonthName(endMonth);
+
+    startDate= `${startDay ? `${startDay}. ` : ''}${startMonth ? `${startMonthName}. ` : ''} ${startYear}`;
+    // endDate= `${endDay ? `${endDay}` : ''}${endMonth ? `. ${endMonthName}` : ''}. ${endYear}`;
+
+    //   startDate = startDay + ". " + startMonthName + ". " + startYear;
+    // } else if (startMonth){
+    //   startDate = startMonthName + ". " + startYear;
+    // } else {
+    //   startDate = startYear;
+    // }
+
+    // if(endDay){
+    //   endDate = endDay + ". " + endMonthName + ". " + endYear;
+    // } else if (endMonth){
+    //   endDate = endMonthName + ". " + endYear;
+    // } else if(endYear) {
+    //   endDate = endYear;
+    // }
 
     const timeline_event = new EventContainer(title, startDay, startMonth, startYear, startDate, endDay, endMonth, endYear, endDate);
       

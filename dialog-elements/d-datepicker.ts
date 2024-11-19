@@ -5,7 +5,7 @@ import "@shoelace-style/shoelace/dist/themes/light.css";
 import {
   SlInput,
 } from "@shoelace-style/shoelace";
-import { TimelineDialog } from '../tl-dialog';
+import{ TimelineDialog} from "../tl-dialog";
 import { EventManager } from '../event-manager';
 
 @customElement('dialog-date-picker')
@@ -120,7 +120,6 @@ export class DialogDatePicker extends LitElement {
     `;
   }
 
-  // only numbers allowed for input
   validateInput(e: KeyboardEvent) {
     if (!/[0-9]/.test(e.key)) {
       e.preventDefault();
@@ -140,26 +139,61 @@ export class DialogDatePicker extends LitElement {
     const month = parseInt(this.month);
     const year = parseInt(this.year);
 
+    // if (month === 2) {
+    //   if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
+    //     console.log("Is leap year and February");
+    //     return day >= 1 && day <= 29; 
+    //   } else {
+    //     console.log("Not a leap year and February");
+    //     return day >= 1 && day <= 28; 
+    //   }
+    // } else if (month === 4 || month === 6 || month === 9 || month === 11) {
+    //   console.log("Month with 30 days");
+    //   return day >= 1 && day <= 30; 
+    // } else {
+    //   console.log("Month with 31 days");
+    //   return day >= 1 && day <= 31; 
+    // }
+
+
     if (month === 2) {
-      if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
-        console.log("Is leap year and February");
-        return day >= 1 && day <= 29; 
-      } else {
-        console.log("Not a leap year and February");
-        return day >= 1 && day <= 28; 
+      const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+      const maxDays = isLeapYear ? 29 : 28;
+
+      if (day < 1) {
+        console.warn("Day must be at least 1");
+        return false;
       }
-    } else if (month === 4 || month === 6 || month === 9 || month === 11) {
-      console.log("Month with 30 days");
-      return day >= 1 && day <= 30; 
+      if (day > maxDays) {
+        console.warn(`February ${year} has ${maxDays} days (${isLeapYear ? 'leap year' : 'not a leap year'})`);
+        return false;
+      }
+    } else if ([4, 6, 9, 11].includes(month)) {
+      if (day < 1) {
+        console.warn("Day must be at least 1");
+        return false;
+      }
+      if (day > 30) {
+        console.warn("This month has only 30 days");
+        return false;
+      }
     } else {
-      console.log("Month with 31 days");
-      return day >= 1 && day <= 31; 
+      if (day > 31) {
+        console.warn("This month has only 31 days");
+        return false;
+      }
     }
   }
+
 
   // month is number 01-12
   validateMonth(value: string): boolean {
     const month = parseInt(value);
+    
+   if(month >12){
+      console.warn("The entered month is invalid.");
+      return false;
+    }
     return month >= 1 && month <= 12;
   }
 
@@ -184,13 +218,14 @@ export class DialogDatePicker extends LitElement {
     if (this.validateDay(this.day)) {
       this.focusNextField(e, 2);
     } else {
-      console.warn("Unvalid day.");
+  
+      // this.tlDialog.disableSaveButton();
+      // console.warn("Unvalid day.");
       //  make warning visible in dialog with css + disable saving
-      this.dispatchEvent(new CustomEvent("request-unvalid-day", {
-        detail: this.day,
-        bubbles: true,
-        composed: true
-      }));
+      // this.dispatchEvent(new CustomEvent("request-invalid-date", {
+      //   bubbles: true,
+      //   composed: true
+      // }));
     }
   }
 
@@ -208,13 +243,14 @@ export class DialogDatePicker extends LitElement {
     if (this.validateMonth(this.month)) {
       this.focusNextField(e, 2);
     } else {
-      console.warn("Unvalid month.");
+      // this.tlDialog.disableSaveButton();
+      // console.warn("Unvalid month.");
       //  make warning visible in dialog with css + disable saving
-      this.dispatchEvent(new CustomEvent("request-unvalid-month", {
-        detail: this.month,
-        bubbles: true,
-        composed: true
-      }));
+      // this.dispatchEvent(new CustomEvent("request-invalid-date", {
+      //   detail: { month: this.month },
+      //   bubbles: true,
+      //   composed: true
+      // }));
     }
   }
 
@@ -223,7 +259,7 @@ export class DialogDatePicker extends LitElement {
     this.year = e.target.value;
     
     // TO DO: add warning if invalid 
-
+    if(!this.year.startsWith("-")){
     if (this.year.length === 1) {
       this.year = `000${this.year}`;
     } else if (this.year.length === 2) {
@@ -233,15 +269,29 @@ export class DialogDatePicker extends LitElement {
     } else {
       this.year = this.year;
     }
+    } else {
+      // this.year.slice(1); TODO 
+      if (this.year.length === 1) {
+        this.year = `000${this.year} BCE`;
+      } else if (this.year.length === 2) {
+        this.year = `00${this.year} BCE`;
+      } else if (this.year.length === 3) {
+        this.year = `0${this.year} BCE`;
+      } else {
+        this.year = this.year + " BCE";
+      }
+    }
 
+
+      //  TO DO: make warning visible in dialog with css + disable saving
     if (!this.validateYear(this.year)) {
-      console.warn("Unvalid year.");
-      //  make warning visible in dialog with css + disable saving
-      this.dispatchEvent(new CustomEvent("request-unvalid-year", {
-      detail: this.month,
-      bubbles: true,
-      composed: true
-      }));
+      // console.warn("Invalid year.");
+      // this.dispatchEvent(new CustomEvent("request-invalid-date", {
+      //   detail: { year: this.year },
+      //   bubbles: true,
+      //   composed: true
+      // }));
+      // console.log("dispatch invalid date event");
     }
   }
 

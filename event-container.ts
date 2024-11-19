@@ -133,14 +133,15 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
 
   // convert string into date for sorting dates 
   getStartDate(): Date {
-    let startDate = "";
-    if(this.event_startDay){
-      startDate = this.event_startYear + "-" +this.event_startMonth + "-" + this.event_startDay;
-    } else if (this.event_startMonth){
-      startDate = this.event_startYear + "-" + this.event_startMonth ;
-    } else if(this.event_startYear) {
-      startDate = this.event_startYear;
-    }
+    // let startDate = "";
+    let startDate = `${this.event_startYear}${this.event_startMonth ? `-${this.event_startMonth}` : ''}${this.event_startDay ? `-${this.event_startDay}` : ''}`;
+    // if(this.event_startDay){
+    //   startDate = this.event_startYear + "-" +this.event_startMonth + "-" + this.event_startDay;
+    // } else if (this.event_startMonth){
+    //   startDate = this.event_startYear + "-" + this.event_startMonth ;
+    // } else if(this.event_startYear) {
+    //   startDate = this.event_startYear;
+    // }
     var d = new Date( Date.parse(startDate));
     console.log(" start date is : ", d);
     return d; 
