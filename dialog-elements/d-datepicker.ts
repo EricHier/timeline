@@ -139,23 +139,6 @@ export class DialogDatePicker extends LitElement {
     const month = parseInt(this.month);
     const year = parseInt(this.year);
 
-    // if (month === 2) {
-    //   if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
-    //     console.log("Is leap year and February");
-    //     return day >= 1 && day <= 29; 
-    //   } else {
-    //     console.log("Not a leap year and February");
-    //     return day >= 1 && day <= 28; 
-    //   }
-    // } else if (month === 4 || month === 6 || month === 9 || month === 11) {
-    //   console.log("Month with 30 days");
-    //   return day >= 1 && day <= 30; 
-    // } else {
-    //   console.log("Month with 31 days");
-    //   return day >= 1 && day <= 31; 
-    // }
-
-
     if (month === 2) {
       const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
       const maxDays = isLeapYear ? 29 : 28;
@@ -164,7 +147,9 @@ export class DialogDatePicker extends LitElement {
         console.warn("Day must be at least 1");
         return false;
       }
-      if (day > maxDays) {
+
+      // if (day > maxDays && maxDays > 29) { //use if the validation method in evaluate month is not working 
+        if (day > maxDays && maxDays > 29) {
         console.warn(`February ${year} has ${maxDays} days (${isLeapYear ? 'leap year' : 'not a leap year'})`);
         return false;
       }
@@ -194,6 +179,10 @@ export class DialogDatePicker extends LitElement {
       console.warn("The entered month is invalid.");
       return false;
     }
+    // if(month == 2 && parseInt(this.day) > 29){
+    //   console.warn("The entered days for Feburary are invalid.");
+    //   return false;
+    // }
     return month >= 1 && month <= 12;
   }
 
@@ -212,8 +201,6 @@ export class DialogDatePicker extends LitElement {
     } else {
       this.day = this.day;
     }
-
-    // TO DO: add warning if invalid 
 
     if (this.validateDay(this.day)) {
       this.focusNextField(e, 2);
@@ -238,8 +225,6 @@ export class DialogDatePicker extends LitElement {
       this.month = this.month;
     }
 
-    // TO DO: add warning if invalid 
-
     if (this.validateMonth(this.month)) {
       this.focusNextField(e, 2);
     } else {
@@ -258,7 +243,6 @@ export class DialogDatePicker extends LitElement {
   updateYear(e) {
     this.year = e.target.value;
     
-    // TO DO: add warning if invalid 
     if(!this.year.startsWith("-")){
     if (this.year.length === 1) {
       this.year = `000${this.year}`;
@@ -269,31 +253,28 @@ export class DialogDatePicker extends LitElement {
     } else {
       this.year = this.year;
     }
-    } else {
-      // this.year.slice(1); TODO 
-      if (this.year.length === 1) {
-        this.year = `000${this.year} BCE`;
-      } else if (this.year.length === 2) {
-        this.year = `00${this.year} BCE`;
-      } else if (this.year.length === 3) {
-        this.year = `0${this.year} BCE`;
-      } else {
-        this.year = this.year + " BCE";
-      }
-    }
-
-
-      //  TO DO: make warning visible in dialog with css + disable saving
+    } 
+    
+    //  TO DO: make warning visible in dialog with css + disable saving
     if (!this.validateYear(this.year)) {
-      // console.warn("Invalid year.");
-      // this.dispatchEvent(new CustomEvent("request-invalid-date", {
-      //   detail: { year: this.year },
-      //   bubbles: true,
-      //   composed: true
-      // }));
-      // console.log("dispatch invalid date event");
     }
   }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   reset() {
     const dates = this.shadowRoot?.querySelectorAll("sl-input");

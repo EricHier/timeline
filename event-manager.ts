@@ -37,8 +37,6 @@ export class EventManager extends LitElementWw {
     `;
   } 
 
-
-  
   //adding event to webwriter-timeline slot by creating event-container
   addEvent(event){
     const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
@@ -50,41 +48,37 @@ export class EventManager extends LitElementWw {
     let startDate = `${startYear}${startMonth ? `-${startMonth}` : ''}${startDay ? `-${startDay}` : ''}`;
     let endDate = "";
     let endMonthName = "";
-    
+    let startYearName = startYear;
+    let endYearName = endYear;
+
+    // if end date exists: check if end date larger than start date, look for end month name, parse to output string
     if (endYear){
       endDate = `${endYear ? `${endYear}` : ''}${endMonth ? `-${endMonth}` : ''}${endDay ? `-${endDay}` : ''}`;
       this.dateManager.checkTermination(startDate, endDate);
       endMonthName = this.dateManager.getMonthName(endMonth);
-      endDate= `${endDay ? `${endDay}. ` : ''}${endMonth ? `${endMonthName}. ` : ''}${endYear}`;
+      if(endYear.includes('-')) {
+          endYearName = endYear.replace('-', '');
+          endYearName = endYearName.padStart(4, '0') + ' BCE';
+        }
+
+      endDate= `${endDay ? `${endDay}. ` : ''}${endMonth ? `${endMonthName}. ` : ''}${endYearName}`;
     }
 
+    // check for start and end date if format is dd/yyyy, if so leave method and disable dialog saving
     if(this.dateManager.checkFormate( startDay, startMonth, endDay, endMonth)== false){
       return;
     }
    
-
-
     const startMonthName = this.dateManager.getMonthName(startMonth);
-    // const endMonthName = this.dateManager.getMonthName(endMonth);
 
-    startDate= `${startDay ? `${startDay}. ` : ''}${startMonth ? `${startMonthName}. ` : ''} ${startYear}`;
-    // endDate= `${endDay ? `${endDay}` : ''}${endMonth ? `. ${endMonthName}` : ''}. ${endYear}`;
+    debugger; 
+    if(startYear.includes('-')) {
+      startYearName = startYear.replace('-', '');
+      startYearName = startYearName.padStart(4, '0') + ' BCE';
+    }
 
-    //   startDate = startDay + ". " + startMonthName + ". " + startYear;
-    // } else if (startMonth){
-    //   startDate = startMonthName + ". " + startYear;
-    // } else {
-    //   startDate = startYear;
-    // }
-
-    // if(endDay){
-    //   endDate = endDay + ". " + endMonthName + ". " + endYear;
-    // } else if (endMonth){
-    //   endDate = endMonthName + ". " + endYear;
-    // } else if(endYear) {
-    //   endDate = endYear;
-    // }
-
+    startDate = `${startDay ? `${startDay}. ` : ''}${startMonth ? `${startMonthName}. ` : ''} ${startYearName}`;
+    
     const timeline_event = new EventContainer(title, startDay, startMonth, startYear, startDate, endDay, endMonth, endYear, endDate);
       
     //needed because webwriter slot initialization, set input values to event container values
@@ -101,11 +95,11 @@ export class EventManager extends LitElementWw {
     timeline_event.setAttribute("event_endDate", endDate);
 
     timeline_event.setAttribute("slot", "event-slot");
-    
-    // tlslot.appendChild(timeline_event); //if event should be inside the slot 
+  
     timeline.appendChild(timeline_event);
 
     this.dateManager.sortEvents();
+
     tldialog.hideDialog();
     }
   
@@ -115,14 +109,10 @@ export class EventManager extends LitElementWw {
     console.log("Delete request delivered: "+ eventToRemove);
     const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const tlslot =  timeline.shadowRoot.querySelector('slot[name="event-slot"]');
-
-    // const eventContainer = tlslot.querySelector(`event-container[id="${eventToRemove}"]`); //if event should be inside the slot 
     const eventContainer = timeline.querySelector(`event-container[id="${eventToRemove}"]`);
 
     if (eventContainer) {
       timeline.removeChild(eventContainer);
     }
   }
-
-  
 }

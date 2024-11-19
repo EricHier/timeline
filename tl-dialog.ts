@@ -101,22 +101,9 @@ export class TimelineDialog extends LitElementWw {
       "sl-alert": SlAlert, 
       "sl-icon": SlIcon,
     };
-
-    
   }
-
-  
 
   private datePicker = new DialogDatePicker();
-
-  protected firstUpdated(_changedProperties: PropertyValues): void {
-    this.addEventListener("request-unvalid-day", this.showWarning)
-    
-    // this.addEventListener("request-unvalid-month", (e) => this.showWarning(e));
-    // this.addEventListener("request-unvalid-year", (e) => this.showWarning(e));
-
-    // this.addEventListener("request-sort", () => this.eventManager.sortEvents());
-  }
 
   render() {
     return html`
@@ -135,13 +122,6 @@ export class TimelineDialog extends LitElementWw {
 
         <sl-button class="dialog-footer" id="resetButton" slot="footer" variant="default"  @click="${this.resetDialog}">Reset</sl-button>
         <sl-button id="savingButton" slot="footer" variant="primary"  ?disabled="${!this.readToFill}" @click="${() => this.addEvent()}">Add Event</sl-button>
-        <div class="alert-toast">
-          <sl-alert variant="danger" duration="3000" closable>
-              <sl-icon slot="icon" name="exclamation-octagon"></sl-icon>
-              <strong>Invalid Date:</strong> Check the day input.
-          </sl-alert>
-      </div>
-
       </sl-dialog>  
     `;
   } 
@@ -187,6 +167,7 @@ export class TimelineDialog extends LitElementWw {
     :this.readToFill = false; 
   }
 
+  // disable save button, called if warnings occur
   disableSaveButton(event){
     console.log("Event delivered, now disable saving: ", event.detail.month)
     this.readToFill =false;
@@ -204,30 +185,16 @@ export class TimelineDialog extends LitElementWw {
         startMonth: startDate.month,
         startYear: startDate.year,
     };
-
     if (this.useTimePeriod) {
       eventDetails['endDay'] = endDate.day;
       eventDetails['endMonth'] = endDate.month;
       eventDetails['endYear'] = endDate.year;
     }
     this.dispatchEvent(new CustomEvent("request-add", {
-        detail: eventDetails,
-        bubbles: true,
-        composed: true
+      detail: eventDetails,
+      bubbles: true,
+      composed: true
     }));
-
     console.log("Add request started: " + this.id);
-  }
-
-  // show warning if invalid date format added
-  showWarning(event) {
-    const unvalidDay = event.detail.day;
-    console.log("WARNING: Invalid input received for day: ", unvalidDay);
-
-    const alertToast = this.shadowRoot.querySelector('.alert-toast sl-alert') as SlAlert;
-    if (alertToast) {
-        alertToast.textContent = `Invalid Day: ${unvalidDay}`; 
-        alertToast.show(); 
-    }
   }
 }

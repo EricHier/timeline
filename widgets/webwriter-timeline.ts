@@ -63,8 +63,6 @@ export class WebWriterTimeline extends LitElementWw {
     this.addEventListener("request-add", (e) => this.eventManager.addEvent(e));
     this.addEventListener("request-remove", (e) => this.eventManager.removeEvent(e));    
     // this.addEventListener("request-invalid-date", (e) => this.tlDialog.disableSaveButton(e));
-
-    // this.addEventListener("request-sort", () => this.eventManager.sortEvents());
   }
 
 

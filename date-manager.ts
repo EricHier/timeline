@@ -48,14 +48,7 @@ export class DatetManager extends LitElementWw {
       .sort((a: EventContainer, b:EventContainer) => {return a.getStartDate() > b.getStartDate() ? 1 : -1})
       .forEach(node => timeline.appendChild(node));
       console.log("sorted succesfully");
-    }
-
-    // const slot = timeline.shadowRoot.querySelector('slot[name="event-slot"]');   
-    // [...slot.children] use if events are appended inside slot
-    //   .sort((a: EventContainer, b:EventContainer) => {return a.getStartDate() > b.getStartDate() ? 1 : -1})
-    //   .forEach(node => slot.appendChild(node));
-    //   console.log("sorted succesfully");
-    // }
+  }
 
   // get name of the month 
   getMonthName(month: string): string {

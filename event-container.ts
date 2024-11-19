@@ -29,34 +29,29 @@ export class EventContainer extends LitElementWw {
 @property({type: String, attribute: true, reflect: true }) accessor event_endYear : string;
 @property({type: String, attribute: true, reflect: true }) accessor event_endDate  : string;
 
-
-// @property({type: String, attribute: true, reflect: true }) accessor event_startDate : string;
-// @property({type: String, attribute: true, reflect: true }) accessor event_endDate : string;
-// @property({
-//   hasChanged(newVal:string, oldVal: string){
-//     console.log("End date has changed, new val: ", newVal, " , old val: ", oldVal);
-//     // method to check for valid date and hasChanged inside and dispatch custom event (for start date)
-//     return true; //hasChanged
-//   },
-//   type: String, attribute: true, reflect: true }) 
-//   accessor event_startDate : string = "";
-
-
 @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
 
-constructor(title: string, startDay: string, startMonth: string, startYear: string, startDate: string, endDay: string = "", endMonth: string = "", endYear: string = "", endDate: string = "") {
-  super();
-  this.event_title = title;
-  // this.event_description = description;
-  this.event_startDay = startDay; 
-  this.event_startMonth = startMonth; 
-  this.event_startYear = startYear; 
-  this.event_startDate = startDate; 
+constructor(
+  title: string, 
+  startDay: string,
+  startMonth: string, 
+  startYear: string, 
+  startDate: string, 
+  endDay: string = "", 
+  endMonth: string = "", 
+  endYear: string = "",
+  endDate: string = "") {
+    super();
+    this.event_title = title;
+    this.event_startDay = startDay; 
+    this.event_startMonth = startMonth; 
+    this.event_startYear = startYear; 
+    this.event_startDate = startDate; 
 
-  this.event_endDay = endDay; 
-  this.event_endMonth = endMonth; 
-  this.event_endYear = endYear; 
-  this.event_endDate = endDate; 
+    this.event_endDay = endDay; 
+    this.event_endMonth = endMonth; 
+    this.event_endYear = endYear; 
+    this.event_endDate = endDate; 
 }
 
 static get styles() {
@@ -113,7 +108,7 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
     `;
   } 
   
-  // on button press a paragraoh with "add description" is added to slot
+  // on button press a paragraph with "add description" is added to slot
   addParagraph(){
     const parDescription = document.createElement("p");
     parDescription.textContent = "Modify event content";
@@ -133,15 +128,7 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
 
   // convert string into date for sorting dates 
   getStartDate(): Date {
-    // let startDate = "";
     let startDate = `${this.event_startYear}${this.event_startMonth ? `-${this.event_startMonth}` : ''}${this.event_startDay ? `-${this.event_startDay}` : ''}`;
-    // if(this.event_startDay){
-    //   startDate = this.event_startYear + "-" +this.event_startMonth + "-" + this.event_startDay;
-    // } else if (this.event_startMonth){
-    //   startDate = this.event_startYear + "-" + this.event_startMonth ;
-    // } else if(this.event_startYear) {
-    //   startDate = this.event_startYear;
-    // }
     var d = new Date( Date.parse(startDate));
     console.log(" start date is : ", d);
     return d; 
