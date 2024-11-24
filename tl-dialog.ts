@@ -80,7 +80,10 @@ export class TimelineDialog extends LitElementWw {
       .endDate-disabled{
         color: grey;
       }
-      
+      .text-error {
+        font-size: var(--sl-input-help-text-font-size-medium);
+        color: var(--sl-color-danger-700);
+      }
   `;
 
 
@@ -105,12 +108,24 @@ export class TimelineDialog extends LitElementWw {
 
   private datePicker = new DialogDatePicker();
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('day-validation-error', this.showDayError);
+    this.addEventListener('month-validation-error', this.showMonthError);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('day-validation-error', this.showDayError);
+    this.removeEventListener('month-validation-error', this.showMonthError);
+  }
+
   render() {
     return html`
       <sl-dialog id="timelineID" class="dialog-width" label="Add a Timeline Event" style="--width: 50vw;">
         <dialog-input type="input" label="Title" id="eventTitle" @sl-change=${this.enableSaveButton} placeholder="Enter the title" required> </dialog-input>
+        <div class="text-error" id="titleError" aria-live="polite" hidden></div>
         <br />
-
         <div class="container">
           <dialog-toggle id="#time-period" .useTimePeriod="${this.useTimePeriod}" @toggle-change="${(e: CustomEvent) => {this.useTimePeriod = e.detail.useTimePeriod;}}"></dialog-toggle>
           <br />
@@ -119,6 +134,8 @@ export class TimelineDialog extends LitElementWw {
             <dialog-date-picker .useTimePeriod="${this.useTimePeriod}" class="${!this.useTimePeriod ? 'endDate-disabled' : ''}" label="End Date" id="eventEndDate" endDate="true"></dialog-date-picker>
           </div>
         </div>            
+        <div class="text-error" id="dayError" aria-live="polite" hidden></div>
+        <div class="text-error" id="monthError" aria-live="polite" hidden></div>
 
         <sl-button class="dialog-footer" id="resetButton" slot="footer" variant="default"  @click="${this.resetDialog}">Reset</sl-button>
         <sl-button id="savingButton" slot="footer" variant="primary"  ?disabled="${!this.readToFill}" @click="${() => this.addEvent()}">Add Event</sl-button>
@@ -143,8 +160,18 @@ export class TimelineDialog extends LitElementWw {
   resetDialog(){
     const inputs = this.shadowRoot?.querySelectorAll("dialog-input");
     const dates = this.shadowRoot?.querySelectorAll("dialog-date-picker");
+    const titleError = this.shadowRoot.getElementById('titleError');
+    const dayError = this.shadowRoot.getElementById('dayError');
+    const monthError = this.shadowRoot.getElementById('monthError');
 
     this.useTimePeriod = false;
+    // reset all error messages
+    titleError.textContent = "";
+    titleError.hidden = true;
+    dayError.textContent = "";
+    dayError.hidden = true;
+    monthError.textContent = "";
+    monthError.hidden = true;
 
     // reset title ... and if used other input elements (adjust if only title will be used)
     inputs.forEach((input: DialogInput ) => {
@@ -159,17 +186,67 @@ export class TimelineDialog extends LitElementWw {
 
   //check if input values are empty, if not readToFill = true and #saveButton not disabled
   enableSaveButton(){
+    this.showTitleError();
     const input_title = this.shadowRoot?.getElementById("eventTitle") as DialogInput;
     const input_startDate = this.shadowRoot?.getElementById("eventStartDate") as DialogDatePicker;
+    const datePicker = this.shadowRoot.querySelector('dialog-date-picker') as DialogDatePicker;
 
-    (input_title.value !== "" && input_startDate.year !== "") 
-    ?this.readToFill = true
-    :this.readToFill = false; 
+    const dayValidation = datePicker.validateDay();
+    const monthValidation = datePicker.validateMonth();
+
+    const isValid = 
+      dayValidation.valid == true && 
+      monthValidation.valid == true &&  
+      datePicker.validateYear() && 
+      input_title.value !== "" && 
+      input_startDate.year !== "";
+
+    this.readToFill = isValid;
+  }
+
+  showTitleError(){
+    const input_title = this.shadowRoot?.getElementById("eventTitle") as DialogInput;
+    const titleError = this.shadowRoot.getElementById('titleError');
+
+    if (input_title.value == "") {
+      titleError.textContent = "Error: Please enter a title";
+      titleError.hidden = false;
+    } else {
+      titleError.textContent = "";
+      titleError.hidden = true;
+    }
+  }
+
+  showDayError(e){
+    const datePicker = this.shadowRoot.querySelector('dialog-date-picker') as DialogDatePicker;
+    const dayError = this.shadowRoot.getElementById('dayError');
+    const dayValidation = datePicker.validateDay();
+
+    if (dayValidation.valid == false) {
+      dayError.textContent = "Error: " + e.detail.errorMessage;
+      dayError.hidden = false;
+    } else {
+      dayError.textContent = "";
+      dayError.hidden = true;
+    }
+  }
+
+  showMonthError(e){
+    const datePicker = this.shadowRoot.querySelector('dialog-date-picker') as DialogDatePicker;
+    const monthError = this.shadowRoot.getElementById('monthError');
+    const monthValidation = datePicker.validateMonth();
+
+    if (monthValidation.valid == false) {
+      monthError.textContent = "Error: " + e.detail.errorMessage;
+      monthError.hidden = false;
+    } else {
+      monthError.textContent = "";
+      monthError.hidden = true;
+    }
   }
 
   // disable save button, called if warnings occur
   disableSaveButton(event){
-    console.log("Event delivered, now disable saving: ", event.detail.month)
     this.readToFill =false;
   }
 
@@ -195,6 +272,6 @@ export class TimelineDialog extends LitElementWw {
       bubbles: true,
       composed: true
     }));
-    console.log("Add request started: " + this.id);
+    // console.log("Add request started: " + this.id);
   }
 }

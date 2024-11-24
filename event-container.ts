@@ -122,7 +122,7 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
       bubbles: true,  
       composed: true
     }));
-    console.log("Delete request started: " + this.id);
+    // console.log("Delete request started: " + this.id);
   }
 
 
@@ -130,7 +130,7 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
   getStartDate(): Date {
     let startDate = `${this.event_startYear}${this.event_startMonth ? `-${this.event_startMonth}` : ''}${this.event_startDay ? `-${this.event_startDay}` : ''}`;
     var d = new Date( Date.parse(startDate));
-    console.log(" start date is : ", d);
+    // console.log(" start date is : ", d);
     return d; 
   }
 }

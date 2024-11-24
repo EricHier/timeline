@@ -63,13 +63,29 @@ export class DialogDatePicker extends LitElement {
         font-weight: 400;
         margin-bottom: 0.5rem;
     }
-
-    .invalid {
-      --sl-input-border-color: var(--sl-color-danger-500) !important;
-      --sl-input-border-width: 1px !important;
+    
+    .validity-styles sl-input[data-user-invalid]::part(base){
+      border-color: var(--sl-color-danger-600);
     }
+    .validity-styles [data-user-invalid]::part(form-control-label){
+      color: var(--sl-color-danger-700);
+    }
+    .validity-styles sl-input:focus-within[data-user-invalid]::part(base){
+      border-color: var(--sl-color-danger-600);
+      box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-color-danger-300);
+    }
+    .validity-styles sl-input[data-user-valid]::part(base){
+      border-color: var(--sl-color-success-600);
+    }
+    .validity-styles [data-user-valid]::part(form-control-label){
+      color: var(--sl-color-success-700);
+    }
+    .validity-styles sl-input:focus-within[data-user-valid]::part(base){
+      border-color: var(--sl-color-success-600);
+      box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-color-success-300);
+    }
+   
   `;
-
   static get scopedElements() {
     return {
     };
@@ -77,15 +93,21 @@ export class DialogDatePicker extends LitElement {
 
   render() {
     return html`
+      <form class="validity-styles">
         <label>${this.label}</label> <br />
         <div class="${!this.useTimePeriod && this.endDate ? 'date-input-disabled' : 'date-input'}">
             <sl-icon-button src=${IconCalendarMonth}></sl-icon-button>        
             <sl-input 
+              ?data-invalid="${this.day.length > 0 && this.validateDay().valid == false}"
               type="text" 
               id="day" 
               .value="${this.day}" 
-              @sl-input="${this.updateDay}"
+              @sl-input="${(e: Event) => {
+                const input = e.target as SlInput;
+                this.day = input.value.padStart(2, "0");
+              }}"
               @keypress="${this.validateInput}"
+              @sl-blur="${this.validateForErrors}"
               placeholder="DD" 
               ?disabled="${!this.useTimePeriod&&this.endDate}" 
               maxlength="2" 
@@ -93,11 +115,16 @@ export class DialogDatePicker extends LitElement {
             ></sl-input>
             <span class="divider">/</span>
             <sl-input 
+              ?data-invalid="${this.month.length > 0 && this.validateMonth().valid == false}"
               type="text" 
               id="month" 
               .value="${this.month}" 
-              @sl-input="${this.updateMonth}"
+              @sl-input="${(e: Event) => {
+                const input = e.target as SlInput;
+                this.month = input.value.padStart(2, "0");
+              }}"
               @keypress="${this.validateInput}"
+              @sl-blur="${this.validateForErrors}"
               placeholder="MM" 
               ?disabled="${!this.useTimePeriod && this.endDate}" 
               maxlength="2" 
@@ -105,21 +132,29 @@ export class DialogDatePicker extends LitElement {
             ></sl-input>
             <span class="divider">/</span>
             <sl-input 
+              ?data-invalid="${this.year.length > 0 && !this.validateYear()}"
               type="text" 
               id="year" 
               .value="${this.year}" 
-              @sl-input="${this.updateYear}"
+              @sl-input="${(e: Event) => {
+                const input = e.target as SlInput;
+                this.year = input.value.padStart(4, "0");
+              }}"
               @keypress="${this.validateYearInput}"
+              @sl-blur="${this.validateForErrors}"
               placeholder="YYYY *"
               ?disabled="${!this.useTimePeriod && this.endDate}" 
               maxlength="5" 
               valueAsString 
               required
-            ></sl-input>
+            ></sl-input> 
         </div>
+       
+      </form>
     `;
   }
 
+  // only numbers are allowed for input 
   validateInput(e: KeyboardEvent) {
     if (!/[0-9]/.test(e.key)) {
       e.preventDefault();
@@ -134,148 +169,98 @@ export class DialogDatePicker extends LitElement {
   }
 
   // day is number 01-31
-  validateDay(value: string): boolean {
-    const day = parseInt(value);
+  validateDay() {
+    const day = parseInt(this.day);
     const month = parseInt(this.month);
     const year = parseInt(this.year);
 
-    if (month === 2) {
+    if (day < 1){
+      return { valid: false, errorMessage: "Days start at least by 1" };
+    }
+    if ( day > 31){
+      return { valid: false, errorMessage: "There is no month with more than 31 days" };
+
+    }
+    if(month == 2) {
       const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
       const maxDays = isLeapYear ? 29 : 28;
+      if (day > maxDays) {
+        if (this.year){
+          return { valid: false, errorMessage:`February ${year} has ${maxDays} days (${isLeapYear ? 'leap year' : 'not a leap year'})` };
 
-      if (day < 1) {
-        console.warn("Day must be at least 1");
-        return false;
-      }
+        } else {
+          return { valid: false, errorMessage:`February has ${maxDays} days or less` };
 
-      // if (day > maxDays && maxDays > 29) { //use if the validation method in evaluate month is not working 
-        if (day > maxDays && maxDays > 29) {
-        console.warn(`February ${year} has ${maxDays} days (${isLeapYear ? 'leap year' : 'not a leap year'})`);
-        return false;
+        }
       }
     } else if ([4, 6, 9, 11].includes(month)) {
-      if (day < 1) {
-        console.warn("Day must be at least 1");
-        return false;
-      }
       if (day > 30) {
-        console.warn("This month has only 30 days");
-        return false;
-      }
-    } else {
-      if (day > 31) {
-        console.warn("This month has only 31 days");
-        return false;
+        return { valid: false, errorMessage: "This month has only 30 days" };
       }
     }
+    return { valid: true, errorMessage: "" };
   }
 
-
   // month is number 01-12
-  validateMonth(value: string): boolean {
-    const month = parseInt(value);
+  validateMonth() {
+    const month = parseInt(this.month);
     
-   if(month >12){
-      console.warn("The entered month is invalid.");
-      return false;
+    if(month < 1 || month > 12){
+      return { valid: false, errorMessage: "The entered month is invalid" };
+
     }
-    // if(month == 2 && parseInt(this.day) > 29){
-    //   console.warn("The entered days for Feburary are invalid.");
-    //   return false;
-    // }
-    return month >= 1 && month <= 12;
+    return { valid: true, errorMessage: "" };
   }
 
   // year is number with 4 digits and if "-" its 5 (todo: adjust maxlength in html)
-  validateYear(value: string): boolean {
-    const year = parseInt(value);
-    return value.length === 4 || (value.startsWith('-') && value.length === 5) || value.length === 0;
+  validateYear(): boolean {
+    return this.year.length === 4 || (this.year.startsWith('-') && this.year.length === 5) || this.year.length === 0;
   }
 
-  // get value and add 0 if day is length 1 without leading 0 
-  updateDay(e) {
-    this.day = e.target.value;
-    
-    if (this.day.length === 1) {
-      this.day = `0${this.day}`;
-    } else {
-      this.day = this.day;
+  // validate day and month input
+  validateForErrors(e: FocusEvent) {
+    const form = this.shadowRoot.querySelector('.validity-styles');
+    const dayError = this.shadowRoot.querySelector('#day-error') as HTMLElement ;
+    const monthError = this.shadowRoot.querySelector('#month-error') as HTMLElement ;
+
+    const input = e.target as SlInput;
+
+    const dayInput = this.shadowRoot.querySelector('#day') as SlInput;
+    const monthInput = this.shadowRoot.querySelector('#month') as SlInput;
+    const yearInput = this.shadowRoot.querySelector('#year') as SlInput;
+
+    const dayValidation = this.validateDay();
+    const monthValidation = this.validateMonth();
+
+    if (this.day.length > 0) {
+      this.dispatchEvent(new CustomEvent('day-validation-error', {
+        detail: { errorMessage: dayValidation.errorMessage },
+        bubbles: true, 
+        composed: true 
+      }));
+
+      if (!dayValidation.valid) {
+        dayInput.setAttribute('data-invalid', 'true');
+      } else {
+        dayInput.removeAttribute('data-invalid');
+      }
     }
 
-    if (this.validateDay(this.day)) {
-      this.focusNextField(e, 2);
-    } else {
-  
-      // this.tlDialog.disableSaveButton();
-      // console.warn("Unvalid day.");
-      //  make warning visible in dialog with css + disable saving
-      // this.dispatchEvent(new CustomEvent("request-invalid-date", {
-      //   bubbles: true,
-      //   composed: true
-      // }));
-    }
-  }
-
-  // get value and add 0 if day is length 1 without leading 0 
-  updateMonth(e) {
-    this.month = e.target.value;
-    if (this.month.length === 1) {
-      this.month = `0${this.month}`;
-    } else {
-      this.month = this.month;
-    }
-
-    if (this.validateMonth(this.month)) {
-      this.focusNextField(e, 2);
-    } else {
-      // this.tlDialog.disableSaveButton();
-      // console.warn("Unvalid month.");
-      //  make warning visible in dialog with css + disable saving
-      // this.dispatchEvent(new CustomEvent("request-invalid-date", {
-      //   detail: { month: this.month },
-      //   bubbles: true,
-      //   composed: true
-      // }));
+    if (this.month.length > 0) {
+      this.dispatchEvent(new CustomEvent('month-validation-error', {
+        detail: { errorMessage: monthValidation.errorMessage },
+        bubbles: true, 
+        composed: true 
+      }));
+      if (!monthValidation.valid) {
+        monthInput.setAttribute('data-invalid', 'true');
+      } else {
+        monthInput.removeAttribute('data-invalid');
+      }
     }
   }
 
-  // get value and add 0's if day is length < 4 (TO DO what with years starting with -)
-  updateYear(e) {
-    this.year = e.target.value;
-    
-    if(!this.year.startsWith("-")){
-    if (this.year.length === 1) {
-      this.year = `000${this.year}`;
-    } else if (this.year.length === 2) {
-      this.year = `00${this.year}`;
-    } else if (this.year.length === 3) {
-      this.year = `0${this.year}`;
-    } else {
-      this.year = this.year;
-    }
-    } 
-    
-    //  TO DO: make warning visible in dialog with css + disable saving
-    if (!this.validateYear(this.year)) {
-    }
-  }
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  // reset all values, reset method in dialog called
   reset() {
     const dates = this.shadowRoot?.querySelectorAll("sl-input");
     this.day = this.month = this.year = this.date = "";

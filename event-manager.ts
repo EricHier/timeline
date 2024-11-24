@@ -71,7 +71,6 @@ export class EventManager extends LitElementWw {
    
     const startMonthName = this.dateManager.getMonthName(startMonth);
 
-    debugger; 
     if(startYear.includes('-')) {
       startYearName = startYear.replace('-', '');
       startYearName = startYearName.padStart(4, '0') + ' BCE';
@@ -106,7 +105,7 @@ export class EventManager extends LitElementWw {
   // dispatch remove request to timeline 
   removeEvent(event){ 
     const eventToRemove = event.detail.id; 
-    console.log("Delete request delivered: "+ eventToRemove);
+    // console.log("Delete request delivered: "+ eventToRemove);
     const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const tlslot =  timeline.shadowRoot.querySelector('slot[name="event-slot"]');
     const eventContainer = timeline.querySelector(`event-container[id="${eventToRemove}"]`);
