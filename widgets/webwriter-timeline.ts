@@ -57,12 +57,10 @@ export class WebWriterTimeline extends LitElementWw {
   }
 
   private eventManager = new EventManager();
-  // private tlDialog = new TimelineDialog();
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
     this.addEventListener("request-add", (e) => this.eventManager.addEvent(e));
     this.addEventListener("request-remove", (e) => this.eventManager.removeEvent(e));    
-    // this.addEventListener("request-invalid-date", (e) => this.tlDialog.disableSaveButton(e));
   }
 
 
@@ -91,7 +89,7 @@ export class WebWriterTimeline extends LitElementWw {
     dialog.showDialog();
   }
 
-  // future quiz
+  // TO DO: future quiz
   startQuiz(){
     const list = this.shadowRoot.querySelector('slot[name="event-slot"]');
     [...list.children]

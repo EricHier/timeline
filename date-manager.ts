@@ -56,27 +56,4 @@ export class DatetManager extends LitElementWw {
     const monthIndex = typeof month === 'string' ? parseInt(month, 10) - 1 : month - 1;
     return monthNames[monthIndex] || month;
   }
-
-  //  check if end date is before start date, if so give warning
-  checkTermination(startDate, endDate){
-    const start= Date.parse(startDate);
-    const end= Date.parse(endDate);
-    if(startDate > endDate){
-      console.warn("Invalid format, Start date after end date");
-    }  
-  }
-
-  //  check if only date and year have been added 
-  checkFormate(startDay, startMonth, endDay, endMonth):Boolean{
-    if(startDay&& !startMonth){
-      console.warn("Invalid format, enter  start month.");
-      this.tlDialog.disableSaveButton("test");
-      return false;
-    }
-    if(endDay&& !endMonth){
-      console.warn("Invalid format, enter  end month.");
-      this.tlDialog.disableSaveButton("test");
-      return false;
-    }
-  }
 }

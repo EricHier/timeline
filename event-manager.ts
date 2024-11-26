@@ -37,7 +37,7 @@ export class EventManager extends LitElementWw {
     `;
   } 
 
-  //adding event to webwriter-timeline slot by creating event-container
+  // adding event to webwriter-timeline slot by creating event-container, 
   addEvent(event){
     const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const tldialog = timeline.shadowRoot.querySelector("timeline-dialog") as TimelineDialog;
@@ -51,23 +51,17 @@ export class EventManager extends LitElementWw {
     let startYearName = startYear;
     let endYearName = endYear;
 
-    // if end date exists: check if end date larger than start date, look for end month name, parse to output string
+    // if end date exists: look for end month name, parse to output string + check if end year is negative, if so change to BCE
     if (endYear){
       endDate = `${endYear ? `${endYear}` : ''}${endMonth ? `-${endMonth}` : ''}${endDay ? `-${endDay}` : ''}`;
-      this.dateManager.checkTermination(startDate, endDate);
       endMonthName = this.dateManager.getMonthName(endMonth);
-      if(endYear.includes('-')) {
+
+      if (endYear.includes('-')) {
           endYearName = endYear.replace('-', '');
           endYearName = endYearName.padStart(4, '0') + ' BCE';
         }
-
       endDate= `${endDay ? `${endDay}. ` : ''}${endMonth ? `${endMonthName}. ` : ''}${endYearName}`;
-    }
-
-    // check for start and end date if format is dd/yyyy, if so leave method and disable dialog saving
-    if(this.dateManager.checkFormate( startDay, startMonth, endDay, endMonth)== false){
-      return;
-    }
+    }   
    
     const startMonthName = this.dateManager.getMonthName(startMonth);
 
@@ -80,7 +74,7 @@ export class EventManager extends LitElementWw {
     
     const timeline_event = new EventContainer(title, startDay, startMonth, startYear, startDate, endDay, endMonth, endYear, endDate);
       
-    //needed because webwriter slot initialization, set input values to event container values
+    // needed because webwriter slot initialization, set input values to event container values
     timeline_event.setAttribute("event_title", title);
 
     timeline_event.setAttribute("event_startDay", startDay);
@@ -102,7 +96,7 @@ export class EventManager extends LitElementWw {
     tldialog.hideDialog();
     }
   
-  // dispatch remove request to timeline 
+  // dispatch remove request of event to timeline 
   removeEvent(event){ 
     const eventToRemove = event.detail.id; 
     // console.log("Delete request delivered: "+ eventToRemove);

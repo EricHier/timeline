@@ -48,6 +48,7 @@ export class DialogInput extends LitElementWw {
 
 
   render() {
+    // TO BE DELTED type: textarea, not needed anymore
     if (this.type === "textarea"){ 
       return html`
         <sl-textarea 
@@ -74,7 +75,7 @@ export class DialogInput extends LitElementWw {
       `;
     } 
       
-      //type: date
+    // TO BE DELTED type: date, not needed anymore
     else {
       return html`
         <sl-input

@@ -1,2 +1,4 @@
 #ignore node_modules files for git
 node_modules/
+#ignore all dist files 
+dist/

@@ -101,7 +101,7 @@ export class DialogToggle extends LitElementWw {
 
   render() {
     return html`
-    <div class="toggle" @click="${this.toggleState}">
+    <div class="toggle" @click="${this.toggleChange}">
       
       <input type="checkbox"  id="time-period" .checked="${this.useTimePeriod}" />
       <label for="time-period"></label>
@@ -115,7 +115,8 @@ export class DialogToggle extends LitElementWw {
   `;
   }
 
-  toggleState() {
+  // on toggle change useTimePeriod value
+  toggleChange() {
     this.useTimePeriod = !this.useTimePeriod;
     this.dispatchEvent(new CustomEvent('toggle-change', { 
       detail: { useTimePeriod: this.useTimePeriod }, 

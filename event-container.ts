@@ -79,7 +79,7 @@ static get scopedElements() {
     "sl-icon":SlIcon,
   };
 }
-// will run again in student view so do not use it 
+// will run again in student view, TO DO: use other way to append new paragraph
 protected firstUpdated(_changedProperties: PropertyValues): void {
   this.addParagraph();
  }

@@ -104,7 +104,7 @@ export class DialogDatePicker extends LitElement {
               .value="${this.day}" 
               @sl-input="${(e: Event) => {
                 const input = e.target as SlInput;
-                this.day = input.value.padStart(2, "0");
+                this.day = input.value.length > 0 ? input.value.padStart(2, "0") : "";
               }}"
               @keypress="${this.validateInput}"
               @sl-blur="${this.validateForErrors}"
@@ -121,7 +121,7 @@ export class DialogDatePicker extends LitElement {
               .value="${this.month}" 
               @sl-input="${(e: Event) => {
                 const input = e.target as SlInput;
-                this.month = input.value.padStart(2, "0");
+                this.month =  input.value.length > 0 ? input.value.padStart(2, "0") : "";
               }}"
               @keypress="${this.validateInput}"
               @sl-blur="${this.validateForErrors}"
@@ -168,7 +168,7 @@ export class DialogDatePicker extends LitElement {
     }
   }
 
-  // day is number 01-31
+  // day is number 01-31, based on month day is restricted 
   validateDay() {
     const day = parseInt(this.day);
     const month = parseInt(this.month);
@@ -177,10 +177,11 @@ export class DialogDatePicker extends LitElement {
     if (day < 1){
       return { valid: false, errorMessage: "Days start at least by 1" };
     }
+
     if ( day > 31){
       return { valid: false, errorMessage: "There is no month with more than 31 days" };
-
     }
+
     if(month == 2) {
       const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
       const maxDays = isLeapYear ? 29 : 28;
@@ -198,6 +199,7 @@ export class DialogDatePicker extends LitElement {
         return { valid: false, errorMessage: "This month has only 30 days" };
       }
     }
+
     return { valid: true, errorMessage: "" };
   }
 
@@ -207,7 +209,6 @@ export class DialogDatePicker extends LitElement {
     
     if(month < 1 || month > 12){
       return { valid: false, errorMessage: "The entered month is invalid" };
-
     }
     return { valid: true, errorMessage: "" };
   }
@@ -217,50 +218,54 @@ export class DialogDatePicker extends LitElement {
     return this.year.length === 4 || (this.year.startsWith('-') && this.year.length === 5) || this.year.length === 0;
   }
 
-  // validate day and month input
-  validateForErrors(e: FocusEvent) {
-    const form = this.shadowRoot.querySelector('.validity-styles');
-    const dayError = this.shadowRoot.querySelector('#day-error') as HTMLElement ;
-    const monthError = this.shadowRoot.querySelector('#month-error') as HTMLElement ;
-
-    const input = e.target as SlInput;
-
+  // validate day and month input, TO DO: fix css for input fields when invalid
+  validateForErrors() {
     const dayInput = this.shadowRoot.querySelector('#day') as SlInput;
     const monthInput = this.shadowRoot.querySelector('#month') as SlInput;
-    const yearInput = this.shadowRoot.querySelector('#year') as SlInput;
 
     const dayValidation = this.validateDay();
     const monthValidation = this.validateMonth();
 
-    if (this.day.length > 0) {
-      this.dispatchEvent(new CustomEvent('day-validation-error', {
+    // invalid day, dispatch error message to dialog
+    if (this.day.length > 0 && !dayValidation.valid) {
+      dayInput.setAttribute('data-invalid', 'true');
+
+      this.dispatchEvent(new CustomEvent('show-day-validation-error', {
         detail: { errorMessage: dayValidation.errorMessage },
         bubbles: true, 
         composed: true 
       }));
 
-      if (!dayValidation.valid) {
-        dayInput.setAttribute('data-invalid', 'true');
-      } else {
-        dayInput.removeAttribute('data-invalid');
-      }
+    } else {
+      dayInput.removeAttribute('data-invalid');
+
+      this.dispatchEvent(new CustomEvent('hide-day-validation-error', {
+        bubbles: true, 
+        composed: true 
+      }));
     }
 
-    if (this.month.length > 0) {
-      this.dispatchEvent(new CustomEvent('month-validation-error', {
+    // invalid month, dispatch error message to dialog
+    if (this.month.length > 0 && !monthValidation.valid) {
+      monthInput.setAttribute('data-invalid', 'true');
+
+      this.dispatchEvent(new CustomEvent('show-month-validation-error', {
         detail: { errorMessage: monthValidation.errorMessage },
         bubbles: true, 
         composed: true 
       }));
-      if (!monthValidation.valid) {
-        monthInput.setAttribute('data-invalid', 'true');
-      } else {
-        monthInput.removeAttribute('data-invalid');
-      }
+
+    } else {
+      monthInput.removeAttribute('data-invalid');
+
+      this.dispatchEvent(new CustomEvent('hide-month-validation-error', {
+        bubbles: true, 
+        composed: true 
+      }));
     }
   }
 
-  // reset all values, reset method in dialog called
+  // reset all values, reset method used in dialog 
   reset() {
     const dates = this.shadowRoot?.querySelectorAll("sl-input");
     this.day = this.month = this.year = this.date = "";
@@ -270,6 +275,7 @@ export class DialogDatePicker extends LitElement {
     });
   }
 
+  // focus on next input field, TO DO: update with current state (unused now)
   focusNextField(e, maxLength) {
     const input = e.target;
     if (input.value.length >= maxLength) {
