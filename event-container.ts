@@ -15,19 +15,19 @@ import {
 @customElement("event-container")
 export class EventContainer extends LitElementWw {
 
-@property({type: String, attribute: true, reflect: true }) accessor event_id : string;
-@property({type: String, attribute: true, reflect: true }) accessor event_title : string;
-@property({type: String, attribute: true, reflect: true }) accessor event_description : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_id;
+@property({type: String, attribute: true, reflect: true }) accessor event_title;
+@property({type: String, attribute: true, reflect: true }) accessor event_description;
 
-@property({type: String, attribute: true, reflect: true }) accessor event_startDay  : string;
-@property({type: String, attribute: true, reflect: true }) accessor event_startMonth : string;
-@property({type: String, attribute: true, reflect: true }) accessor event_startYear : string;
-@property({type: String, attribute: true, reflect: true }) accessor event_startDate  : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_startDay;
+@property({type: String, attribute: true, reflect: true }) accessor event_startMonth;
+@property({type: String, attribute: true, reflect: true }) accessor event_startYear;
+@property({type: String, attribute: true, reflect: true }) accessor event_startDate;
 
-@property({type: String, attribute: true, reflect: true }) accessor event_endDay  : string;
-@property({type: String, attribute: true, reflect: true }) accessor event_endMonth : string;
-@property({type: String, attribute: true, reflect: true }) accessor event_endYear : string;
-@property({type: String, attribute: true, reflect: true }) accessor event_endDate  : string;
+@property({type: String, attribute: true, reflect: true }) accessor event_endDay;
+@property({type: String, attribute: true, reflect: true }) accessor event_endMonth;
+@property({type: String, attribute: true, reflect: true }) accessor event_endYear;
+@property({type: String, attribute: true, reflect: true }) accessor event_endDate;
 
 @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
 

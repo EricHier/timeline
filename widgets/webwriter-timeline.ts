@@ -21,6 +21,7 @@ import { MainQuiz } from "./q-main-quiz";
 
 export class WebWriterTimeline extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
+  @property({type: Boolean, attribute: true, reflect: true }) accessor openQuiz = false;
 
   static get styles() {
     return css`
@@ -81,7 +82,7 @@ export class WebWriterTimeline extends LitElementWw {
           <sl-button id="addButton" @click=${this.openingTLDialog}>Add Event</sl-button> 
         </div>
         <br />
-        <sl-button id="quizButton" @click=${this.startQuiz}>Start Quiz</sl-button> 
+        <sl-button id="quizButton" @click=${this.startQuiz}>${this.openQuiz ? "Refresh Quiz" : "Open Quiz"}</sl-button> 
         <sl-button id="quizButton" @click=${this.endQuiz}>End Quiz</sl-button> 
       </div>
       <br />
@@ -96,29 +97,36 @@ export class WebWriterTimeline extends LitElementWw {
     dialog.showDialog();
   }
 
-  // TO DO: future quiz
+  // show quiz and add events to it 
   startQuiz(){
-    debugger;
     const quiz = this.shadowRoot?.querySelector("#quiz") as MainQuiz;
     quiz.hidden = false;
+    this.openQuiz = true;
 
-    // const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
-    // const list = this.shadowRoot.querySelector('slot[name="event-slot"]');
-    // const table = quiz.shadowRoot.querySelector('#quizTable');
     const events = [...this.children]; 
-
-    events.forEach((event) => {
-      let date = event.getAttribute('event_startDate');
-      const title = event.getAttribute('event_title');
-      quiz.appendRow(date, title);
+    const existingEvents = quiz.getAppendedEvents(); 
+    
+    const eventsToAppend = events.filter(event => {
+        const title = event.getAttribute('event_title');
+        return !existingEvents.some(existingEvent => 
+            existingEvent.title === title
+        );
     });
 
+    eventsToAppend.forEach((event) => {
+        let date = event.getAttribute('event_startDate');
+        const title = event.getAttribute('event_title');
+        quiz.appendRow(date, title);
+    });  
     console.log("show quiz");
   }
 
   endQuiz(){
     const quiz = this.shadowRoot?.querySelector("#quiz") as MainQuiz;
     quiz.hidden = true;
+    this.openQuiz = false;
+
     console.log("hide quiz");
+    quiz.resetQuiz();
   }
 }
