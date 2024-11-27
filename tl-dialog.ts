@@ -19,6 +19,7 @@ import { EventContainer } from "./event-container";
 import { WebWriterTimeline } from "./widgets/webwriter-timeline";
 import { DialogToggle } from "./dialog-elements/d-toggle";
 import {DialogDatePicker } from "./dialog-elements/d-datepicker";
+import { TlEvent } from "./tl-event";
 
 @customElement("timeline-dialog")
 export class TimelineDialog extends LitElementWw {
@@ -30,7 +31,7 @@ export class TimelineDialog extends LitElementWw {
   @property({ type: String }) accessor placeholder = "";
   @property({ type: Boolean, reflect: true }) accessor required = false;
   @property({ type: String }) accessor type: "input" | "textarea";
-  @property({ type: Boolean }) accessor readToFill = false;
+  @property({ type: Boolean }) accessor readyToFill = false;
   @property({ type: Boolean }) accessor useTimePeriod = false;
 
   static styles = css` 
@@ -134,7 +135,7 @@ export class TimelineDialog extends LitElementWw {
     return html`
       <sl-dialog id="timelineID" class="dialog-width" label="Add a Timeline Event" style="--width: 50vw;">
         <dialog-input type="input" label="Title" id="eventTitle" @sl-change=${this.enableSaveButton} placeholder="Enter the title" required> </dialog-input>
-        <div class="text-error" id="titleError" aria-live="polite" hidden></div>
+        <div class="text-error" id="titleError" hidden></div>
         <br />
         <div class="container">
           <dialog-toggle id="time-period" .useTimePeriod="${this.useTimePeriod}"
@@ -151,12 +152,12 @@ export class TimelineDialog extends LitElementWw {
             <dialog-date-picker .useTimePeriod="${this.useTimePeriod}" class="${!this.useTimePeriod ? 'endDate-disabled' : ''}" label="End Date" id="eventEndDate"   @sl-change=${this.enableSaveButton} endDate="true"></dialog-date-picker>
           </div>
         </div>            
-        <div class="text-error" id="dayError" aria-live="polite" hidden></div>
-        <div class="text-error" id="monthError" aria-live="polite" hidden></div>
-        <div class="text-error" id="formateError" aria-live="polite" hidden></div>
+        <div class="text-error" id="dayError" hidden></div>
+        <div class="text-error" id="monthError" hidden></div>
+        <div class="text-error" id="formateError" hidden></div>
 
         <sl-button class="dialog-footer" id="resetButton" slot="footer" variant="default"  @click="${this.resetDialog}">Reset</sl-button>
-        <sl-button id="savingButton" slot="footer" variant="primary" ?disabled="${!this.readToFill}" @click="${() => this.addEvent()}">Add Event</sl-button>
+        <sl-button id="savingButton" slot="footer" variant="primary" ?disabled="${!this.readyToFill}" @click="${() => this.addEvent()}">Add Event</sl-button>
       </sl-dialog>  
     `;
   } 
@@ -235,9 +236,9 @@ export class TimelineDialog extends LitElementWw {
     const isValid = dayValidation.valid && monthValidation.valid && yearValidation &&  input_title.value !== "" && input_startDate.year !== "";
     
     if(this.showFormateError() == true){
-      this.readToFill = isValid
+      this.readyToFill = isValid
     } else  {
-      this.readToFill = false; 
+      this.readyToFill = false; 
     } 
   }
 
@@ -333,7 +334,7 @@ export class TimelineDialog extends LitElementWw {
 
   // disable save button, called if warnings occur
   disableSaveButton(){
-    this.readToFill =false;
+    this.readyToFill =false;
   }
 
   // dispatch add request to timeline component 
@@ -342,6 +343,7 @@ export class TimelineDialog extends LitElementWw {
     const startDate = this.shadowRoot.querySelector("#eventStartDate") as DialogDatePicker;
     const endDate= this.shadowRoot.querySelector("#eventEndDate") as DialogDatePicker;
 
+    // TO DO: let eventDetails: TlEvent = {
     let eventDetails = {
         title: title.value,
         startDay: startDate.day,
