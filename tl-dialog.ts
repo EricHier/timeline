@@ -305,7 +305,6 @@ export class TimelineDialog extends LitElementWw {
   
   //  check if end date is before start date and check if only dd and yyyy have been added
   showFormateError(): Boolean {
-    debugger;
     const startDate = this.shadowRoot.querySelector("#eventStartDate") as DialogDatePicker;
     const endDate= this.shadowRoot.querySelector("#eventEndDate") as DialogDatePicker;
     const formateError = this.shadowRoot.getElementById('formateError');
@@ -318,11 +317,11 @@ export class TimelineDialog extends LitElementWw {
       formateError.hidden = false;
       return false;
     } else if(start > end && this.useTimePeriod == true && ((startDate.day && !startDate.month  && startDate.year)||(endDate.day && !endDate.month && endDate.year))){
-      formateError.textContent = "Error: Invalid format, Start date after end date and enter start month.";
+      formateError.textContent = "Error: Invalid format (dd/yyyy) please enter a month and start date after end date.";
       formateError.hidden = false;
       return false;
     } else if ((startDate.day && !startDate.month && startDate.year)||(endDate.day && !endDate.month && endDate.year)){
-      formateError.textContent = "Error: Invalid format, enter  start month.";
+      formateError.textContent = "Error: Invalid format (dd/yyyy), enter a month.";
       formateError.hidden = false;
       return false;
     } else {

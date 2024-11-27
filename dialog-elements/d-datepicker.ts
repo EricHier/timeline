@@ -17,74 +17,79 @@ export class DialogDatePicker extends LitElement {
   @property({ type: String }) label = "";
   @property({ type: Boolean }) accessor endDate;
   @property({ type: Boolean }) accessor useTimePeriod = false;
+  @property({ type: Boolean }) accessor invalid = false;
 
 
   // TO DO: Adjust width of input fields if window is sized down
   static styles = css`
-    .date-input {
-        display: flex;
-        align-items: center;
-        border: 1px solid #d6d6da;
-        border-radius: 5px;
-        background: white;
-        width: 100%;
+    .date-input, .date-input-disabled {
+      display: flex;
+      align-items: center;
+      border: 1px solid #d6d6da;
+      border-radius: 5px;
+      background: white;
+      width: 100%;
     }
     .date-input-disabled {
-        display: flex;
-        align-items: center;
-        border: 1px solid #d6d6da;
-        border-radius: 5px;
-        background: #f7f7f8;
-        width: 100%;
+      background: #f7f7f8;
     }
 
     sl-input {
-        --sl-input-border-color: transparent;
-        --sl-input-border-width: 0px;
-        --sl-input-padding-vertical: 0;
-        --sl-input-padding-horizontal: 1rem;
-        max-width: 25%;
-        text-align: center;
+      --sl-input-border-color: transparent;
+      --sl-input-border-width: 0;
+      --sl-input-padding-vertical: 0;
+      --sl-input-padding-horizontal: 1rem;
+      max-width: 25%;
+      text-align: center;
     }
+
     sl-input[disabled] {
-        --sl-input-border-color: transparent;
-        --sl-input-border-width: 0px;
-        --sl-input-padding-vertical: 0;
-        --sl-input-padding-horizontal: 1rem;
-        --sl-input-color:transparent;
-        max-width: 25%;
-        text-align: center;
+      --sl-input-color: gray;
     }
+
     .divider {
-        color: lightgray;
+      color: lightgray;
     }
+
     label {
-        font-size: 1rem;
-        font-weight: 400;
-        margin-bottom: 0.5rem;
+      font-size: 1rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
     }
-    
-    .validity-styles sl-input[data-user-invalid]::part(base){
-      border-color: var(--sl-color-danger-600);
-    }
-    .validity-styles [data-user-invalid]::part(form-control-label){
-      color: var(--sl-color-danger-700);
-    }
-    .validity-styles sl-input:focus-within[data-user-invalid]::part(base){
+
+    sl-input[date-invalid]::part(base){
       border-color: var(--sl-color-danger-600);
       box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-color-danger-300);
     }
-    .validity-styles sl-input[data-user-valid]::part(base){
-      border-color: var(--sl-color-success-600);
-    }
-    .validity-styles [data-user-valid]::part(form-control-label){
-      color: var(--sl-color-success-700);
-    }
-    .validity-styles sl-input:focus-within[data-user-valid]::part(base){
+    /* sl-input[date-valid]::part(base){
       border-color: var(--sl-color-success-600);
       box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-color-success-300);
+    } */
+    /* sl-input[data-invalid]::part(base) {
+      border-color: var(--sl-color-danger-600);
     }
-   
+
+    sl-input[data-invalid]::part(form-control-label) {
+      color: var(--sl-color-danger-700);
+    }
+
+    sl-input:focus-within[data-invalid]::part(base) {
+      border-color: var(--sl-color-danger-600);
+      box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-color-danger-300);
+    }
+
+    sl-input[data-valid]::part(base) {
+      border-color: var(--sl-color-success-600);
+    }
+
+    sl-input[data-valid]::part(form-control-label) {
+      color: var(--sl-color-success-700);
+    }
+
+    sl-input:focus-within[data-valid]::part(base) {
+      border-color: var(--sl-color-success-600);
+      box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-color-success-300);
+    } */
   `;
   static get scopedElements() {
     return {
@@ -98,7 +103,7 @@ export class DialogDatePicker extends LitElement {
         <div class="${!this.useTimePeriod && this.endDate ? 'date-input-disabled' : 'date-input'}">
             <sl-icon-button src=${IconCalendarMonth}></sl-icon-button>        
             <sl-input 
-              ?data-invalid="${this.day.length > 0 && this.validateDay().valid == false}"
+              class="${this.day.length > 0 && this.validateDay().valid == false  ? 'date-invalid' : ''}"
               type="text" 
               id="day" 
               .value="${this.day}" 
@@ -115,7 +120,7 @@ export class DialogDatePicker extends LitElement {
             ></sl-input>
             <span class="divider">/</span>
             <sl-input 
-              ?data-invalid="${this.month.length > 0 && this.validateMonth().valid == false}"
+              class="${this.month.length > 0 && this.validateMonth().valid == false  ? 'date-invalid' : ''}"
               type="text" 
               id="month" 
               .value="${this.month}" 
@@ -132,7 +137,7 @@ export class DialogDatePicker extends LitElement {
             ></sl-input>
             <span class="divider">/</span>
             <sl-input 
-              ?data-invalid="${this.year.length > 0 && !this.validateYear()}"
+              class="${this.year.length > 0 && !this.validateYear() ? 'date-invalid' : ''}"
               type="text" 
               id="year" 
               .value="${this.year}" 
@@ -191,7 +196,6 @@ export class DialogDatePicker extends LitElement {
 
         } else {
           return { valid: false, errorMessage:`February has ${maxDays} days or less` };
-
         }
       }
     } else if ([4, 6, 9, 11].includes(month)) {
@@ -214,8 +218,13 @@ export class DialogDatePicker extends LitElement {
   }
 
   // year is number with 4 digits and if "-" its 5 (todo: adjust maxlength in html)
-  validateYear(): boolean {
-    return this.year.length === 4 || (this.year.startsWith('-') && this.year.length === 5) || this.year.length === 0;
+  validateYear() {
+    if(this.year.length == 0 || (this.year.startsWith('-') && this.year.length == 1)){
+      return { valid: false, errorMessage: "Please enter a year" };
+    } else if (this.year.length >= 4 && !this.year.startsWith('-')){
+      return { valid: false, errorMessage: "Please enter a year with maximum 4 digits" };
+    }
+    return { valid: true, errorMessage: "" };
   }
 
   // validate day and month input, TO DO: fix css for input fields when invalid
@@ -225,10 +234,10 @@ export class DialogDatePicker extends LitElement {
 
     const dayValidation = this.validateDay();
     const monthValidation = this.validateMonth();
-
+   
     // invalid day, dispatch error message to dialog
     if (this.day.length > 0 && !dayValidation.valid) {
-      dayInput.setAttribute('data-invalid', 'true');
+      // dayInput.setAttribute('data-invalid','true');
 
       this.dispatchEvent(new CustomEvent('show-day-validation-error', {
         detail: { errorMessage: dayValidation.errorMessage },
@@ -237,7 +246,9 @@ export class DialogDatePicker extends LitElement {
       }));
 
     } else {
-      dayInput.removeAttribute('data-invalid');
+      // if(dayInput.hasAttribute('data-invalid')){
+      //   dayInput.removeAttribute('data-invalid');
+      // }
 
       this.dispatchEvent(new CustomEvent('hide-day-validation-error', {
         bubbles: true, 
@@ -247,16 +258,17 @@ export class DialogDatePicker extends LitElement {
 
     // invalid month, dispatch error message to dialog
     if (this.month.length > 0 && !monthValidation.valid) {
-      monthInput.setAttribute('data-invalid', 'true');
+      // monthInput.setAttribute('data-invalid', 'true');
+      // monthInput.removeAttribute('data-valid');
 
       this.dispatchEvent(new CustomEvent('show-month-validation-error', {
         detail: { errorMessage: monthValidation.errorMessage },
         bubbles: true, 
         composed: true 
       }));
-
     } else {
-      monthInput.removeAttribute('data-invalid');
+      // monthInput.removeAttribute('data-invalid');
+      // monthInput.setAttribute('data-valid', 'true');
 
       this.dispatchEvent(new CustomEvent('hide-month-validation-error', {
         bubbles: true, 

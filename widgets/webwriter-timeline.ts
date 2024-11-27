@@ -14,6 +14,8 @@ import { EventContainer } from "../event-container";
 import { DialogInput } from "../dialog-elements/d-input";
 import{ TimelineDialog} from "../tl-dialog";
 import { EventManager } from "../event-manager";
+import { MainQuiz } from "./q-main-quiz";
+
 
 @customElement("webwriter-timeline")
 
@@ -52,11 +54,13 @@ export class WebWriterTimeline extends LitElementWw {
       
       "timeline-dialog": TimelineDialog,
       
+      "main-quiz": MainQuiz,
       "sl-button": SlButton,
     };
   }
 
   private eventManager = new EventManager();
+  private mainQuiz = new MainQuiz();
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
     this.addEventListener("request-add", (e) => this.eventManager.addEvent(e));
@@ -78,8 +82,11 @@ export class WebWriterTimeline extends LitElementWw {
         </div>
         <br />
         <sl-button id="quizButton" @click=${this.startQuiz}>Start Quiz</sl-button> 
-
+        <sl-button id="quizButton" @click=${this.endQuiz}>End Quiz</sl-button> 
       </div>
+      <br />
+
+      <main-quiz id="quiz" hidden></main-quiz>
     `;
   }
 
@@ -91,7 +98,27 @@ export class WebWriterTimeline extends LitElementWw {
 
   // TO DO: future quiz
   startQuiz(){
-    const list = this.shadowRoot.querySelector('slot[name="event-slot"]');
-    [...list.children]
+    debugger;
+    const quiz = this.shadowRoot?.querySelector("#quiz") as MainQuiz;
+    quiz.hidden = false;
+
+    // const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
+    // const list = this.shadowRoot.querySelector('slot[name="event-slot"]');
+    // const table = quiz.shadowRoot.querySelector('#quizTable');
+    const events = [...this.children]; 
+
+    events.forEach((event) => {
+      let date = event.getAttribute('event_startDate');
+      const title = event.getAttribute('event_title');
+      quiz.appendRow(date, title);
+    });
+
+    console.log("show quiz");
+  }
+
+  endQuiz(){
+    const quiz = this.shadowRoot?.querySelector("#quiz") as MainQuiz;
+    quiz.hidden = true;
+    console.log("hide quiz");
   }
 }

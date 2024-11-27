@@ -90,7 +90,7 @@ protected firstUpdated(_changedProperties: PropertyValues): void {
         <sl-details>
           <span slot="summary">
             <span class="title-style">${this.event_title}</span>
-            <span class="date-style">${this.event_startDate}${this.event_endDate != "" ? "–" + this.event_endDate : ""}</span>
+            <span class="date-style">${this.event_startDate}${this.event_endDate != "" ? " – " + this.event_endDate : ""}</span>
           </span>
             <slot>
               <!-- <p> <i>Click on button to add event content</i></p> -->
