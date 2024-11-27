@@ -99,12 +99,24 @@ export class MainQuiz extends LitElementWw {
             id="title-radio"
           ></sl-radio-group>
         </div>
-        <sl-button @click="${this.randomiseTitleOrder}">Randomize Title Order</sl-button>
+        <br />
+        <hr/>
+        <br />
+        <div name="found-matches"></div>
         <sl-button @click="${this.checkMatch}">Check Match</sl-button>
+        <sl-button @click="${this.endQuiz}">End Quiz</sl-button>
 
       </div>
     `;
   }
+
+  endQuiz(){
+    this.dispatchEvent(new CustomEvent("request-close-quiz", {
+        bubbles: true,  
+        composed: true
+    }));
+  }
+
 
 //   reset radio elements 
   resetQuiz() {
@@ -148,6 +160,7 @@ export class MainQuiz extends LitElementWw {
     title_radio.appendChild(title_option);
 
     this.appendedEvents.push({ date, title });
+    this.randomiseTitleOrder()
     console.log("events added to date quiz");
   }
 

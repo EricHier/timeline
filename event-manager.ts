@@ -10,6 +10,7 @@ import{ TimelineDialog} from "./tl-dialog";
 import { WebWriterTimeline } from "./widgets/webwriter-timeline";
 import { DialogDatePicker } from "./dialog-elements/d-datepicker";
 import { DatetManager } from "./date-manager";
+import { TlEvent } from "./tl-event";
 
 @customElement("event-manager")
 

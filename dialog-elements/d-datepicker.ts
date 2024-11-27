@@ -15,7 +15,7 @@ export class DialogDatePicker extends LitElement {
   @property({ type: String }) year = "";
   @property({ type: String }) date = "";
   @property({ type: String }) label = "";
-  @property({ type: Boolean }) accessor endDate;
+  @property({ type: Boolean }) accessor useEndDate;
   @property({ type: Boolean }) accessor useTimePeriod = false;
   @property({ type: Boolean }) accessor invalid = false;
 
@@ -100,7 +100,7 @@ export class DialogDatePicker extends LitElement {
     return html`
       <form class="validity-styles">
         <label>${this.label}</label> <br />
-        <div class="${!this.useTimePeriod && this.endDate ? 'date-input-disabled' : 'date-input'}">
+        <div class="${!this.useTimePeriod && this.useEndDate ? 'date-input-disabled' : 'date-input'}">
             <sl-icon-button src=${IconCalendarMonth}></sl-icon-button>        
             <sl-input 
               class="${this.day.length > 0 && this.validateDay().valid == false  ? 'date-invalid' : ''}"
@@ -114,7 +114,7 @@ export class DialogDatePicker extends LitElement {
               @keypress="${this.validateInput}"
               @sl-blur="${this.validateForErrors}"
               placeholder="DD" 
-              ?disabled="${!this.useTimePeriod&&this.endDate}" 
+              ?disabled="${!this.useTimePeriod&&this.useEndDate}" 
               maxlength="2" 
               valueAsString
             ></sl-input>
@@ -131,7 +131,7 @@ export class DialogDatePicker extends LitElement {
               @keypress="${this.validateInput}"
               @sl-blur="${this.validateForErrors}"
               placeholder="MM" 
-              ?disabled="${!this.useTimePeriod && this.endDate}" 
+              ?disabled="${!this.useTimePeriod && this.useEndDate}" 
               maxlength="2" 
               valueAsString
             ></sl-input>
@@ -148,7 +148,7 @@ export class DialogDatePicker extends LitElement {
               @keypress="${this.validateYearInput}"
               @sl-blur="${this.validateForErrors}"
               placeholder="YYYY *"
-              ?disabled="${!this.useTimePeriod && this.endDate}" 
+              ?disabled="${!this.useTimePeriod && this.useEndDate}" 
               maxlength="5" 
               valueAsString 
               required
