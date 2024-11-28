@@ -5,13 +5,13 @@ import { customElement, property, query } from "lit/decorators.js";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
 import { SlButton, SlDialog, SlIcon } from "@shoelace-style/shoelace";
-
+import { EventController } from "../tl-event-controller";
 import { EventContainer } from "../event-container";
 import { DialogInput } from "../dialog-elements/d-input";
 import { TimelineDialog } from "../tl-dialog";
 import { EventManager } from "../event-manager";
 import { MainQuiz } from "./q-main-quiz";
-import { TlEvent } from "../tl-event";
+import { TlEventData } from "../tl-event-data";
 
 @customElement("webwriter-timeline")
 export class WebWriterTimeline extends LitElementWw {
@@ -20,8 +20,8 @@ export class WebWriterTimeline extends LitElementWw {
   @property({ type: Boolean, attribute: true, reflect: true })
   accessor openQuiz = false;
 
-  // @query("#timelineID") accessor timelineDialog: TimelineDialog
   @query("#quiz") accessor quiz: MainQuiz;
+  @query("#timelineID") accessor dialog: TimelineDialog;
 
   static get styles() {
     return css`
@@ -66,6 +66,7 @@ export class WebWriterTimeline extends LitElementWw {
     this.addEventListener("request-remove", (e) =>
       this.eventManager.removeEvent(e)
     );
+    // this.addEventListener("request-appendEvent",(e) => this.appendEvent(e) );
   }
 
   render() {
@@ -102,9 +103,15 @@ export class WebWriterTimeline extends LitElementWw {
 
   // open dialog, dealing with input and event storage in sub-structures
   openingTLDialog() {
-    const dialog = this.shadowRoot?.querySelector("#timelineID") as TimelineDialog;
-    dialog.showDialog();
+    this.dialog.showDialog();
   }
+
+  // appendEvent(event) {
+  //   debugger;
+  //   console.log("Append-Event details: ",event.detail)
+  //   const timeline_event = event.detail;
+  //   this.appendChild(timeline_event);
+  // }
 
   // show quiz and add events to it
   startQuiz() {

@@ -5,60 +5,36 @@ import IconTextPlus from "@tabler/icons/outline/text-plus.svg";
 import IconTrash from "@tabler/icons/outline/trash.svg";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { SlButton, SlDetails, SlIcon } from "@shoelace-style/shoelace";
+import { TlEventData } from "./tl-event-data";
 
 @customElement("event-container")
 export class EventContainer extends LitElementWw {
-  @property({ type: String, attribute: true, reflect: true }) accessor event_id;
-  @property({ type: String, attribute: true, reflect: true })
-  accessor event_title;
-  @property({ type: String, attribute: true, reflect: true })
-  accessor event_description;
 
-  @property({ type: String, attribute: true, reflect: true })
-  accessor event_startDay;
-  @property({ type: String, attribute: true, reflect: true })
-  accessor event_startMonth;
-  @property({ type: String, attribute: true, reflect: true })
-  accessor event_startYear;
-  @property({ type: String, attribute: true, reflect: true })
-  accessor event_startDate;
-
-  @property({ type: String, attribute: true, reflect: true })
-  accessor event_endDay;
-  @property({ type: String, attribute: true, reflect: true })
-  accessor event_endMonth;
-  @property({ type: String, attribute: true, reflect: true })
-  accessor event_endYear;
-  @property({ type: String, attribute: true, reflect: true })
-  accessor event_endDate;
-
+  @property({ type: String }) event_title = '1';
+  @property({ type: String }) event_startDate = '2';
+  @property({ type: String }) event_endDate = '3';
   @property({ type: Number, attribute: true, reflect: true })
   accessor tabIndex = -1;
 
-  constructor(
-    title: string,
-    startDay: string,
-    startMonth: string,
-    startYear: string,
-    startDate: string,
-    endDay: string = "",
-    endMonth: string = "",
-    endYear: string = "",
-    endDate: string = ""
-  ) {
+  constructor(eventData?: TlEventData) {
     super();
-    this.event_title = title;
-    this.event_startDay = startDay;
-    this.event_startMonth = startMonth;
-    this.event_startYear = startYear;
-    this.event_startDate = startDate;
-
-    this.event_endDay = endDay;
-    this.event_endMonth = endMonth;
-    this.event_endYear = endYear;
-    this.event_endDate = endDate;
+    
+    if (eventData) {
+      this.event_title = eventData.title;
+      this.event_startDate = eventData.startDate;
+      this.event_endDate = eventData.endDate;
+    }
+    // if(!eventData){
+    //   console.warn("Event data is undefined");
+    // }
+    
+    console.log(`Initialized with title: ${this.event_title}, startDate: ${this.event_startDate}, endDate: ${this.event_endDate}`);
   }
 
+  static create(eventData: TlEventData): EventContainer {
+    return new EventContainer(eventData);
+  }
+  
   static get styles() {
     return css`
       .title-style {
@@ -89,33 +65,27 @@ export class EventContainer extends LitElementWw {
   // will run again in student view, TO DO: use other way to append new paragraph
   protected firstUpdated(_changedProperties: PropertyValues): void {
     this.addParagraph();
+    console.log('First update completed. Current properties:', this.event_title, this.event_startDate, this.event_endDate);
   }
+  
 
   render() {
     return html`
-      <div class="position">
-        <sl-details>
-          <span slot="summary">
-            <span class="title-style">${this.event_title}</span>
-            <span class="date-style">${this.event_startDate}${
-      this.event_endDate != "" ? " – " + this.event_endDate : ""
-    }</span>
-          </span>
-            <slot>
-              <!-- <p> <i>Click on button to add event content</i></p> -->
-            </slot>
-           
-            <!-- <div class="author-only"> -->
-              <sl-button variant="primary" outline @click="${
-                this.addParagraph
-              }">
-                <sl-icon src=${IconTextPlus} slot="prefix"></sl-icon></sl-button>
-              <sl-button variant="danger" outline @click="${this.removeEvent}">
-                <sl-icon src=${IconTrash} slot="prefix"></sl-icon></sl-button>
-              </sl-button>
-            <!-- </div> -->
-        </sl-details>  
-      </div>
+        <div class="position">
+      <sl-details>
+        <span slot="summary">
+          <span class="title-style">${this.event_title || 'Untitled Event'}</span>
+          <span class="date-style">${this.event_startDate || 'No Start Date'}${this.event_endDate ? ` – ${this.event_endDate}` : ""}</span>
+        </span>
+        <slot></slot>
+        <sl-button variant="primary" outline @click="${this.addParagraph}">
+          <sl-icon src=${IconTextPlus} slot="prefix"></sl-icon>
+        </sl-button>
+        <sl-button variant="danger" outline @click="${this.removeEvent}">
+          <sl-icon src=${IconTrash} slot="prefix"></sl-icon>
+        </sl-button>
+      </sl-details>  
+    </div>
     `;
   }
 
@@ -140,11 +110,25 @@ export class EventContainer extends LitElementWw {
 
   // convert string into date for sorting dates
   getStartDate(): Date {
-    let startDate = `${this.event_startYear}${
-      this.event_startMonth ? `-${this.event_startMonth}` : ""
-    }${this.event_startDay ? `-${this.event_startDay}` : ""}`;
-    var d = new Date(Date.parse(startDate));
-    // console.log(" start date is : ", d);
+    const parts:  String[] = this.event_startDate.split(". ", -1);
+    const spaceCount: Number = parts.length - 1;
+    let startDay, startMonth, startYear = "";
+    if(spaceCount===0){
+      startDay = "";
+      startMonth = "";
+      startYear = this.event_startDate;
+    } else if( spaceCount === 1){
+      startDay = "";
+      [startMonth, startYear] = this.event_startDate.split(". ");
+    } else if ( spaceCount === 2 ){
+      [startDay, startMonth, startYear] = this.event_startDate.split(". ");
+    }
+
+    let sortStartDate = `${startYear}${
+      startMonth ? `-${startMonth}` : ""
+    }${startDay ? `-${startDay}` : ""}`;
+    var d = new Date(Date.parse(sortStartDate));
+    console.log(" start date is : ", d, " the parsed date is: ", sortStartDate);
     return d;
   }
 }

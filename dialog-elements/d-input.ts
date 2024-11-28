@@ -38,52 +38,17 @@ export class DialogInput extends LitElementWw {
   protected firstUpdated(_changedProperties: PropertyValues): void {}
 
   render() {
-    // TO BE DELTED type: textarea, not needed anymore
-    // if (this.type === "textarea") {
-    //   return html`
-    //     <sl-textarea
-    //       label=${this.label}
-    //       id=${this.id}
-    //       .value=${this.value}
-    //       placeholder=${this.placeholder}
-    //       ?required=${this.required}
-    //       @sl-change=${this.checkInput}
-    //       clearable
-    //     ></sl-textarea>
-    //   `;
-    // } 
-    //  if (this.type === "input") {
-      return html`
-        <sl-input
-          label=${this.label}
-          id=${this.id}
-          .value=${this.value}
-          placeholder=${this.placeholder}
-          ?required=${this.required}
-          @sl-change=${this.checkInput}
-          clearable
-        ></sl-input>
-      `;
-    // }
-
-    // TO BE DELTED type: date, not needed anymore
-    // else {
-    //   return html`
-    //     <sl-input
-    //       class="half-input"
-    //       type="date"
-    //       label=${this.label}
-    //       id=${this.id}
-    //       .value=${this.value}
-    //       placeholder=${this.placeholder}
-    //       ?required=${this.required}
-    //       @sl-change=${this.checkInput}
-    //       clearable
-    //       valueAsString
-    //       ?disabled=${this.disabled}
-    //     ></sl-input>
-    //   `;
-    // }
+    return html`
+      <sl-input
+        label=${this.label}
+        id=${this.id}
+        .value=${this.value}
+        placeholder=${this.placeholder}
+        ?required=${this.required}
+        @sl-change=${this.checkInput}
+        clearable
+      ></sl-input>
+    `;
   }
 
   checkInput(event) {

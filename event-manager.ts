@@ -10,7 +10,7 @@ import{ TimelineDialog} from "./tl-dialog";
 import { WebWriterTimeline } from "./widgets/webwriter-timeline";
 import { DialogDatePicker } from "./dialog-elements/d-datepicker";
 import { DatetManager } from "./date-manager";
-import { TlEvent } from "./tl-event";
+import { TlEventData } from "./tl-event-data";
 
 @customElement("event-manager")
 
@@ -39,68 +39,59 @@ export class EventManager extends LitElementWw {
   } 
 
   // adding event to webwriter-timeline slot by creating event-container, 
-  addEvent(event){
+  addEvent(event: CustomEvent<TlEventData>) {
+    console.log("Event detail:", event.detail);
     const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
-    const tldialog = timeline.shadowRoot.querySelector("timeline-dialog") as TimelineDialog;
-    const tlslot =  timeline.shadowRoot.querySelector('slot[name="event-slot"]');
+    const tldialog = timeline?.shadowRoot?.querySelector("timeline-dialog") as TimelineDialog;
 
-    const { title, startDay, startMonth, startYear, endDay, endMonth, endYear } = event.detail;
-
-    let startDate = `${startYear}${startMonth ? `-${startMonth}` : ''}${startDay ? `-${startDay}` : ''}`;
-    let endDate = "";
-    let endMonthName = "";
-    let startYearName = startYear;
-    let endYearName = endYear;
-
-    // if end date exists: look for end month name, parse to output string + check if end year is negative, if so change to BCE
-    if (endYear){
-      endDate = `${endYear ? `${endYear}` : ''}${endMonth ? `-${endMonth}` : ''}${endDay ? `-${endDay}` : ''}`;
-      endMonthName = this.dateManager.getMonthName(endMonth);
-
-      if (endYear.includes('-')) {
-          endYearName = endYear.replace('-', '');
-          endYearName = endYearName.padStart(4, '0') + ' BCE';
-        }
-      endDate= `${endDay ? `${endDay}. ` : ''}${endMonth ? `${endMonthName}. ` : ''}${endYearName}`;
-    }   
-   
-    const startMonthName = this.dateManager.getMonthName(startMonth);
-
-    if(startYear.includes('-')) {
-      startYearName = startYear.replace('-', '');
-      startYearName = startYearName.padStart(4, '0') + ' BCE';
+    if (!event.detail) {
+      console.error("Event detail not received");
+      return;
+    }
+    
+    if (!timeline || !tldialog) {
+      console.error("Cannot find timeline or dialog");
+      return;  
     }
 
-    startDate = `${startDay ? `${startDay}. ` : ''}${startMonth ? `${startMonthName}. ` : ''} ${startYearName}`;
-    
-    const timeline_event = new EventContainer(title, startDay, startMonth, startYear, startDate, endDay, endMonth, endYear, endDate);
-      
-    // needed because webwriter slot initialization, set input values to event container values
+    const { title: title, startDate: startDate, endDate: endDate } = event.detail;
+    const [startYear, startMonth, startDay] = startDate.split("-");
+    const [endYear, endMonth, endDay] = endDate ? endDate.split("-") : [undefined, undefined, undefined];
+
+    const startMonthName = startMonth ? this.dateManager.getMonthName(startMonth) : "";
+    const endMonthName = endMonth ? this.dateManager.getMonthName(endMonth) : "";
+
+    const displayStartDate = this.dateManager.formatDisplayDate(startYear, startMonth, startDay, startMonthName);
+    const displayEndDate = endDate ? this.dateManager.formatDisplayDate(endYear, endMonth, endDay, endMonthName) : "";
+
+    // TO DO: why cant I use the constructor ??
+    const timeline_event = new EventContainer({
+      title: title,
+      startDate: displayStartDate,
+      endDate: displayEndDate
+    });
+
     timeline_event.setAttribute("event_title", title);
-
-    timeline_event.setAttribute("event_startDay", startDay);
-    timeline_event.setAttribute("event_startMonth", startMonth);
-    timeline_event.setAttribute("event_startYear", startYear);
-    timeline_event.setAttribute("event_startDate", startDate);
-
-    timeline_event.setAttribute("event_endDay", endDay);
-    timeline_event.setAttribute("event_endMonth", endMonth);
-    timeline_event.setAttribute("event_endYear", endYear);
-    timeline_event.setAttribute("event_endDate", endDate);
-
+    timeline_event.setAttribute("event_startDate", displayStartDate);
+    timeline_event.setAttribute("event_endDate", displayEndDate);
     timeline_event.setAttribute("slot", "event-slot");
-  
+
     timeline.appendChild(timeline_event);
 
-    this.dateManager.sortEvents();
+    // this.dispatchEvent(new CustomEvent("request-appendEvent", {
+    //   detail: timeline_event,
+    //   bubbles: true,
+    //   composed: true
+    // }));
+    
+    this.dateManager.sortEvents(); 
 
-    tldialog.hideDialog();
-    }
-  
-  // dispatch remove request of event to timeline 
+    tldialog.hideDialog(); 
+  }
+
+   // dispatch remove request of event to timeline 
   removeEvent(event){ 
     const eventToRemove = event.detail.id; 
-    // console.log("Delete request delivered: "+ eventToRemove);
     const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const tlslot =  timeline.shadowRoot.querySelector('slot[name="event-slot"]');
     const eventContainer = timeline.querySelector(`event-container[id="${eventToRemove}"]`);

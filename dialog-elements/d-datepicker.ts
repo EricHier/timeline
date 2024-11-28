@@ -244,16 +244,12 @@ export class DialogDatePicker extends LitElement {
 
   // year is number with 4 digits and if "-" its 5 (todo: adjust maxlength in html)
   validateYear() {
-    if (
-      this.year.length == 0 ||
-      (this.year.startsWith("-") && this.year.length == 1)
-    ) {
+    if (this.year.length === 0 || (this.year.startsWith("-") && this.year.length === 1)) {
       return { valid: false, errorMessage: "Please enter a year" };
-    } else if (this.year.length >= 4 && !this.year.startsWith("-")) {
-      return {
-        valid: false,
-        errorMessage: "Please enter a year with maximum 4 digits",
-      };
+    } else if (this.year.length > 4 && !this.year.startsWith("-")) {
+      return { valid: false, errorMessage: "Please enter a year with maximum 4 digits", };
+    } else if (this.year.length > 5 && this.year.startsWith("-")) {
+      return { valid: false, errorMessage: "Please enter a year with maximum 5 digits including '-' ", };
     }
     return { valid: true, errorMessage: "" };
   }

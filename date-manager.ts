@@ -44,6 +44,7 @@ export class DatetManager extends LitElementWw {
   sortEvents(){
     const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     // console.log("sorting");
+    // debugger;
     [...timeline.children]
       .sort((a: EventContainer, b:EventContainer) => {return a.getStartDate() > b.getStartDate() ? 1 : -1})
       .forEach(node => timeline.appendChild(node));
@@ -55,5 +56,17 @@ export class DatetManager extends LitElementWw {
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const monthIndex = typeof month === 'string' ? parseInt(month, 10) - 1 : month - 1;
     return monthNames[monthIndex] || month;
+  }
+
+  formatDate(year: string, month: string, day: string): string {
+    return `${year}${month ? `-${month}` : ""}${day ? `-${day}` : ""}`;
+  }
+
+ formatDisplayDate(year: string, month: string, day: string, monthName: string): string {
+    let yearName = year;
+    if (year.includes("-")) {
+        yearName = year.replace("-", "").padStart(4, "0") + " BCE";
+    }
+    return `${day ? `${day}. ` : ""}${month ? `${monthName}. ` : ""}${yearName}`;
   }
 }

@@ -1,6 +1,6 @@
 import {LitElement, html, PropertyValues, css} from "lit"
 import {LitElementWw} from "@webwriter/lit"
-import {customElement, property} from "lit/decorators.js"
+import {customElement, property, query, queryAll} from "lit/decorators.js"
 
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import {
@@ -19,7 +19,7 @@ import { EventContainer } from "./event-container";
 import { WebWriterTimeline } from "./widgets/webwriter-timeline";
 import { DialogToggle } from "./dialog-elements/d-toggle";
 import {DialogDatePicker } from "./dialog-elements/d-datepicker";
-import { TlEvent } from "./tl-event";
+import { TlEventData } from "./tl-event-data";
 
 @customElement("timeline-dialog")
 export class TimelineDialog extends LitElementWw {
@@ -34,7 +34,18 @@ export class TimelineDialog extends LitElementWw {
   @property({ type: Boolean }) accessor readyToFill = false;
   @property({ type: Boolean }) accessor useTimePeriod = false;
 
-  static styles = css` 
+
+  @query("#timelineID") accessor dialog: SlDialog;
+  @query("#eventTitle") accessor event_title: DialogInput;
+  @query("#eventStartDate") accessor startDate: DialogDatePicker;
+  @query("#eventEndDate") accessor endDate: DialogDatePicker;
+  @query("#titleError") accessor titleError;
+  @query("#dayError") accessor dayError;
+  @query("#monthError") accessor monthError;
+  @query("#formatError") accessor formatError;
+
+
+static styles = css` 
 
       sl-dialog::part(base) {
         position: absolute;
@@ -154,86 +165,70 @@ export class TimelineDialog extends LitElementWw {
         </div>            
         <div class="text-error" id="dayError" hidden></div>
         <div class="text-error" id="monthError" hidden></div>
-        <div class="text-error" id="formateError" hidden></div>
+        <div class="text-error" id="formatError" hidden></div>
 
         <sl-button class="dialog-footer" id="resetButton" slot="footer" variant="default"  @click="${this.resetDialog}">Reset</sl-button>
-        <sl-button id="savingButton" slot="footer" variant="primary" ?disabled="${!this.readyToFill}" @click="${() => this.addEvent()}">Add Event</sl-button>
+        <sl-button id="savingButton" slot="footer" variant="primary" ?disabled="${!this.readyToFill}" @click="${() => this.dispatchAddEvent()}">Add Event</sl-button>
       </sl-dialog>  
     `;
   } 
       
   // show dialog to enter input
   public showDialog() {
-    const dialog = this.shadowRoot?.querySelector(".dialog-width") as SlDialog;
     this.resetDialog();
-    dialog.show();
+    this.dialog.show();
   }
 
   //hide dialog after saving or closing
   public hideDialog() {
-    const dialog = this.shadowRoot?.querySelector(".dialog-width") as SlDialog;
-    dialog.hide();
+    this.dialog.hide();
   }
 
-  //reset input values before showing new dialog
+  //reset input values and errors 
   resetDialog(){
-    const inputs = this.shadowRoot?.querySelectorAll("dialog-input");
-    const dates = this.shadowRoot?.querySelectorAll("dialog-date-picker");
-    const titleError = this.shadowRoot.getElementById('titleError');
-    const dayError = this.shadowRoot.getElementById('dayError');
-    const monthError = this.shadowRoot.getElementById('monthError');
-    const formateError = this.shadowRoot.getElementById('formateError');
-
-    // reset toggle
     this.useTimePeriod = false;
 
-    // reset all error messages
-    titleError.textContent = "";
-    dayError.textContent = "";
-    monthError.textContent = "";
-    formateError.textContent = "";
+    this.titleError.textContent = "";
+    this.dayError.textContent = "";
+    this.monthError.textContent = "";
+    this.formatError.textContent = "";
 
-    titleError.hidden = true;
-    dayError.hidden = true;
-    monthError.hidden = true;
-    formateError.hidden = true;
+    this.titleError.hidden = true;
+    this.dayError.hidden = true;
+    this.monthError.hidden = true;
+    this.formatError.hidden = true;
 
-    // reset title ... and if used other input elements (adjust if only title will be used)
-    inputs.forEach((input: DialogInput ) => {
-      input.value = ""; 
-    });
+    this.event_title.value = "";
 
-    // reset start and end dates
-    dates.forEach((date: DialogDatePicker) => {
-      date.reset(); 
-    }); 
+    this.startDate.reset();
+    this.endDate.reset();
+
   }
 
   // seperate reset function to call if on toggle change
   resetEndDate(){
-    const formateError = this.shadowRoot.getElementById('formateError');
-    const endDate= this.shadowRoot.querySelector("#eventEndDate") as DialogDatePicker;
-
-    formateError.textContent = "";
-    formateError.hidden = true;
-    endDate.reset();
+    this.formatError.textContent = "";
+    this.formatError.hidden = true;
+    this.endDate.reset();
   }
 
   //check if input values are empty, if not readToFill = true and #saveButton not disabled
   enableSaveButton(){
     this.evaluateTitleError();
-    const input_title = this.shadowRoot?.getElementById("eventTitle") as DialogInput;
-    const input_startDate = this.shadowRoot?.getElementById("eventStartDate") as DialogDatePicker;
-    const datePicker = this.shadowRoot.querySelector('dialog-date-picker') as DialogDatePicker;
 
-    const dayValidation = datePicker.validateDay();
-    const monthValidation = datePicker.validateMonth();
+    let dayValidation;
+    let monthValidation;
+    let yearValidation;
+
+    this.useTimePeriod ? dayValidation = this.startDate.validateDay() && this.endDate.validateDay() : dayValidation = this.startDate.validateDay();
+    this.useTimePeriod ? monthValidation = this.startDate.validateMonth() && this.endDate.validateMonth() : monthValidation = this.startDate.validateMonth();
+    this.useTimePeriod? yearValidation = this.startDate.validateYear() && this.endDate.validateYear() : yearValidation = this.startDate.validateYear();
+
+
+    const titleValid = this.event_title.value !== "";
+    const startDateValid = this.startDate.year !== "";
     
-    const yearValidation = datePicker.validateYear();
-    const titleValid = input_title.value !== "";
-    const startDateValid = input_startDate.year !== "";
-    
-    const isValid = dayValidation.valid && monthValidation.valid && yearValidation &&  input_title.value !== "" && input_startDate.year !== "";
+    const isValid = dayValidation.valid && monthValidation.valid && yearValidation.valid && this.event_title.value !== "" && this.startDate.year !== "";
     
     if(this.showFormateError() == true){
       this.readyToFill = isValid
@@ -242,120 +237,95 @@ export class TimelineDialog extends LitElementWw {
     } 
   }
 
+   // disable save button, called if warnings occur
+   disableSaveButton(){
+    this.readyToFill =false;
+  }
+
   // check if title is empty, give errer message if so
   evaluateTitleError(){
-    const input_title = this.shadowRoot?.getElementById("eventTitle") as DialogInput;
-    const titleError = this.shadowRoot.getElementById('titleError');
-
-    if (input_title.value == "") {
-      titleError.textContent = "Error: Please enter a title";
-      titleError.hidden = false;
+    if (this.event_title.value == "") {
+      this.titleError.textContent = "Error: Please enter a title";
+      this.titleError.hidden = false;
     } else {
-      titleError.textContent = "";
-      titleError.hidden = true;
+      this.titleError.textContent = "";
+      this.titleError.hidden = true;
     }
   }
 
   // show error message for invalid day 
   showDayError(e){
-    const datePicker = this.shadowRoot.querySelector('dialog-date-picker') as DialogDatePicker;
-    const dayError = this.shadowRoot.getElementById('dayError');
-    const dayValidation = datePicker.validateDay();
+    const dayValidation = this.useTimePeriod? this.startDate.validateDay() && this.endDate.validateDay() : this.startDate.validateDay();
 
     if (dayValidation.valid == false) {
-      dayError.textContent = "Error: " + e.detail.errorMessage;
-      dayError.hidden = false;
+      this.dayError.textContent = "Error: " + e.detail.errorMessage;
+      this.dayError.hidden = false;
     }
   }
   
   // hide error message for valid day 
   hideDayError(){
-    const datePicker = this.shadowRoot.querySelector('dialog-date-picker') as DialogDatePicker;
-    const dayError = this.shadowRoot.getElementById('dayError');
-    const dayValidation = datePicker.validateDay();
+    const dayValidation = this.useTimePeriod? this.startDate.validateDay() && this.endDate.validateDay() : this.startDate.validateDay();
 
     if (dayValidation.valid == true) {
-      dayError.textContent = "";
-      dayError.hidden = true;
+      this.dayError.textContent = "";
+      this.dayError.hidden = true;
     }
   }
   
   // show error message for invalid month 
   showMonthError(e){
-    const datePicker = this.shadowRoot.querySelector('dialog-date-picker') as DialogDatePicker;
-    const monthError = this.shadowRoot.getElementById('monthError');
-    const monthValidation = datePicker.validateMonth();
+    const monthValidation = this.useTimePeriod? this.startDate.validateMonth() && this.endDate.validateMonth() : this.startDate.validateMonth();
 
     if (monthValidation.valid == false) {
-      monthError.textContent = "Error: " + e.detail.errorMessage;
-      monthError.hidden = false;
+      this.monthError.textContent = "Error: " + e.detail.errorMessage;
+      this.monthError.hidden = false;
     } 
   }
 
   // hide error message for valid month 
   hideMonthError(){
-    const datePicker = this.shadowRoot.querySelector('dialog-date-picker') as DialogDatePicker;
-    const monthError = this.shadowRoot.getElementById('monthError');
-    const monthValidation = datePicker.validateMonth();
+    const monthValidation = this.useTimePeriod? this.startDate.validateMonth() && this.endDate.validateMonth() : this.startDate.validateMonth();
 
     if (monthValidation.valid == true) {
-      monthError.textContent = "";
-      monthError.hidden = true;
+      this.monthError.textContent = "";
+      this.monthError.hidden = true;
     }
   }
   
   //  check if end date is before start date and check if only dd and yyyy have been added
   showFormateError(): Boolean {
-    const startDate = this.shadowRoot.querySelector("#eventStartDate") as DialogDatePicker;
-    const endDate= this.shadowRoot.querySelector("#eventEndDate") as DialogDatePicker;
-    const formateError = this.shadowRoot.getElementById('formateError');
 
-    const start= Date.parse(`${startDate.year ? `${startDate.year}` : ''}${startDate.month ? `-${startDate.month}` : ''}${startDate.day ? `-${startDate.day}` : ''}`);
-    const end= Date.parse(`${endDate.year ? `${endDate.year}` : ''}${endDate.month ? `-${endDate.month}` : ''}${endDate.day ? `-${endDate.day}` : ''}`);
+    const start= Date.parse(`${this.startDate.year ? `${this.startDate.year}` : ''}${this.startDate.month ? `-${this.startDate.month}` : ''}${this.startDate.day ? `-${this.startDate.day}` : ''}`);
+    const end= Date.parse(`${this.endDate.year ? `${this.endDate.year}` : ''}${this.endDate.month ? `-${this.endDate.month}` : ''}${this.endDate.day ? `-${this.endDate.day}` : ''}`);
 
-    if(start > end && this.useTimePeriod == true && !((startDate.day && !startDate.month && startDate.year)||(endDate.day && !endDate.month && endDate.year))){
-      formateError.textContent = "Error: Invalid format, Start date after end date";
-      formateError.hidden = false;
+    if(start > end && this.useTimePeriod == true && !((this.startDate.day && !this.startDate.month && this.startDate.year)||(this.endDate.day && !this.endDate.month && this.endDate.year))){
+      this.formatError.textContent = "Error: Invalid format, Start date after end date";
+      this.formatError.hidden = false;
       return false;
-    } else if(start > end && this.useTimePeriod == true && ((startDate.day && !startDate.month  && startDate.year)||(endDate.day && !endDate.month && endDate.year))){
-      formateError.textContent = "Error: Invalid format (dd/yyyy) please enter a month and start date after end date.";
-      formateError.hidden = false;
+    } else if(start > end && this.useTimePeriod == true && ((this.startDate.day && !this.startDate.month  && this.startDate.year)||(this.endDate.day && !this.endDate.month && this.endDate.year))){
+      this.formatError.textContent = "Error: Invalid format (dd/yyyy) please enter a month and start date after end date.";
+      this.formatError.hidden = false;
       return false;
-    } else if ((startDate.day && !startDate.month && startDate.year)||(endDate.day && !endDate.month && endDate.year)){
-      formateError.textContent = "Error: Invalid format (dd/yyyy), enter a month.";
-      formateError.hidden = false;
+    } else if ((this.startDate.day && !this.startDate.month && this.startDate.year)||(this.endDate.day && !this.endDate.month && this.endDate.year)){
+      this.formatError.textContent = "Error: Invalid format (dd/yyyy), enter a month.";
+      this.formatError.hidden = false;
       return false;
     } else {
-      formateError.textContent= "";
-      formateError.hidden = true;
+      this.formatError.textContent= "";
+      this.formatError.hidden = true;
       return true;
     }
   }
 
-  // disable save button, called if warnings occur
-  disableSaveButton(){
-    this.readyToFill =false;
-  }
-
   // dispatch add request to timeline component 
-  addEvent() {
-    const title = this.shadowRoot.querySelector("#eventTitle") as DialogInput;
-    const startDate = this.shadowRoot.querySelector("#eventStartDate") as DialogDatePicker;
-    const endDate= this.shadowRoot.querySelector("#eventEndDate") as DialogDatePicker;
-
-    // TO DO: create interface class with reactive controllers
-    // let eventDetails: TlEvent = {
-    let eventDetails = {
-        title: title.value,
-        startDay: startDate.day,
-        startMonth: startDate.month,
-        startYear: startDate.year,
+  dispatchAddEvent() {
+    let eventDetails: TlEventData = {
+      title: this.event_title.value,
+      startDate: `${this.startDate.year}${this.startDate.month ? `-${this.startDate.month}` : ''}${this.startDate.day ? `-${this.startDate.day}` : ''}`,
+      endDate: this.useTimePeriod ?`${this.endDate.year}${this.endDate.month ? `-${this.endDate.month}` : ''}${this.endDate.day ? `-${this.endDate.day}` : ''}` : ''
     };
-    if (this.useTimePeriod) {
-      eventDetails['endDay'] = endDate.day;
-      eventDetails['endMonth'] = endDate.month;
-      eventDetails['endYear'] = endDate.year;
-    }
+
     this.dispatchEvent(new CustomEvent("request-add", {
       detail: eventDetails,
       bubbles: true,
