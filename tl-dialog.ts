@@ -149,7 +149,7 @@ export class TimelineDialog extends LitElementWw {
           <br />
           <div class="dialog-input-container">
             <dialog-date-picker .useTimePeriod="${this.useTimePeriod}" label=${this.useTimePeriod ? "Start date" : "Date"} id="eventStartDate" @sl-change=${this.enableSaveButton}></dialog-date-picker>
-            <dialog-date-picker .useTimePeriod="${this.useTimePeriod}" class="${!this.useTimePeriod ? 'endDate-disabled' : ''}" label="End Date" id="eventEndDate"   @sl-change=${this.enableSaveButton} endDate="true"></dialog-date-picker>
+            <dialog-date-picker .useTimePeriod="${this.useTimePeriod}" class="${!this.useTimePeriod ? 'endDate-disabled' : ''}" label="End Date" id="eventEndDate"   @sl-change=${this.enableSaveButton} useEndDate="true"></dialog-date-picker>
           </div>
         </div>            
         <div class="text-error" id="dayError" hidden></div>
@@ -343,7 +343,8 @@ export class TimelineDialog extends LitElementWw {
     const startDate = this.shadowRoot.querySelector("#eventStartDate") as DialogDatePicker;
     const endDate= this.shadowRoot.querySelector("#eventEndDate") as DialogDatePicker;
 
-    // TO DO: let eventDetails: TlEvent = {
+    // TO DO: create interface class with reactive controllers
+    // let eventDetails: TlEvent = {
     let eventDetails = {
         title: title.value,
         startDay: startDate.day,

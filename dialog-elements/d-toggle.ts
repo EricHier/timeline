@@ -1,11 +1,10 @@
-import {LitElement, html, PropertyValues, css} from "lit"
-import {LitElementWw} from "@webwriter/lit"
-import {customElement, property} from "lit/decorators.js"
+import { LitElement, html, PropertyValues, css } from "lit";
+import { LitElementWw } from "@webwriter/lit";
+import { customElement, property } from "lit/decorators.js";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
 @customElement("dialog-toggle")
 export class DialogToggle extends LitElementWw {
-
   @property({ type: Boolean }) accessor useTimePeriod = false;
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
 
@@ -29,7 +28,7 @@ export class DialogToggle extends LitElementWw {
       margin-bottom: 8px;
     }
 
-    input[type='checkbox'] {
+    input[type="checkbox"] {
       display: none;
     }
 
@@ -48,7 +47,7 @@ export class DialogToggle extends LitElementWw {
       box-sizing: border-box;
     }
 
-    input[type='checkbox']:checked + label {
+    input[type="checkbox"]:checked + label {
       transform: translateX(100%);
     }
 
@@ -71,7 +70,7 @@ export class DialogToggle extends LitElementWw {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 15px; 
+      min-height: 15px;
     }
 
     .label-left {
@@ -84,11 +83,11 @@ export class DialogToggle extends LitElementWw {
 
     @media (max-width: 300px) {
       .toggle {
-        min-height: 50px; 
+        min-height: 50px;
       }
 
       .label {
-        font-size: 0.7em; 
+        font-size: 0.7em;
       }
     }
   `;
@@ -101,28 +100,31 @@ export class DialogToggle extends LitElementWw {
 
   render() {
     return html`
-    <div class="toggle" @click="${this.toggleChange}">
-      
-      <input type="checkbox"  id="time-period" .checked="${this.useTimePeriod}" />
-      <label for="time-period"></label>
-      
-      <div class="labels-container">
-        <span class="label label-left">Single Date</span>
-        <span class="label label-right">Time Period</span>
-      </div>
+      <div class="toggle" @click="${this.toggleChange}">
+        <input
+          type="checkbox"
+          id="time-period"
+          .checked="${this.useTimePeriod}"
+        />
+        <label for="time-period"></label>
 
-    </div>
-  `;
+        <div class="labels-container">
+          <span class="label label-left">Single Date</span>
+          <span class="label label-right">Time Period</span>
+        </div>
+      </div>
+    `;
   }
 
   // on toggle change useTimePeriod value
   toggleChange() {
     this.useTimePeriod = !this.useTimePeriod;
-    this.dispatchEvent(new CustomEvent('toggle-change', { 
-      detail: { useTimePeriod: this.useTimePeriod }, 
-      bubbles: true, 
-      composed: true 
-    }));
+    this.dispatchEvent(
+      new CustomEvent("toggle-change", {
+        detail: { useTimePeriod: this.useTimePeriod },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
-
 }

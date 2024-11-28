@@ -1,6 +1,6 @@
 import { LitElement, html, PropertyValues, css } from "lit";
 import { LitElementWw } from "@webwriter/lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
@@ -12,7 +12,6 @@ import {
   SlRadio,
 } from "@shoelace-style/shoelace";
 
-
 import { WebWriterTimeline } from "../widgets/webwriter-timeline";
 
 @customElement("main-quiz")
@@ -20,6 +19,9 @@ export class MainQuiz extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true })
   accessor tabIndex = -1;
   private appendedEvents: Array<{ date: string; title: string }> = [];
+
+  @query("#date-radio") accessor date_radio: SlRadioGroup;
+  @query("#title-radio") accessor title_radio: SlRadioGroup;
 
   static get styles() {
     return css`
@@ -37,10 +39,6 @@ export class MainQuiz extends LitElementWw {
 
       h4 {
         text-align: center;
-      }
-      :host(:not([contenteditable="true"]):not([contenteditable=""]))
-        .author-only {
-        display: none;
       }
       .quiz-container {
         display: grid;
@@ -60,14 +58,14 @@ export class MainQuiz extends LitElementWw {
         border: 1px solid #83b9e0;
       }
 
-    .match {
+      .match {
         /* background-color:#c4f6d3; */
         --sl-input-label-color: #83e08e;
-    }
-    .mismatch {
-    /* background-color:#f6c4d0; */
+      }
+      .mismatch {
+        /* background-color:#f6c4d0; */
         --sl-input-label-color: #e08394;
-    }
+      }
     `;
   }
 
@@ -100,50 +98,44 @@ export class MainQuiz extends LitElementWw {
           ></sl-radio-group>
         </div>
         <br />
-        <hr/>
+        <hr />
         <br />
         <div name="found-matches"></div>
         <sl-button @click="${this.checkMatch}">Check Match</sl-button>
         <sl-button @click="${this.endQuiz}">End Quiz</sl-button>
-
       </div>
     `;
   }
 
-  endQuiz(){
-    this.dispatchEvent(new CustomEvent("request-close-quiz", {
-        bubbles: true,  
-        composed: true
-    }));
+  endQuiz() {
+    this.dispatchEvent(
+      new CustomEvent("request-close-quiz", {
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
-
-//   reset radio elements 
+  // reset radio elements
   resetQuiz() {
-    const date_radio = this.shadowRoot?.querySelector("#date-radio");
-    const title_radio = this.shadowRoot?.querySelector("#title-radio");
-
-    while (date_radio.firstChild) {
-      date_radio.removeChild(date_radio.firstChild);
+    while (this.date_radio.firstChild) {
+      this.date_radio.removeChild(this.date_radio.firstChild);
     }
 
-    while (title_radio.firstChild) {
-      title_radio.removeChild(title_radio.firstChild);
+    while (this.title_radio.firstChild) {
+      this.title_radio.removeChild(this.title_radio.firstChild);
     }
-
+    
     this.appendedEvents = [];
   }
 
-//   return value for added event dates and title to compare with event slot elements
+  // return value for added event dates and title to compare with event slot elements
   getAppendedEvents() {
     return this.appendedEvents;
   }
 
-// add event title and date to radio groups 
+  // add event title and date to radio groups
   appendRow(date, title) {
-    const date_radio = this.shadowRoot?.querySelector("#date-radio");
-    const title_radio = this.shadowRoot?.querySelector("#title-radio");
-
     const date_option = document.createElement("sl-radio");
     const title_option = document.createElement("sl-radio");
 
@@ -156,33 +148,30 @@ export class MainQuiz extends LitElementWw {
     date_option.textContent = `${date}`;
     title_option.textContent = `${title}`;
 
-    date_radio.appendChild(date_option);
-    title_radio.appendChild(title_option);
+    this.date_radio.appendChild(date_option);
+    this.title_radio.appendChild(title_option);
 
     this.appendedEvents.push({ date, title });
-    this.randomiseTitleOrder()
+    this.randomiseTitleOrder();
     console.log("events added to date quiz");
   }
 
-//   randomize title order with shuffle
+  // randomize title order with shuffle
   randomiseTitleOrder() {
-    const title_radio = this.shadowRoot?.querySelector(
-      "#title-radio"
-    ) as SlRadioGroup;
-    if (!title_radio) {
+    if (!this.title_radio) {
       console.log("No titles added to randomize order.");
       return;
     }
-    const radios = Array.from(title_radio.querySelectorAll("sl-radio"));
+    const radios = Array.from(this.title_radio.querySelectorAll("sl-radio"));
     const titles = radios.map((radio) => radio.textContent);
 
     this.shuffle(titles);
-    title_radio.innerHTML = "";
+    this.title_radio.innerHTML = "";
 
     titles.forEach((title) => {
       const newRadio = document.createElement("sl-radio");
       newRadio.textContent = title;
-      title_radio.appendChild(newRadio);
+      this.title_radio.appendChild(newRadio);
     });
   }
 
@@ -193,44 +182,41 @@ export class MainQuiz extends LitElementWw {
 
   // check selected elements for match/mismatch and set css
   checkMatch() {
-    debugger;
-    const title_radio_group = this.shadowRoot?.querySelector("#title-radio") as SlRadioGroup;
-    const date_radio_group = this.shadowRoot?.querySelector("#date-radio") as SlRadioGroup;
-
-    if (!title_radio_group || !date_radio_group) {
+    if (!this.title_radio || !this.date_radio) {
       console.log("No elements to match");
       return;
     }
 
-    const selectedDate = date_radio_group.querySelector("sl-radio[aria-checked=true]");
-    const selectedTitle = title_radio_group.querySelector("sl-radio[aria-checked=true]");
+    const selectedDate = this.date_radio.querySelector("sl-radio[aria-checked=true]");
+    const selectedTitle = this.title_radio.querySelector("sl-radio[aria-checked=true]");
 
-    if (selectedDate && selectedTitle){
+    if (selectedDate && selectedTitle) {
+      const matchFound = this.appendedEvents.some(
+        (event) =>
+          event.date === selectedDate.textContent &&
+          event.title === selectedTitle.textContent
+      );
 
-        const matchFound = this.appendedEvents.some(event => event.date === selectedDate.textContent && event.title === selectedTitle.textContent);
-        debugger;
+      if (matchFound) {
+        console.log("Match found");
+        selectedDate.classList.add("match");
+        selectedTitle.classList.add("match");
 
-        if(matchFound){
-            console.log("Match found");
-            selectedDate.classList.add("match");
-            selectedTitle.classList.add("match");
+        selectedDate.classList.remove("mismatch");
+        selectedTitle.classList.remove("mismatch");
+      } else {
+        console.log("Mismatch found");
+        selectedDate.classList.add("mismatch");
+        selectedTitle.classList.add("mismatch");
 
-            selectedDate.classList.remove("mismatch");
-            selectedTitle.classList.remove("mismatch");
-        } else {
-            console.log("Mismatch found");
-            selectedDate.classList.add("mismatch");
-            selectedTitle.classList.add("mismatch");
-
-            selectedDate.classList.remove("match");
-            selectedTitle.classList.remove("match");
-            let timeout = setTimeout(function() {
-                selectedDate.classList.remove('mismatch');
-                selectedTitle.classList.remove('mismatch');
-                timeout = 0;
-            }, 2000);
-        }
+        selectedDate.classList.remove("match");
+        selectedTitle.classList.remove("match");
+        let timeout = setTimeout(function () {
+          selectedDate.classList.remove("mismatch");
+          selectedTitle.classList.remove("mismatch");
+          timeout = 0;
+        }, 2000);
+      }
     }
   }
-
 }
