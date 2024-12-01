@@ -10,29 +10,19 @@ import { TlEventData } from "./tl-event-data";
 @customElement("event-container")
 export class EventContainer extends LitElementWw {
 
-  @property({ type: String }) event_title = '1';
-  @property({ type: String }) event_startDate = '2';
-  @property({ type: String }) event_endDate = '3';
+  @property({ type: String }) event_title;
+  @property({ type: String }) event_startDate;
+  @property({ type: String }) event_endDate;
   @property({ type: Number, attribute: true, reflect: true })
   accessor tabIndex = -1;
 
-  constructor(eventData?: TlEventData) {
+  constructor() {
     super();
-    
-    if (eventData) {
-      this.event_title = eventData.title;
-      this.event_startDate = eventData.startDate;
-      this.event_endDate = eventData.endDate;
-    }
+   
     // if(!eventData){
     //   console.warn("Event data is undefined");
     // }
-    
-    console.log(`Initialized with title: ${this.event_title}, startDate: ${this.event_startDate}, endDate: ${this.event_endDate}`);
-  }
 
-  static create(eventData: TlEventData): EventContainer {
-    return new EventContainer(eventData);
   }
   
   static get styles() {
@@ -89,6 +79,13 @@ export class EventContainer extends LitElementWw {
     `;
   }
 
+  setConstructorAttributes(eventData: TlEventData){
+    this.event_title = eventData.title;
+    this.event_startDate = eventData.startDate;
+    this.event_endDate = eventData.endDate;
+    console.log(`Initialized with title: ${this.event_title}, startDate: ${this.event_startDate}, endDate: ${this.event_endDate}`);
+  }
+
   // on button press a paragraph with "add description" is added to slot
   addParagraph() {
     const parDescription = document.createElement("p");
@@ -110,6 +107,7 @@ export class EventContainer extends LitElementWw {
 
   // convert string into date for sorting dates
   getStartDate(): Date {
+    debugger;
     const parts:  String[] = this.event_startDate.split(". ", -1);
     const spaceCount: Number = parts.length - 1;
     let startDay, startMonth, startYear = "";
@@ -131,4 +129,5 @@ export class EventContainer extends LitElementWw {
     console.log(" start date is : ", d, " the parsed date is: ", sortStartDate);
     return d;
   }
+
 }

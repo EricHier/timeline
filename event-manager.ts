@@ -1,6 +1,6 @@
 import {LitElement, html, PropertyValues, css} from "lit"
 import {LitElementWw} from "@webwriter/lit"
-import {customElement, property} from "lit/decorators.js"
+import {customElement, property, query} from "lit/decorators.js"
 
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
@@ -9,13 +9,18 @@ import { DialogInput } from "./dialog-elements/d-input";
 import{ TimelineDialog} from "./tl-dialog";
 import { WebWriterTimeline } from "./widgets/webwriter-timeline";
 import { DialogDatePicker } from "./dialog-elements/d-datepicker";
-import { DatetManager } from "./date-manager";
+import { DateManager } from "./date-manager";
 import { TlEventData } from "./tl-event-data";
 
 @customElement("event-manager")
 
 export class EventManager extends LitElementWw {  
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
+
+  // @query('webwriter-timeline') accessor timeline: WebWriterTimeline;
+  // @query('webwriter-timeline timeline-dialog') accessor dialog: TimelineDialog;
+  // @query('webwriter-timeline slot[name="event-slot"]') accessor tlslot: HTMLSlotElement;
+
 
   static styles = css`
   `;
@@ -27,11 +32,11 @@ export class EventManager extends LitElementWw {
       "timeline-dialog": TimelineDialog,
       "webwriter-timelin": WebWriterTimeline,
       "custom-datepicker":DialogDatePicker,
-      "date-manager": DatetManager,
+      "date-manager": DateManager,
     };
   }
 
-  private dateManager = new DatetManager();
+  private dateManager = new DateManager();
 
   render() {
     return html`
@@ -39,11 +44,12 @@ export class EventManager extends LitElementWw {
   } 
 
   // adding event to webwriter-timeline slot by creating event-container, 
-  addEvent(event: CustomEvent<TlEventData>) {
+  addEvent(event: CustomEvent<TlEventData>, timeline) {
     console.log("Event detail:", event.detail);
-    const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
+    // const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const tldialog = timeline?.shadowRoot?.querySelector("timeline-dialog") as TimelineDialog;
 
+    // debugger;
     if (!event.detail) {
       console.error("Event detail not received");
       return;
@@ -65,12 +71,17 @@ export class EventManager extends LitElementWw {
     const displayEndDate = endDate ? this.dateManager.formatDisplayDate(endYear, endMonth, endDay, endMonthName) : "";
 
     // TO DO: why cant I use the constructor ??
-    const timeline_event = new EventContainer({
-      title: title,
-      startDate: displayStartDate,
-      endDate: displayEndDate
+    // const timeline_event = new EventContainer({
+    //   title: title,
+    //   startDate: displayStartDate,
+    //   endDate: displayEndDate
+    // });
+    const timeline_event = new EventContainer();
+    timeline_event.setConstructorAttributes({
+        title: title,
+        startDate: displayStartDate,
+        endDate: displayEndDate
     });
-
     timeline_event.setAttribute("event_title", title);
     timeline_event.setAttribute("event_startDate", displayStartDate);
     timeline_event.setAttribute("event_endDate", displayEndDate);
@@ -83,8 +94,9 @@ export class EventManager extends LitElementWw {
     //   bubbles: true,
     //   composed: true
     // }));
-    
-    this.dateManager.sortEvents(); 
+    debugger;
+
+    this.dateManager.sortEvents(timeline); 
 
     tldialog.hideDialog(); 
   }

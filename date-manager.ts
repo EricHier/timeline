@@ -12,7 +12,7 @@ import { DialogDatePicker } from "./dialog-elements/d-datepicker";
 
 @customElement("date-manager")
 
-export class DatetManager extends LitElementWw {  
+export class DateManager extends LitElementWw {  
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
 
   static styles = css`
@@ -41,8 +41,8 @@ export class DatetManager extends LitElementWw {
   } 
 
   // creates array of timeline children elements (events) and sorts them via start date, re-append after
-  sortEvents(){
-    const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
+  sortEvents(timeline){
+    // const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     // console.log("sorting");
     // debugger;
     [...timeline.children]

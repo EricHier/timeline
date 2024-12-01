@@ -4,7 +4,7 @@ import { customElement, property, query } from "lit/decorators.js";
 
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
-import { SlButton, SlDialog, SlIcon } from "@shoelace-style/shoelace";
+import { SlButton, SlDialog, SlIcon, SlInput } from "@shoelace-style/shoelace";
 import { EventController } from "../tl-event-controller";
 import { EventContainer } from "../event-container";
 import { DialogInput } from "../dialog-elements/d-input";
@@ -73,21 +73,21 @@ export class WebWriterTimeline extends LitElementWw {
     return html`
       <div class="border" id="parent">
         <h4>My Timeline</h4>
-
+       
         <slot name="event-slot"></slot>
         <hr />
         ${this.isContentEditable
           ? html`
               <timeline-dialog
                 id="timelineID"
-                @request-add=${(e) => this.eventManager.addEvent(e)}
+                @request-add=${(e) => this.eventManager.addEvent(e, this)}
               ></timeline-dialog>
+              <!-- <reactive-controller></reactive-controller> -->
               <sl-button id="addButton" @click=${this.openingTLDialog}
                 >Add Event</sl-button
               >
             `
           : null}
-
         <sl-button id="quizButton" @click=${this.startQuiz}
           >${this.openQuiz ? "Refresh Quiz" : "Open Quiz"}</sl-button
         >
