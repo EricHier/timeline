@@ -10,7 +10,7 @@ import { EventContainer } from "../event-container";
 import { DialogInput } from "../dialog-elements/d-input";
 import { TimelineDialog } from "../tl-dialog";
 import { EventManager } from "../event-manager";
-import { MainQuiz } from "./q-main-quiz";
+import { MainQuiz } from "../quiz/q-main-quiz";
 import { TlEventData } from "../tl-event-data";
 
 @customElement("webwriter-timeline")

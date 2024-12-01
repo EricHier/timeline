@@ -13,15 +13,17 @@ import {
 } from "@shoelace-style/shoelace";
 
 import { WebWriterTimeline } from "../widgets/webwriter-timeline";
+import { QuizTitles } from "./q-titles";
+import { QuizDateField } from "./q-date-field";
 
 @customElement("main-quiz")
 export class MainQuiz extends LitElementWw {
-  @property({ type: Number, attribute: true, reflect: true })
-  accessor tabIndex = -1;
-  private appendedEvents: Array<{ date: string; title: string }> = [];
+  
+  @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
+  @property({ type: Array, attribute: true, reflect: true }) appendedEvents: Array<{ date: string; title: string }> = [];
 
-  @query("#date-container") accessor date_container: HTMLDivElement;
-  @query("#title-container") accessor title_container: HTMLDivElement;
+  @query("#date-container") accessor date_container: QuizDateField;
+  @query("#title-container") accessor title_container: QuizTitles;
 
   static get styles() {
     return css`
@@ -30,22 +32,20 @@ export class MainQuiz extends LitElementWw {
         border-radius: 5px;
         min-height: 700px;
         width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+        box-sizing: border-box;
       }
-
-      #parent > * {
-        margin-left: 10px;
-        margin-right: 10px;
-      }
-
       h4 {
         text-align: center;
       }
       .quiz-container {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 16px;
+        gap: 10px;
         width: 100%;
         min-height: 200px;
+        border: 1px solid grey;
       }
       .date-box, .title-box {
         border: 1px solid #ccc;
@@ -64,6 +64,8 @@ export class MainQuiz extends LitElementWw {
       "sl-select": SlSelect,
       "sl-radio-group": SlRadioGroup,
       "sl-radio": SlRadio,
+      "quiz-title":QuizTitles,
+      "quiz-date-field":QuizDateField,
     };
   }
 
@@ -77,11 +79,9 @@ export class MainQuiz extends LitElementWw {
         <h4>My Quiz</h4>
         <p>Find the matching pair</p>
         <div class="quiz-container">
-          <div id="date-container"></div>
-          <div id="title-container"></div>
+          <quiz-date-field id="date-container"></quiz-date-field>
+          <quiz-title id="title-container"></quiz-title>
         </div>
-        <br />
-        <hr />
         <br />
         <div name="found-matches"></div>
         <sl-button @click="${this.checkMatch}">Check Match</sl-button>
@@ -111,30 +111,29 @@ export class MainQuiz extends LitElementWw {
   }
 
   appendRow(date, title) {
+    const date_attacher = this.date_container.shadowRoot.getElementById("date");
     const date_element = document.createElement("div");
     date_element.textContent = date;
-    date_element.classList.add("date-box");
-    // dateBox.addEventListener("click", () => this.selectDate(date));
+    date_element.classList.add("date-border");
 
+    const title_attacher = this.title_container.shadowRoot.getElementById("title");
     const title_element = document.createElement("div");
     title_element.textContent = title
     title_element.setAttribute("draggable","true");
+    title_element.classList.add("title-border");
 
-    title_element.classList.add("title-box");
-    // titleBox.addEventListener("click", () => this.selectTitle(title));
-
-    this.date_container.appendChild(date_element);
-    this.title_container.appendChild(title_element);
+    date_attacher.appendChild(date_element);
+    title_attacher.appendChild(title_element);
 
     this.appendedEvents.push({ date, title });
-    this.randomiseTitleOrder();
+    this.randomiseTitleOrder(title_attacher);
   }
 
-  randomiseTitleOrder() {
-    const titles = Array.from(this.title_container.children);
+  randomiseTitleOrder(title_attacher) {
+    const titles = Array.from(title_attacher.children);
     titles.sort(() => Math.random() - 0.5);
-    this.title_container.innerHTML = "";
-    titles.forEach((box) => this.title_container.appendChild(box));
+    title_attacher.innerHTML = "";
+    titles.forEach((box) => title_attacher.appendChild(box));
   }
  
   checkMatch() {
