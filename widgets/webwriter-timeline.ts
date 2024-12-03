@@ -107,14 +107,17 @@ export class WebWriterTimeline extends LitElementWw {
   startQuiz() {
     this.openQuiz = true;
     this.quiz.hidden = false;
-    // debugger;
     const events = [...this.children];
     const existingEvents = this.quiz.appendedEvents;
 
     const eventsToAppend = events.filter((event) => {
       const title = event.getAttribute('event_title');
+      const date = event.getAttribute('event_startdate');
+
       const newEvent = !existingEvents.some(
-        (existingEvent) => existingEvent.title === title
+        (existingEvent) => 
+          existingEvent.title === title || 
+          existingEvent.date === date
       ); 
       return newEvent;
     });
@@ -132,6 +135,5 @@ export class WebWriterTimeline extends LitElementWw {
     this.quiz.hidden = true;
     this.quiz.resetQuiz();
     console.log("hide quiz");
-    this.quiz.resetQuiz();
   }
 }
