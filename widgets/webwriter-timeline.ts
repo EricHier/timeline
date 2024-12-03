@@ -15,10 +15,8 @@ import { TlEventData } from "../tl-event-data";
 
 @customElement("webwriter-timeline")
 export class WebWriterTimeline extends LitElementWw {
-  @property({ type: Number, attribute: true, reflect: true })
-  accessor tabIndex = -1;
-  @property({ type: Boolean, attribute: true, reflect: true })
-  accessor openQuiz = false;
+  @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
+  @property({ type: Boolean, attribute: true, reflect: true }) accessor openQuiz = false;
 
   @query("#quiz") accessor quiz: MainQuiz;
   @query("#timelineID") accessor dialog: TimelineDialog;
@@ -66,7 +64,6 @@ export class WebWriterTimeline extends LitElementWw {
     this.addEventListener("request-remove", (e) =>
       this.eventManager.removeEvent(e)
     );
-    // this.addEventListener("request-appendEvent",(e) => this.appendEvent(e) );
   }
 
   render() {
@@ -106,40 +103,34 @@ export class WebWriterTimeline extends LitElementWw {
     this.dialog.showDialog();
   }
 
-  // appendEvent(event) {
-  //   debugger;
-  //   console.log("Append-Event details: ",event.detail)
-  //   const timeline_event = event.detail;
-  //   this.appendChild(timeline_event);
-  // }
-
   // show quiz and add events to it
   startQuiz() {
-    this.quiz.hidden = false;
     this.openQuiz = true;
-
+    this.quiz.hidden = false;
+    // debugger;
     const events = [...this.children];
-    const existingEvents = this.quiz.getAppendedEvents();
+    const existingEvents = this.quiz.appendedEvents;
 
     const eventsToAppend = events.filter((event) => {
-      const title = event.getAttribute("event_title");
-      return !existingEvents.some(
+      const title = event.getAttribute('event_title');
+      const newEvent = !existingEvents.some(
         (existingEvent) => existingEvent.title === title
-      );
+      ); 
+      return newEvent;
     });
 
     eventsToAppend.forEach((event) => {
       let date = event.getAttribute("event_startDate");
       const title = event.getAttribute("event_title");
-      this.quiz.appendRow(date, title);
+      this.quiz.addEventElements(date, title);
     });
     console.log("show quiz");
   }
 
   endQuiz() {
-    this.quiz.hidden = true;
     this.openQuiz = false;
-
+    this.quiz.hidden = true;
+    this.quiz.resetQuiz();
     console.log("hide quiz");
     this.quiz.resetQuiz();
   }

@@ -49,7 +49,6 @@ export class EventManager extends LitElementWw {
     // const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const tldialog = timeline?.shadowRoot?.querySelector("timeline-dialog") as TimelineDialog;
 
-    // debugger;
     if (!event.detail) {
       console.error("Event detail not received");
       return;
@@ -94,7 +93,6 @@ export class EventManager extends LitElementWw {
     //   bubbles: true,
     //   composed: true
     // }));
-    debugger;
 
     this.dateManager.sortEvents(timeline); 
 

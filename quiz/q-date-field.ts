@@ -18,6 +18,7 @@ export class QuizDateField extends LitElementWw {
       margin-right: 10px;
       margin-top: 10px;
       box-sizing: border-box;
+      min-height: 50px; 
     }
     .date-border {
       background: white;
@@ -25,6 +26,26 @@ export class QuizDateField extends LitElementWw {
       border-radius: 3;
       margin: 5px;
       text-align: center; 
+    }
+    .drop-section {
+      background: white;
+      border: 1px dotted  #d6d6da;
+      border-radius: 3;
+      margin: 5px;
+      text-align: center; 
+      width: 100px; 
+      height: 35px;
+      padding: 10px;
+    }
+    .drop-section-droppable {
+      background: white;
+      border: 1px dotted blue;
+      border-radius: 3;
+      margin: 5px;
+      text-align: center; 
+      width: 100px; 
+      height: 35px;
+      padding: 10px;
     }
   `;
 
@@ -36,8 +57,16 @@ export class QuizDateField extends LitElementWw {
     return html`
     <div id="date" class="border">
     </div>
-      
     `;
   }
+
+  appendDraggedTitle(titleId) {
+    const targetSection = this.shadowRoot.querySelector('.date-drop-section');
+    const draggedTitle = document.querySelector(`#${titleId}`);
+    if (draggedTitle && targetSection) {
+        targetSection.appendChild(draggedTitle.cloneNode(true)); // Clone if needed or directly append
+        draggedTitle.remove(); // Remove from original location if necessary
+    }
+}
 }
 

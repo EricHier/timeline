@@ -44,7 +44,6 @@ export class DateManager extends LitElementWw {
   sortEvents(timeline){
     // const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     // console.log("sorting");
-    // debugger;
     [...timeline.children]
       .sort((a: EventContainer, b:EventContainer) => {return a.getStartDate() > b.getStartDate() ? 1 : -1})
       .forEach(node => timeline.appendChild(node));

@@ -8,6 +8,10 @@ import "@shoelace-style/shoelace/dist/themes/light.css";
 @customElement('quiz-title')
 
 export class QuizTitles extends LitElementWw {
+
+  @query("title-element") accessor title_element: HTMLDivElement;
+
+
   static styles = css`
     .border {
         border: 1px solid  #d6d6da;
@@ -19,10 +23,20 @@ export class QuizTitles extends LitElementWw {
         margin-top: 10px;
         box-sizing: border-box;
         align-items: right; 
+        min-height: 50px; 
     }
     .title-border {
       background: white;
       border: 1px solid  #d6d6da;
+      border-radius: 3;
+      margin: 5px;
+      text-align: center; 
+      width: 100px;
+    }
+    .title-border-dragged{
+      font: red; 
+      background: white;
+      border: 1px solid red;
       border-radius: 3;
       margin: 5px;
       text-align: center; 

@@ -21,9 +21,12 @@ export class MainQuiz extends LitElementWw {
   
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   @property({ type: Array, attribute: true, reflect: true }) appendedEvents: Array<{ date: string; title: string }> = [];
+  @property({ type: Array, attribute: true, reflect: true }) droppedTitles =[];
 
   @query("#date-container") accessor date_container: QuizDateField;
   @query("#title-container") accessor title_container: QuizTitles;
+
+  // private droppedTitles: HTMLElement[] = []; 
 
   static get styles() {
     return css`
@@ -77,20 +80,22 @@ export class MainQuiz extends LitElementWw {
     return html`
       <div class="border" id="parent">
         <h4>My Quiz</h4>
-        <p>Find the matching pair</p>
+        <p>Drag the correct title to the drop section</p>
         <div class="quiz-container">
           <quiz-date-field id="date-container"></quiz-date-field>
           <quiz-title id="title-container"></quiz-title>
         </div>
         <br />
         <div name="found-matches"></div>
-        <sl-button @click="${this.checkMatch}">Check Match</sl-button>
+        <!-- <sl-button @click="${this.checkMatch}">Check Match</sl-button> -->
+        <sl-button @click="${this.resetAnswers}">Reset Quiz</sl-button>
         <sl-button @click="${this.endQuiz}">End Quiz</sl-button>
       </div>
     `;
   }
 
   endQuiz() {
+    // this.resetQuiz();
     this.dispatchEvent(
       new CustomEvent("request-close-quiz", {
         bubbles: true,
@@ -104,29 +109,107 @@ export class MainQuiz extends LitElementWw {
     this.title_container.innerHTML = "";
   
     this.appendedEvents = [];
+    this.droppedTitles = [];
+
+  }
+
+  resetAnswers(){
+    const title_attacher = this.title_container.shadowRoot.querySelector("#title");
+
+    this.droppedTitles.forEach(title => {
+        title_attacher.appendChild(title);
+        title.removeAttribute('data-drop-status');
+    });
+    this.droppedTitles = [];
   }
 
   getAppendedEvents() {
+    console.log("appendedEvents ",this.appendedEvents);
     return this.appendedEvents;
   }
 
-  appendRow(date, title) {
-    const date_attacher = this.date_container.shadowRoot.getElementById("date");
-    const date_element = document.createElement("div");
-    date_element.textContent = date;
-    date_element.classList.add("date-border");
+  addEventElements(date, title) {
+      const date_attacher = this.date_container.shadowRoot.querySelector("#date");
+      const title_attacher = this.title_container.shadowRoot.querySelector("#title");
 
-    const title_attacher = this.title_container.shadowRoot.getElementById("title");
-    const title_element = document.createElement("div");
-    title_element.textContent = title
-    title_element.setAttribute("draggable","true");
-    title_element.classList.add("title-border");
+      const date_element = document.createElement("div");
+      date_element.textContent = date;
+      date_element.classList.add("date-border");
 
-    date_attacher.appendChild(date_element);
-    title_attacher.appendChild(title_element);
+      const date_drop_section = document.createElement("section");
+      date_drop_section.classList.add("drop-section");
+      date_drop_section.id = `drop-section-${date}`;
 
-    this.appendedEvents.push({ date, title });
-    this.randomiseTitleOrder(title_attacher);
+      const title_element = document.createElement("div");
+      title_element.textContent = title;
+      title_element.classList.add("title-border");
+      title_element.setAttribute("draggable", "true");
+      // title_element.setAttribute("event_title", title);
+
+      title_element.id = `title-${title}`; 
+
+      title_element.addEventListener('dragstart', (event: DragEvent) => {
+          
+          title_element.setAttribute('data-dragging', 'true');
+          event.dataTransfer?.setData("text/plain", title_element.id);
+      });
+
+      title_element.addEventListener('dragend', () => {
+          title_element.removeAttribute('data-dragging');
+      });
+
+      date_drop_section.addEventListener('dragover', (event: DragEvent) => {
+          event.preventDefault();
+          date_drop_section.setAttribute('data-dragover', 'true');
+      });
+
+      date_drop_section.addEventListener('dragleave', () => {
+          date_drop_section.removeAttribute('data-dragover');
+      });
+
+      date_drop_section.addEventListener('drop', (event: DragEvent) => {
+          event.preventDefault();
+          date_drop_section.removeAttribute('data-dragover');
+
+          const data = event.dataTransfer?.getData("text");
+          if (data) {
+            this.handleTitleDrop(data, date_drop_section, date);
+          }
+      });
+
+      date_attacher.appendChild(date_element);
+      date_attacher.appendChild(date_drop_section);
+      title_attacher.appendChild(title_element);
+
+      this.appendedEvents.push({ date, title });
+      this.randomiseTitleOrder(title_attacher);
+  }
+
+  handleTitleDrop(titleId, dropSection, dropDate) {
+      const draggedElement = this.title_container.shadowRoot.getElementById(titleId);
+      
+      if (draggedElement) {
+          draggedElement.parentElement.removeChild(draggedElement);
+          dropSection.appendChild(draggedElement);
+          this.droppedTitles.push(draggedElement);
+          this.checkMatch(titleId, dropDate);
+      }
+  }
+
+  checkMatch(titleId, dropDate) {
+      const matchFound = this.appendedEvents.find(event => 
+          `title-${event.title}` === titleId && event.date === dropDate
+      );
+
+      if (matchFound) {
+          console.log('Correct drop!');
+          const droppedElement = this.title_container.shadowRoot.getElementById(titleId);
+          droppedElement?.setAttribute('data-drop-status', 'correct');
+      } else {
+          console.log('Incorrect drop!');
+          const droppedElement = this.title_container.shadowRoot.getElementById(titleId);
+          droppedElement?.setAttribute('data-drop-status', 'incorrect');
+      }
   }
 
   randomiseTitleOrder(title_attacher) {
@@ -135,38 +218,5 @@ export class MainQuiz extends LitElementWw {
     title_attacher.innerHTML = "";
     titles.forEach((box) => title_attacher.appendChild(box));
   }
- 
-  checkMatch() {
-   //   const selectedDate = this.date_radio.querySelector("sl-radio[aria-checked=true]");
-  //   const selectedTitle = this.title_radio.querySelector("sl-radio[aria-checked=true]");
-
-  //   if (selectedDate && selectedTitle) {
-  //     const matchFound = this.appendedEvents.some(
-  //       (event) =>
-  //         event.date === selectedDate.textContent &&
-  //         event.title === selectedTitle.textContent
-  //     );
-
-  //     if (matchFound) {
-  //       console.log("Match found");
-  //       selectedDate.classList.add("match");
-  //       selectedTitle.classList.add("match");
-
-  //       selectedDate.classList.remove("mismatch");
-  //       selectedTitle.classList.remove("mismatch");
-  //     } else {
-  //       console.log("Mismatch found");
-  //       selectedDate.classList.add("mismatch");
-  //       selectedTitle.classList.add("mismatch");
-
-  //       selectedDate.classList.remove("match");
-  //       selectedTitle.classList.remove("match");
-  //       let timeout = setTimeout(function () {
-  //         selectedDate.classList.remove("mismatch");
-  //         selectedTitle.classList.remove("mismatch");
-  //         timeout = 0;
-  //       }, 2000);
-  //     }
-  //   }
-  }
 }
+

@@ -55,7 +55,7 @@ export class EventContainer extends LitElementWw {
   // will run again in student view, TO DO: use other way to append new paragraph
   protected firstUpdated(_changedProperties: PropertyValues): void {
     this.addParagraph();
-    console.log('First update completed. Current properties:', this.event_title, this.event_startDate, this.event_endDate);
+    // console.log('First update completed. Current properties:', this.event_title, this.event_startDate, this.event_endDate);
   }
   
 
@@ -83,7 +83,7 @@ export class EventContainer extends LitElementWw {
     this.event_title = eventData.title;
     this.event_startDate = eventData.startDate;
     this.event_endDate = eventData.endDate;
-    console.log(`Initialized with title: ${this.event_title}, startDate: ${this.event_startDate}, endDate: ${this.event_endDate}`);
+    // console.log(`Initialized with title: ${this.event_title}, startDate: ${this.event_startDate}, endDate: ${this.event_endDate}`);
   }
 
   // on button press a paragraph with "add description" is added to slot
@@ -107,7 +107,6 @@ export class EventContainer extends LitElementWw {
 
   // convert string into date for sorting dates
   getStartDate(): Date {
-    debugger;
     const parts:  String[] = this.event_startDate.split(". ", -1);
     const spaceCount: Number = parts.length - 1;
     let startDay, startMonth, startYear = "";
