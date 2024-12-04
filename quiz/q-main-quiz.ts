@@ -47,6 +47,7 @@ export class MainQuiz extends LitElementWw {
         width: 100%;
         min-height: 200px;
         border: 1px solid grey;
+        flex-direction: column;
       }
       .date-box, .title-box {
         border: 1px solid #ccc;

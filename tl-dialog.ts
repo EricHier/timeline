@@ -16,7 +16,6 @@ import {
 import { DialogInput } from "./dialog-elements/d-input";
 import { EventManager } from "./event-manager";
 import { EventContainer } from "./event-container";
-import { WebWriterTimeline } from "./widgets/webwriter-timeline";
 import { DialogToggle } from "./dialog-elements/d-toggle";
 import {DialogDatePicker } from "./dialog-elements/d-datepicker";
 import { TlEventData } from "./tl-event-data";
@@ -42,7 +41,10 @@ export class TimelineDialog extends LitElementWw {
   @query("#titleError") accessor titleError;
   @query("#dayError") accessor dayError;
   @query("#monthError") accessor monthError;
+  @query("#yearError") accessor yearError;
   @query("#formatError") accessor formatError;
+  @query("#timeError") accessor timeError;
+
 
 
 static styles = css` 
@@ -55,18 +57,15 @@ static styles = css`
       sl-dialog::part(overlay) {
         position: absolute;
       }
-
       .dialog-width{
         width: 100%,
       }
-
       .dialog-input-container {
         display: grid;
         grid-template-columns: 1fr 1fr; 
         gap: 16px;
         width: 100%;
       }
-
       dialog-input {
         width: 100%;
         min-width: 0; 
@@ -75,14 +74,12 @@ static styles = css`
         width: 100%;
         min-width: 0; 
       }
-
       @media (max-width: 600px) {
         .inputs-container {
           grid-template-columns: 1fr; 
           gap: 8px;
         }
       }
-
       dialog-input[disabled] {
         --sl-input-label-color: #888888;
       }
@@ -97,7 +94,6 @@ static styles = css`
         color: var(--sl-color-danger-700);
       }
   `;
-
 
   static get scopedElements() {
     return { 
@@ -130,6 +126,11 @@ static styles = css`
     this.addEventListener('show-month-validation-error', this.showMonthError);
     this.addEventListener('hide-month-validation-error', this.hideMonthError);
     
+    this.addEventListener('show-year-validation-error', this.showYearError);
+    this.addEventListener('hide-year-validation-error', this.hideYearError);
+
+    this.addEventListener('show-format-validation-error', this.showFormatError);
+    this.addEventListener('hide-format-validation-error', this.hideFormatError);
   }
 
   disconnectedCallback() {
@@ -144,12 +145,33 @@ static styles = css`
 
   render() {
     return html`
-      <sl-dialog id="timelineID" class="dialog-width" label="Add a Timeline Event" style="--width: 50vw;">
-        <dialog-input type="input" label="Title" id="eventTitle" @sl-change=${this.enableSaveButton} placeholder="Enter the title" required> </dialog-input>
-        <div class="text-error" id="titleError" hidden></div>
+      <sl-dialog 
+        id="timelineID" 
+        class="dialog-width" 
+        label="Add a Timeline Event"
+        style="--width: 50vw;">
+
+        <dialog-input 
+          type="input" 
+          label="Title" 
+          id="eventTitle" 
+          @sl-change=${this.enableSaveButton} 
+          placeholder="Enter the title" 
+          required> 
+        </dialog-input>
+
+        <div 
+          class="text-error" 
+          id="titleError" 
+          hidden>
+        </div>
+
         <br />
         <div class="container">
-          <dialog-toggle id="time-period" .useTimePeriod="${this.useTimePeriod}"
+
+          <dialog-toggle 
+            id="time-period" 
+            .useTimePeriod="${this.useTimePeriod}"
             @toggle-change="${(e: CustomEvent) => {
               this.useTimePeriod = e.detail.useTimePeriod;
               if (!this.useTimePeriod) {
@@ -157,18 +179,48 @@ static styles = css`
               }
             }}"
           ></dialog-toggle>
+
           <br />
+
           <div class="dialog-input-container">
-            <dialog-date-picker .useTimePeriod="${this.useTimePeriod}" label=${this.useTimePeriod ? "Start date" : "Date"} id="eventStartDate" @sl-change=${this.enableSaveButton}></dialog-date-picker>
-            <dialog-date-picker .useTimePeriod="${this.useTimePeriod}" class="${!this.useTimePeriod ? 'endDate-disabled' : ''}" label="End Date" id="eventEndDate"   @sl-change=${this.enableSaveButton} useEndDate="true"></dialog-date-picker>
+            <dialog-date-picker 
+              .useTimePeriod="${this.useTimePeriod}" 
+              label=${this.useTimePeriod ? "Start date" : "Date"} 
+              id="eventStartDate" 
+              @sl-change=${this.enableSaveButton}>
+            </dialog-date-picker>
+
+            <dialog-date-picker .useTimePeriod="${this.useTimePeriod}" 
+              class="${!this.useTimePeriod ? 'endDate-disabled' : ''}" 
+              label="End Date" id="eventEndDate"   
+              @sl-change=${this.enableSaveButton} 
+              useEndDate="true">
+            </dialog-date-picker>
+
           </div>
         </div>            
         <div class="text-error" id="dayError" hidden></div>
         <div class="text-error" id="monthError" hidden></div>
+        <div class="text-error" id="yearError" hidden></div>
         <div class="text-error" id="formatError" hidden></div>
+        <div class="text-error" id="timeError" hidden></div>
 
-        <sl-button class="dialog-footer" id="resetButton" slot="footer" variant="default"  @click="${this.resetDialog}">Reset</sl-button>
-        <sl-button id="savingButton" slot="footer" variant="primary" ?disabled="${!this.readyToFill}" @click="${() => this.dispatchAddEvent()}">Add Event</sl-button>
+        <sl-button 
+          class="dialog-footer" 
+          id="resetButton" 
+          slot="footer" 
+          variant="default"  
+          @click="${this.resetDialog}">Reset
+        </sl-button>
+
+        <sl-button 
+          id="savingButton" 
+          slot="footer" 
+          variant="primary" 
+          ?disabled="${!this.readyToFill}" 
+          @click="${() => this.dispatchAddEvent()}">Add Event
+        </sl-button>
+
       </sl-dialog>  
     `;
   } 
@@ -186,17 +238,25 @@ static styles = css`
 
   //reset input values and errors 
   resetDialog(){
+    const monthStartInput = this.startDate.shadowRoot.querySelector('#month') as SlInput;
+    const monthEndInput = this.startDate.shadowRoot.querySelector('#month') as SlInput;
+
     this.useTimePeriod = false;
 
     this.titleError.textContent = "";
     this.dayError.textContent = "";
     this.monthError.textContent = "";
+    this.yearError.textContent = "";
     this.formatError.textContent = "";
 
     this.titleError.hidden = true;
     this.dayError.hidden = true;
     this.monthError.hidden = true;
+    this.yearError.hidden = true; 
     this.formatError.hidden = true;
+
+    monthStartInput.removeAttribute("invalid");
+    monthEndInput.removeAttribute("invalid");
 
     this.event_title.value = "";
 
@@ -219,18 +279,37 @@ static styles = css`
     let dayValidation;
     let monthValidation;
     let yearValidation;
+    let formatValidation;
 
-    this.useTimePeriod ? dayValidation = this.startDate.validateDay() && this.endDate.validateDay() : dayValidation = this.startDate.validateDay();
-    this.useTimePeriod ? monthValidation = this.startDate.validateMonth() && this.endDate.validateMonth() : monthValidation = this.startDate.validateMonth();
-    this.useTimePeriod? yearValidation = this.startDate.validateYear() && this.endDate.validateYear() : yearValidation = this.startDate.validateYear();
-
+    this.useTimePeriod
+      ? (dayValidation =
+          this.startDate.validateDay() && this.endDate.validateDay())
+      : (dayValidation = this.startDate.validateDay());
+    this.useTimePeriod
+      ? (monthValidation =
+          this.startDate.validateMonth() && this.endDate.validateMonth())
+      : (monthValidation = this.startDate.validateMonth());
+    this.useTimePeriod
+      ? (yearValidation =
+          this.startDate.validateYear() && this.endDate.validateYear())
+      : (yearValidation = this.startDate.validateYear());
+    this.useTimePeriod
+      ? (formatValidation =
+          this.startDate.validateFormat() && this.endDate.validateFormat())
+      : (formatValidation = this.startDate.validateFormat());
 
     const titleValid = this.event_title.value !== "";
     const startDateValid = this.startDate.year !== "";
     
-    const isValid = dayValidation.valid && monthValidation.valid && yearValidation.valid && this.event_title.value !== "" && this.startDate.year !== "";
+    const isValid =
+      dayValidation.valid &&
+      monthValidation.valid &&
+      yearValidation.valid &&
+      formatValidation.valid &&
+      this.event_title.value !== "" &&
+      this.startDate.year !== "";
     
-    if(this.showFormateError() == true){
+    if(this.evaluateTimeError() == true){
       this.readyToFill = isValid
     } else  {
       this.readyToFill = false; 
@@ -255,17 +334,21 @@ static styles = css`
 
   // show error message for invalid day 
   showDayError(e){
-    const dayValidation = this.useTimePeriod? this.startDate.validateDay() && this.endDate.validateDay() : this.startDate.validateDay();
+    const dayValidation = this.useTimePeriod
+    ? this.startDate.validateDay() && this.endDate.validateDay() 
+    : this.startDate.validateDay();
 
     if (dayValidation.valid == false) {
-      this.dayError.textContent = "Error: " + e.detail.errorMessage;
+      this.dayError.textContent = "Day Error: " + e.detail.errorMessage;
       this.dayError.hidden = false;
     }
   }
   
   // hide error message for valid day 
   hideDayError(){
-    const dayValidation = this.useTimePeriod? this.startDate.validateDay() && this.endDate.validateDay() : this.startDate.validateDay();
+    const dayValidation = this.useTimePeriod
+    ? this.startDate.validateDay() && this.endDate.validateDay() 
+    : this.startDate.validateDay();
 
     if (dayValidation.valid == true) {
       this.dayError.textContent = "";
@@ -275,17 +358,21 @@ static styles = css`
   
   // show error message for invalid month 
   showMonthError(e){
-    const monthValidation = this.useTimePeriod? this.startDate.validateMonth() && this.endDate.validateMonth() : this.startDate.validateMonth();
+    const monthValidation = this.useTimePeriod
+    ? this.startDate.validateMonth() && this.endDate.validateMonth()
+    : this.startDate.validateMonth();
 
     if (monthValidation.valid == false) {
-      this.monthError.textContent = "Error: " + e.detail.errorMessage;
+      this.monthError.textContent = "Month Error: " + e.detail.errorMessage;
       this.monthError.hidden = false;
     } 
   }
 
   // hide error message for valid month 
   hideMonthError(){
-    const monthValidation = this.useTimePeriod? this.startDate.validateMonth() && this.endDate.validateMonth() : this.startDate.validateMonth();
+    const monthValidation = this.useTimePeriod
+      ? this.startDate.validateMonth() && this.endDate.validateMonth() 
+      : this.startDate.validateMonth();
 
     if (monthValidation.valid == true) {
       this.monthError.textContent = "";
@@ -293,28 +380,71 @@ static styles = css`
     }
   }
   
+  // show error message for invalid year 
+  showYearError(e){
+    const yearValidation = this.useTimePeriod
+      ? this.startDate.validateYear() && this.endDate.validateYear() 
+      : this.startDate.validateYear();
+
+    if (yearValidation.valid == false) {
+      this.yearError.textContent = "Year Error: " + e.detail.errorMessage;
+      this.yearError.hidden = false;
+    } 
+  }
+
+  // hide error message for valid year 
+  hideYearError(){
+    const yearValidation = this.useTimePeriod
+      ? this.startDate.validateYear() && this.endDate.validateYear() 
+      : this.startDate.validateYear();
+
+    if (yearValidation.valid == true) {
+      this.yearError.textContent = "";
+      this.yearError.hidden = true;
+    }
+  }
+
   //  check if end date is before start date and check if only dd and yyyy have been added
-  showFormateError(): Boolean {
+  showFormatError(e) {
+    const formatValidation = this.useTimePeriod? this.startDate.validateFormat() && this.endDate.validateFormat() : this.startDate.validateFormat();
 
-    const start= Date.parse(`${this.startDate.year ? `${this.startDate.year}` : ''}${this.startDate.month ? `-${this.startDate.month}` : ''}${this.startDate.day ? `-${this.startDate.day}` : ''}`);
-    const end= Date.parse(`${this.endDate.year ? `${this.endDate.year}` : ''}${this.endDate.month ? `-${this.endDate.month}` : ''}${this.endDate.day ? `-${this.endDate.day}` : ''}`);
+    if (formatValidation.valid == false) {
+      this.formatError.textContent = "Format Error: " + e.detail.errorMessage;
+      this.formatError.hidden = false;
+    }
+  }
 
-    if(start > end && this.useTimePeriod == true && !((this.startDate.day && !this.startDate.month && this.startDate.year)||(this.endDate.day && !this.endDate.month && this.endDate.year))){
-      this.formatError.textContent = "Error: Invalid format, Start date after end date";
-      this.formatError.hidden = false;
-      return false;
-    } else if(start > end && this.useTimePeriod == true && ((this.startDate.day && !this.startDate.month  && this.startDate.year)||(this.endDate.day && !this.endDate.month && this.endDate.year))){
-      this.formatError.textContent = "Error: Invalid format (dd/yyyy) please enter a month and start date after end date.";
-      this.formatError.hidden = false;
-      return false;
-    } else if ((this.startDate.day && !this.startDate.month && this.startDate.year)||(this.endDate.day && !this.endDate.month && this.endDate.year)){
-      this.formatError.textContent = "Error: Invalid format (dd/yyyy), enter a month.";
-      this.formatError.hidden = false;
-      return false;
-    } else {
-      this.formatError.textContent= "";
+  hideFormatError(){
+    const formatValidation = this.useTimePeriod
+      ? this.startDate.validateFormat() && this.endDate.validateFormat()
+      : this.startDate.validateFormat();
+
+    if (formatValidation.valid == true) {
+      this.formatError.textContent = "";
       this.formatError.hidden = true;
-      return true;
+    }
+  }
+
+  evaluateTimeError(): Boolean{
+    const start = Date.parse(
+      `${this.startDate.year ? `${this.startDate.year}` : ""}${
+        this.startDate.month ? `-${this.startDate.month}` : ""
+      }${this.startDate.day ? `-${this.startDate.day}` : ""}`
+    );
+    const end = Date.parse(
+      `${this.endDate.year ? `${this.endDate.year}` : ""}${
+        this.endDate.month ? `-${this.endDate.month}` : ""
+      }${this.endDate.day ? `-${this.endDate.day}` : ""}`
+    );
+
+    if(start > end && this.useTimePeriod == true){
+      this.timeError.textContent = "Time Error: Invalid format, Start date after end date";
+      this.timeError.hidden = false;
+      return false; 
+    } else {
+      this.timeError.textContent= "";
+      this.timeError.hidden = true;
+      return true; 
     }
   }
 
@@ -322,8 +452,16 @@ static styles = css`
   dispatchAddEvent() {
     let eventDetails: TlEventData = {
       title: this.event_title.value,
-      startDate: `${this.startDate.year}${this.startDate.month ? `-${this.startDate.month}` : ''}${this.startDate.day ? `-${this.startDate.day}` : ''}`,
-      endDate: this.useTimePeriod ?`${this.endDate.year}${this.endDate.month ? `-${this.endDate.month}` : ''}${this.endDate.day ? `-${this.endDate.day}` : ''}` : ''
+
+      startDate: `${this.startDate.year}${
+        this.startDate.month ? `-${this.startDate.month}` : ""
+      }${this.startDate.day ? `-${this.startDate.day}` : ""}`,
+
+      endDate: this.useTimePeriod
+        ? `${this.endDate.year}${
+            this.endDate.month ? `-${this.endDate.month}` : ""
+          }${this.endDate.day ? `-${this.endDate.day}` : ""}`
+        : "",
     };
 
     this.dispatchEvent(new CustomEvent("request-add", {

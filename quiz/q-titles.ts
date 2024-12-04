@@ -15,41 +15,47 @@ export class QuizTitles extends LitElementWw {
 
   static styles = css`
     .border {
-        border: 1px solid  #d6d6da;
-        background: #f7f7f8;
-        border-radius: 5px;
-        /* width: 100%; */
-        /* margin-left: 10px; */
-        margin-right: 10px;
-        margin-top: 10px;
-        box-sizing: border-box;
-        align-items: right; 
-        min-height: 50px; 
-      }
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      border: 1px solid #d6d6da;
+      background: #f7f7f8;
+      border-radius: 5px;
+      margin: 10px;
+      padding: 10px; 
+      box-sizing: border-box;
+      min-height: 50px; 
+      width: calc(100% - 20px);
+    }
+
     .title-border {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       background: white;
-      border: 1px solid  #d6d6da;
+      border: 1px solid #d6d6da;
       border-radius: 7px;
       margin: 5px;
-      text-align: center; 
-      width: 100px;
+      width: auto; 
+      max-width: calc(100% - 10px); 
       cursor: grab;
       font-weight: 500;
       font-size: 1.15rem;
-      color: #333333
-    }
-    .title-border[dragging]{
-      font-weight: 500; 
-      background: #e5f4fc;
-      border: 2px solid#83b9e0;
-      border-radius: 7px;
-      margin: 5px;
-      text-align: center; 
-      width: 100px;
-      font-weight: 500;
-      font-size: 1.15rem;
       color: #333333;
+      min-height: 35px;
+      flex-wrap: wrap;
+      text-align: center;
+      padding: 5px 10px;
+      box-sizing: border-box;
     }
+
+    .title-border[dragging] {
+      background: #e5f4fc;
+      border: 2px solid #83b9e0;
+    }
+
+    
   `;
 
   render() {

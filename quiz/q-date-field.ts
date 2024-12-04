@@ -20,75 +20,70 @@ export class QuizDateField extends LitElementWw {
       margin-bottom: 10px;
       box-sizing: border-box;
       min-height: 50px; 
+      max-width:100%;
+
     }
     .date-border {
-      background: white;
-      border: 1px solid  #d6d6da;
-      border-radius: 5px;
+      /* background: white; */
+      /* border: 1px solid  #d6d6da;
+      border-radius: 5px; */
       margin: 5px;
       max-width: 250px;
-      text-align: center; 
+      text-align: left; 
       color: #666;
       font-weight: 400;
+      flex-direction: column;
+      width: auto; 
+      max-width: calc(100% - 10px); 
     }
     .drop-section {
+      display: flex;
+      align-items: center;  
+      justify-content: center;  
       background: white;
       border: 2px dashed #d6d6da;
       border-radius: 7px;
       margin: 5px;
-      text-align: center; 
-      width: 100px; 
-      height: 35px;
-      padding: 10px;
-    }
-    .drop-section[dragover] {
-      background: white;
-      border: 2px dashed #83b9e0;
-      border-radius: 7px;
-      margin: 5px;
-      text-align: center; 
-      width: 100px; 
-      height: 35px;
-      padding: 10px;
-      color: #666666;
-    }
-    .drop-section[dropped] {
-      background: white;
-      border: 2px solid #d6d6da;
-      border-radius: 7px;
-      margin: 5px;
-      text-align: center; 
-      width: 100px; 
+      min-width: 100px; 
       min-height: 35px;
+      max-width: calc(100% - 10px); 
+      flex-direction: column;
+
       padding: 10px;
+      flex-wrap: wrap; 
+      box-sizing: border-box;
+    }
+
+    .drop-section[dragover] {
+      border: 2px dashed #83b9e0;
+    }
+
+    .drop-section[dropped] {
+      border: 2px solid #d6d6da;
       font-weight: 500;
       font-size: 1.15rem;
       color: #333333;
     }
+
     .drop-section[quiz-result="match"] {
       background: #b3eab5;
       color: #4aad4d;
       border: 2px solid #4aad4d;
-      border-radius: 7px;
-      margin: 5px;
-      text-align: center; 
-      width: 100px; 
-      min-height: 35px;
-      padding: 10px;
-      font-weight: 450;
-      font-size: 1.125rem;
     }
+
     .drop-section[quiz-result="mismatch"] {
       background: #f5d1ce;
-      color:#c92c1b;
+      color: #c92c1b;
       border: 2px solid #e58e85;
-      border-radius: 7px;
-      margin: 5px;
-      text-align: center; 
-      width: 100px; 
-      min-height: 35px;
-      padding: 10px;
     }
+
+.drop-section > * {
+  max-width: 100%;  
+  white-space: nowrap; 
+  overflow: hidden;  
+  text-overflow: ellipsis;  
+}
+
   `;
 
 
