@@ -61,6 +61,8 @@ static styles = css`
         width: 100%,
       }
       .dialog-input-container {
+        padding-top: 10px; 
+
         display: grid;
         grid-template-columns: 1fr 1fr; 
         gap: 16px;
@@ -92,6 +94,22 @@ static styles = css`
       .text-error {
         font-size: var(--sl-input-help-text-font-size-medium);
         color: var(--sl-color-danger-700);
+      }
+      .button-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+      .button {
+        padding-top: 5px; 
+        width: 100px; 
+      }
+      /* .d-toggle {
+        padding-top: 10px; 
+      } */
+      .d-input{
+        padding-bottom: 10px; 
       }
   `;
 
@@ -152,9 +170,9 @@ static styles = css`
         style="--width: 50vw;">
 
         <dialog-input 
-          type="input" 
-          label="Title" 
           id="eventTitle" 
+          class="d-input"
+          type="input" 
           @sl-change=${this.enableSaveButton} 
           placeholder="Enter the title" 
           required> 
@@ -166,61 +184,82 @@ static styles = css`
           hidden>
         </div>
 
-        <br />
-        <div class="container">
+        <dialog-toggle 
+          id="time-period"
+          class="d-toggle" 
+          .useTimePeriod="${this.useTimePeriod}"
+          @toggle-change="${(e: CustomEvent) => {
+            this.useTimePeriod = e.detail.useTimePeriod;
+            if (!this.useTimePeriod) {
+              this.resetEndDate();
+            }
+          }}">
+        </dialog-toggle>
 
-          <dialog-toggle 
-            id="time-period" 
-            .useTimePeriod="${this.useTimePeriod}"
-            @toggle-change="${(e: CustomEvent) => {
-              this.useTimePeriod = e.detail.useTimePeriod;
-              if (!this.useTimePeriod) {
-                this.resetEndDate();
-              }
-            }}"
-          ></dialog-toggle>
+        <div class="dialog-input-container">
+          <dialog-date-picker 
+            .useTimePeriod="${this.useTimePeriod}" 
+            label=${this.useTimePeriod ? "Start date" : "Date"} 
+            id="eventStartDate" 
+            @sl-change=${this.enableSaveButton}>
+          </dialog-date-picker>
 
-          <br />
+          <dialog-date-picker .useTimePeriod="${this.useTimePeriod}" 
+            class="${!this.useTimePeriod ? 'endDate-disabled' : ''}" 
+            label="End Date" id="eventEndDate"   
+            @sl-change=${this.enableSaveButton} 
+            useEndDate="true">
+          </dialog-date-picker>
+        </div>
+                 
+        <div 
+          class="text-error" 
+          id="dayError" 
+          hidden>
+        </div>
 
-          <div class="dialog-input-container">
-            <dialog-date-picker 
-              .useTimePeriod="${this.useTimePeriod}" 
-              label=${this.useTimePeriod ? "Start date" : "Date"} 
-              id="eventStartDate" 
-              @sl-change=${this.enableSaveButton}>
-            </dialog-date-picker>
+        <div 
+          class="text-error" 
+          id="monthError" 
+          hidden>
+        </div>
 
-            <dialog-date-picker .useTimePeriod="${this.useTimePeriod}" 
-              class="${!this.useTimePeriod ? 'endDate-disabled' : ''}" 
-              label="End Date" id="eventEndDate"   
-              @sl-change=${this.enableSaveButton} 
-              useEndDate="true">
-            </dialog-date-picker>
+        <div 
+          class="text-error" 
+          id="yearError" 
+          hidden>
+        </div>
 
-          </div>
-        </div>            
-        <div class="text-error" id="dayError" hidden></div>
-        <div class="text-error" id="monthError" hidden></div>
-        <div class="text-error" id="yearError" hidden></div>
-        <div class="text-error" id="formatError" hidden></div>
-        <div class="text-error" id="timeError" hidden></div>
+        <div 
+          class="text-error" 
+          id="formatError" 
+          hidden>
+        </div>
 
-        <sl-button 
-          class="dialog-footer" 
-          id="resetButton" 
-          slot="footer" 
-          variant="default"  
-          @click="${this.resetDialog}">Reset
-        </sl-button>
+        <div 
+          class="text-error" 
+          id="timeError" 
+          hidden>
+        </div>
 
-        <sl-button 
-          id="savingButton" 
-          slot="footer" 
-          variant="primary" 
-          ?disabled="${!this.readyToFill}" 
-          @click="${() => this.dispatchAddEvent()}">Add Event
-        </sl-button>
+        <div class="button-container">
+          <sl-button 
+            class="button" 
+            id="resetButton" 
+            slot="footer" 
+            variant="default"  
+            @click="${this.resetDialog}">Reset
+          </sl-button>
 
+          <sl-button 
+            class="button" 
+            id="savingButton" 
+            slot="footer" 
+            variant="primary" 
+            ?disabled="${!this.readyToFill}" 
+            @click="${() => this.dispatchAddEvent()}">Add Event
+          </sl-button>
+        </div>
       </sl-dialog>  
     `;
   } 

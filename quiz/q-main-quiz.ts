@@ -24,8 +24,8 @@ export class MainQuiz extends LitElementWw {
   @property({ type: Array, attribute: true, reflect: true }) accessor droppedTitles =[];
   @property({ type: Number, attribute: true, reflect: true }) accessor matchCount = 0;
   @property({ type: Number, attribute: true, reflect: true }) accessor score;
-  @property({ type: Number, attribute: true, reflect: true }) accessor quizSelection;
-  @property({ type: Boolean, attribute: true, reflect: true }) accessor button_checked = false;
+  @property({ type: Number, attribute: true, reflect: true }) accessor selected_option;
+  @property({ type: Boolean, attribute: true, reflect: true }) accessor noNeedToReset = true;
 
 
   @query("#date-container") accessor date_container: QuizDateField;
@@ -33,6 +33,7 @@ export class MainQuiz extends LitElementWw {
   @query("#score-feedback") accessor score_feedback: HTMLParagraphElement;
   @query("#quiz-selection") accessor quiz_selection: SlSelect;
   @query("#check-button") accessor check_button: SlSelect;
+  @query("#formatError") accessor formatError;
 
 
   static get styles() {
@@ -50,13 +51,18 @@ export class MainQuiz extends LitElementWw {
         text-align: center;
       }
       .quiz-container {
+        border-radius: 5px;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px;
         width: 100%;
         min-height: 200px;
-        border: 1px solid grey;
+        border: 1px solid #d6d6da;
         flex-direction: column;
+      }
+      .quiz-border {
+       /* text-align:center;  */
+       font-weight: 500;
       }
       .date-box, .title-box {
         border: 1px solid #ccc;
@@ -66,6 +72,14 @@ export class MainQuiz extends LitElementWw {
       }
       .quiz-options{
         display: flex; 
+      }
+      .quiz-options{
+        width: 100%; 
+        margin-bottom: 5px; 
+      }
+      .text-error {
+        font-size: var(--sl-input-help-text-font-size-medium);
+        color: var(--sl-color-warning-700);
       }
     `;
   }
@@ -87,49 +101,64 @@ export class MainQuiz extends LitElementWw {
     return html`
       <div class="border" id="parent">
         <h4>My Quiz</h4>
-        <p>Drag the correct title to the drop section</p>
 
         <div class="quiz-options" id="quiz-options">
-          <sl-select 
-            id="quiz-selection" 
-            label="Select Quiz Feedback" 
-            help-text="Please select which feedback the students should get." 
+          <sl-select
+            id="quiz-selection"
+            class="quiz-selection"
+            label="Select Quiz Feedback"
+            help-text="Please select which feedback the students should get."
             @sl-change="${this.saveQuizSelection}">
-            <sl-option value="1">Score and Correct Answers</sl-option>
-            <sl-option value="2">Correct Answers Only</sl-option>
-            <sl-option value="3">Score Only</sl-option>
-            <sl-option value="4">None</sl-option>
+              <sl-option value="1">Score and Correct Answers</sl-option>
+              <sl-option value="2">Correct Answers Only</sl-option>
+              <sl-option value="3">Score Only</sl-option>
+              <sl-option value="4">None</sl-option>
           </sl-select>
         </div>
+        <div class="text-error" id="formatError" hidden> Please select one feedback option.</div>
 
-        <div class="quiz-container">
-          <quiz-date-field id="date-container"></quiz-date-field>
-          <quiz-title id="title-container"></quiz-title>
+        <br />
+
+        <div class="quiz-border">
+          <p>Drag the correct title to the drop section</p>
+          <div class="quiz-container">
+            <quiz-date-field id="date-container"></quiz-date-field>
+            <quiz-title id="title-container"></quiz-title>
+          </div>
         </div>
-        <br />
-         
-        ${(this.quizSelection === 1 || this.quizSelection === 3) && this.score !== undefined
-          ? html`<p id="score-feedback">Your Score: ${this.score + " %"}</p>`
-          : ''}
         
+        
+        <br />
+
+        ${(this.selected_option === 1 ||
+          this.selected_option === 3) &&
+          this.score !== undefined
+            ? html`<p id="score-feedback">Your Score: ${this.score + " %"}</p>`
+            : ""}
+
         <br />
         <br />
 
-        <sl-button id="check-matches"   
+        <sl-button 
+          variant="danger" outline 
+          @click="${this.endQuiz}">End Quiz 
+        </sl-button>
+        
+
+        <sl-button 
+          variant="neutral" outline 
+          @click="${this.resetAnswers}">Reset Quiz 
+        </sl-button>
+
+        <sl-button
+          id="check-matches"
+          variant="primary" outline
           @click="${() => {
-              this.checkMatch();
-              this.calculateScore();
-              this.button_checked = true;
+            this.checkMatch();
+            this.calculateScore();
           }}"
-          ?disabled=${this.droppedTitles.length === 0}>Check Match
-        </sl-button>
-        
-        <sl-button 
-          @click="${this.resetAnswers}">Reset Quiz
-        </sl-button>
-
-        <sl-button 
-          @click="${this.endQuiz}">End Quiz
+          ?disabled=${this.droppedTitles.length === 0}
+          >Check Match
         </sl-button>
       </div>
     `;
@@ -152,7 +181,6 @@ export class MainQuiz extends LitElementWw {
   
     this.appendedEvents = [];
     this.droppedTitles = [];
-    
   }
 
   resetAnswers(){
@@ -177,8 +205,11 @@ export class MainQuiz extends LitElementWw {
     this.droppedTitles = [];
     this.matchCount = 0; 
     this.score = 0; 
-    this.quizSelection = 0;
-    // this.button_checked = false; 
+    this.quiz_selection.value = "defaultValue";
+    this.selected_option = 0; 
+    this.formatError.hidden = true;
+    this.noNeedToReset = true; 
+
   }
 
   getAppendedEvents() {
@@ -260,21 +291,28 @@ export class MainQuiz extends LitElementWw {
   
 checkMatch() {
   this.droppedTitles.forEach(({ element, dropSection, dropDate }) => {
-
+    debugger; 
     const titleId = element.id;
     const matchFound = this.appendedEvents.find(event => 
         `title-${event.title}` === titleId && event.date === dropDate
     );
+    if(this.selected_option === undefined){
+      this.formatError.hidden = false;
+      console.log("undefined option, show error");
+    }
+
     if (matchFound) {
-      if(this.quizSelection === 1|| this.quizSelection ===2){
+      if(this.selected_option === 1|| this.selected_option ===2){
         element.setAttribute('quiz-result', 'match');
-        dropSection.setAttribute('quiz-result', 'match'); 
+        dropSection.setAttribute('quiz-result', 'match');
+        this.formatError.hidden = true;
       }
       this.matchCount++;
     } else {
-      if(this.quizSelection === 1|| this.quizSelection ===2){
+      if(this.selected_option === 1|| this.selected_option ===2){
         element.setAttribute('quiz-result', 'mismatch');
         dropSection.setAttribute('quiz-result', 'mismatch'); 
+        this.formatError.hidden = true;
       }
     }
   });
@@ -288,14 +326,22 @@ checkMatch() {
   }
 
   calculateScore(){
-    const achievedPoints = this.matchCount;
-    const possiblePoints = this.appendedEvents.length;
-    this.score = parseFloat(((achievedPoints / possiblePoints) * 100).toFixed(2));    
+    if(this.noNeedToReset){
+      const achievedPoints = this.matchCount;
+      const possiblePoints = this.appendedEvents.length;
+      this.score = parseFloat(((achievedPoints / possiblePoints) * 100).toFixed(2));  
+      this.noNeedToReset = false; 
+    } else {
+      this.score = this.score; 
+    }
+     
   }
 
-  saveQuizSelection(event){
-    const select = event.target as SlSelect;
-    this.quizSelection = Number(select.value);
+  saveQuizSelection(){
+    this.selected_option = Number(this.quiz_selection.value);
+    if(this.selected_option !== undefined){
+      this.formatError.hidden = true;
+    }
   }
  
 }

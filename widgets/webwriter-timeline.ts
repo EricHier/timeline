@@ -85,8 +85,12 @@ export class WebWriterTimeline extends LitElementWw {
               >
             `
           : null}
-        <sl-button id="quizButton" @click=${this.startQuiz}
-          >${this.openQuiz ? "Refresh Quiz" : "Open Quiz"}</sl-button
+        <sl-button 
+          id="quizButton" 
+          variant="primary" outline
+          @click=${this.startQuiz}>
+          ${this.openQuiz ? "Refresh Quiz" : "Open Quiz"}
+        </sl-button
         >
       </div>
 
