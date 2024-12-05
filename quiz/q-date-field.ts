@@ -66,7 +66,7 @@ export class QuizDateField extends LitElementWw {
     }
 
     .drop-section[quiz-result="match"] {
-      background: #b3eab5;
+      background: #cdefcf;
       color: #4aad4d;
       border: 2px solid #4aad4d;
     }

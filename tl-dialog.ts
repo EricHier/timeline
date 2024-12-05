@@ -38,13 +38,13 @@ export class TimelineDialog extends LitElementWw {
   @query("#eventTitle") accessor event_title: DialogInput;
   @query("#eventStartDate") accessor startDate: DialogDatePicker;
   @query("#eventEndDate") accessor endDate: DialogDatePicker;
+
   @query("#titleError") accessor titleError;
   @query("#dayError") accessor dayError;
   @query("#monthError") accessor monthError;
   @query("#yearError") accessor yearError;
   @query("#formatError") accessor formatError;
   @query("#timeError") accessor timeError;
-
 
 
 static styles = css` 
@@ -309,7 +309,7 @@ static styles = css`
       this.event_title.value !== "" &&
       this.startDate.year !== "";
     
-    if(this.evaluateTimeError() == true){
+    if(this.evaluateTimeError() === true){
       this.readyToFill = isValid
     } else  {
       this.readyToFill = false; 
@@ -323,7 +323,7 @@ static styles = css`
 
   // check if title is empty, give errer message if so
   evaluateTitleError(){
-    if (this.event_title.value == "") {
+    if (this.event_title.value === "") {
       this.titleError.textContent = "Error: Please enter a title";
       this.titleError.hidden = false;
     } else {
@@ -338,7 +338,7 @@ static styles = css`
     ? this.startDate.validateDay() && this.endDate.validateDay() 
     : this.startDate.validateDay();
 
-    if (dayValidation.valid == false) {
+    if (dayValidation.valid === false) {
       this.dayError.textContent = "Day Error: " + e.detail.errorMessage;
       this.dayError.hidden = false;
     }
@@ -350,7 +350,7 @@ static styles = css`
     ? this.startDate.validateDay() && this.endDate.validateDay() 
     : this.startDate.validateDay();
 
-    if (dayValidation.valid == true) {
+    if (dayValidation.valid === true) {
       this.dayError.textContent = "";
       this.dayError.hidden = true;
     }
@@ -362,7 +362,7 @@ static styles = css`
     ? this.startDate.validateMonth() && this.endDate.validateMonth()
     : this.startDate.validateMonth();
 
-    if (monthValidation.valid == false) {
+    if (monthValidation.valid === false) {
       this.monthError.textContent = "Month Error: " + e.detail.errorMessage;
       this.monthError.hidden = false;
     } 
@@ -374,7 +374,7 @@ static styles = css`
       ? this.startDate.validateMonth() && this.endDate.validateMonth() 
       : this.startDate.validateMonth();
 
-    if (monthValidation.valid == true) {
+    if (monthValidation.valid === true) {
       this.monthError.textContent = "";
       this.monthError.hidden = true;
     }
@@ -386,7 +386,7 @@ static styles = css`
       ? this.startDate.validateYear() && this.endDate.validateYear() 
       : this.startDate.validateYear();
 
-    if (yearValidation.valid == false) {
+    if (yearValidation.valid === false) {
       this.yearError.textContent = "Year Error: " + e.detail.errorMessage;
       this.yearError.hidden = false;
     } 
@@ -398,7 +398,7 @@ static styles = css`
       ? this.startDate.validateYear() && this.endDate.validateYear() 
       : this.startDate.validateYear();
 
-    if (yearValidation.valid == true) {
+    if (yearValidation.valid === true) {
       this.yearError.textContent = "";
       this.yearError.hidden = true;
     }
@@ -419,7 +419,7 @@ static styles = css`
       ? this.startDate.validateFormat() && this.endDate.validateFormat()
       : this.startDate.validateFormat();
 
-    if (formatValidation.valid == true) {
+    if (formatValidation.valid === true) {
       this.formatError.textContent = "";
       this.formatError.hidden = true;
     }
