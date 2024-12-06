@@ -12,6 +12,7 @@ import { TimelineDialog } from "../tl-dialog";
 import { EventManager } from "../event-manager";
 import { MainQuiz } from "../quiz/q-main-quiz";
 import { TlEventData } from "../tl-event-data";
+import { TlTimeline } from "./tl-timeline";
 
 @customElement("webwriter-timeline")
 export class WebWriterTimeline extends LitElementWw {
@@ -30,8 +31,8 @@ export class WebWriterTimeline extends LitElementWw {
         width: 100%;
         padding-left: 10px;
         padding-right: 10px;
-
         box-sizing: border-box;
+        margin-bottom: 20px; 
       }
 
       h4 {
@@ -40,25 +41,29 @@ export class WebWriterTimeline extends LitElementWw {
       .quiz-mode {
         display: none;
       }
+      .button-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding-top: 15px; 
+      }
     `;
   }
 
   static get scopedElements() {
     return {
       "dialog-input": DialogInput,
-
       "event-manager": EventManager,
       "event-container": EventContainer,
-
       "timeline-dialog": TimelineDialog,
-
       "main-quiz": MainQuiz,
       "sl-button": SlButton,
+      "tl-timeline":TlTimeline,
     };
   }
 
   private eventManager = new EventManager();
-  private mainQuiz = new MainQuiz();
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
     this.addEventListener("request-remove", (e) =>
@@ -70,32 +75,37 @@ export class WebWriterTimeline extends LitElementWw {
     return html`
       <div class="border" id="parent">
         <h4>My Timeline</h4>
-       
+        <tl-timeline></tl-timeline>
         <slot name="event-slot"></slot>
-        <hr />
         ${this.isContentEditable
           ? html`
               <timeline-dialog
                 id="timelineID"
-                @request-add=${(e) => this.eventManager.addEvent(e, this)}
-              ></timeline-dialog>
-              <!-- <reactive-controller></reactive-controller> -->
-              <sl-button id="addButton" @click=${this.openingTLDialog}
-                >Add Event</sl-button
-              >
-            `
+                @request-add=${(e) => this.eventManager.addEvent(e, this)}>
+              </timeline-dialog>
+              `
           : null}
-        <sl-button 
-          id="quizButton" 
-          variant="primary" outline
-          @click=${this.startQuiz}>
-          ${this.openQuiz ? "Refresh Quiz" : "Open Quiz"}
-        </sl-button
-        >
+              <!-- <reactive-controller></reactive-controller> -->
+        <div class="button-container">
+          <sl-button 
+            id="addButton" 
+            class="buttton-left"
+            @click=${this.openingTLDialog}>Add Event
+          </sl-button>
+      
+          <sl-button 
+            id="quizButton" 
+            variant="primary" outline
+            @click=${this.startQuiz}>
+            ${this.openQuiz ? "Refresh Quiz" : "Open Quiz"}
+          </sl-button>
+        </div>
+              
       </div>
 
       <main-quiz
         id="quiz"
+        class="quiz-container"
         @request-close-quiz=${this.endQuiz}
         hidden
       ></main-quiz>

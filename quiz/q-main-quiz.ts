@@ -81,6 +81,22 @@ export class MainQuiz extends LitElementWw {
         font-size: var(--sl-input-help-text-font-size-medium);
         color: var(--sl-color-warning-700);
       }
+      .button-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding-top: 15px; 
+      }
+      .button-left-container {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        width: 100%;
+      }
+      .button-spacer{
+        padding-right: 5px; 
+      }
     `;
   }
 
@@ -117,18 +133,15 @@ export class MainQuiz extends LitElementWw {
         </div>
         <div class="text-error" id="formatError" hidden> Please select one feedback option.</div>
 
-        <br />
-
         <div class="quiz-border">
           <p>Drag the correct title to the drop section</p>
           <div class="quiz-container">
-            <quiz-date-field id="date-container"></quiz-date-field>
+            <quiz-date-field id="date-container">
+              
+            </quiz-date-field>
             <quiz-title id="title-container"></quiz-title>
           </div>
         </div>
-        
-        
-        <br />
 
         ${(this.selected_option === 1 ||
           this.selected_option === 3) &&
@@ -136,30 +149,29 @@ export class MainQuiz extends LitElementWw {
             ? html`<p id="score-feedback">Your Score: ${this.score + " %"}</p>`
             : ""}
 
-        <br />
-        <br />
-
-        <sl-button 
-          variant="danger" outline 
-          @click="${this.endQuiz}">End Quiz 
-        </sl-button>
-        
-
-        <sl-button 
-          variant="neutral" outline 
-          @click="${this.resetAnswers}">Reset Quiz 
-        </sl-button>
-
-        <sl-button
-          id="check-matches"
-          variant="primary" outline
-          @click="${() => {
-            this.checkMatch();
-            this.calculateScore();
-          }}"
-          ?disabled=${this.droppedTitles.length === 0}
-          >Check Match
-        </sl-button>
+        <div class="button-container">
+          <div class="button-left-container">
+            <sl-button 
+              class="button-spacer"
+              variant="danger" outline 
+              @click="${this.endQuiz}">End Quiz 
+            </sl-button>
+          
+            <sl-button 
+              variant="neutral" outline 
+              @click="${this.resetAnswers}">Reset Quiz 
+            </sl-button>
+          </div>
+          <sl-button
+            id="check-matches"
+            variant="primary" outline
+            @click="${() => {
+              this.checkMatch();
+              this.calculateScore();
+            }}"
+            ?disabled=${this.droppedTitles.length === 0}>Check Match
+          </sl-button>
+        </div>
       </div>
     `;
   }
@@ -209,7 +221,6 @@ export class MainQuiz extends LitElementWw {
     this.selected_option = 0; 
     this.formatError.hidden = true;
     this.noNeedToReset = true; 
-
   }
 
   getAppendedEvents() {
@@ -334,13 +345,13 @@ checkMatch() {
     } else {
       this.score = this.score; 
     }
-     
   }
 
   saveQuizSelection(){
     this.selected_option = Number(this.quiz_selection.value);
-    if(this.selected_option !== undefined){
+    if(this.selected_option !== undefined || this.selected_option === "defaultValue"){
       this.formatError.hidden = true;
+      console.log("show error no selection");
     }
   }
  

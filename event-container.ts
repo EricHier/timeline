@@ -1,7 +1,8 @@
 import { LitElement, html, PropertyValues, css } from "lit";
 import { LitElementWw } from "@webwriter/lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import IconTextPlus from "@tabler/icons/outline/text-plus.svg";
+import IconBook from "@tabler/icons/outline/book.svg";
 import IconTrash from "@tabler/icons/outline/trash.svg";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { SlButton, SlDetails, SlIcon } from "@shoelace-style/shoelace";
@@ -13,7 +14,10 @@ export class EventContainer extends LitElementWw {
   @property({ type: String }) event_title;
   @property({ type: String }) event_startDate;
   @property({ type: String }) event_endDate;
-  @property({ type: Number, attribute: true, reflect: true })
+  // @property({ type: Number, attribute: true, reflect: true })
+
+  @query("#event_elements") accessor event_element;
+
   accessor tabIndex = -1;
 
   constructor() {
@@ -26,20 +30,68 @@ export class EventContainer extends LitElementWw {
   }
   
   static get styles() {
-    return css`
-      .title-style {
-        font-weight: bold;
-        color: #333;
+    return css`  
+      .line { 
+        height: 1px;
+        width: 150px;     //to do: shouldnt have a fixed size but should be same length as date + padding left and right 5px;
+        background: #484848;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        grid-column: 1;
+        grid-row: 2;
       }
 
-      .date-style {
-        color: #666;
+      .line::before {
+        content: "\ ";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #484848;
       }
-      .position {
-        margin-left: 10px;
+
+      //to do: align date to the middle of the line
+      .date-container{
+        display: grid;
+        align-items: center;
+
       }
-      :host(:not([contenteditable="true"]):not([contenteditable=""]))
-        .author-only {
+      .event-container {
+        display: flex;
+        /* justify-content: space-between; */
+        align-items: center;
+        padding: 16px ;
+        position: relative;
+      }
+
+      .event-date {
+        font-size: 14px;
+        font-weight: 700;
+        color: #484848;
+        margin-right: 16px;
+        grid-column: 1;
+        grid-row: 1;
+      }
+
+      .event-content {
+        border: 3px solid #E0E0E0;
+        border-radius: 5px;
+        flex-grow: 1;
+        display: flex; 
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .event-title {
+        font-size: 16px;
+        font-weight: 500;
+        padding: 5px; 
+        text-align: center;  
+        color:  #484848;
+      }
+      //to do: is still showing the details arrow and label
+      details summary {
         display: none;
       }
     `;
@@ -54,29 +106,42 @@ export class EventContainer extends LitElementWw {
   }
   // will run again in student view, TO DO: use other way to append new paragraph
   protected firstUpdated(_changedProperties: PropertyValues): void {
-    this.addParagraph();
+    // this.addParagraph();
     // console.log('First update completed. Current properties:', this.event_title, this.event_startDate, this.event_endDate);
   }
   
 
   render() {
     return html`
-        <div class="position">
-      <sl-details>
-        <span slot="summary">
-          <span class="title-style">${this.event_title || 'Untitled Event'}</span>
-          <span class="date-style">${this.event_startDate || 'No Start Date'}${this.event_endDate ? ` – ${this.event_endDate}` : ""}</span>
-        </span>
-        <slot></slot>
-        <sl-button variant="primary" outline @click="${this.addParagraph}">
-          <sl-icon src=${IconTextPlus} slot="prefix"></sl-icon>
-        </sl-button>
-        <sl-button variant="danger" outline @click="${this.removeEvent}">
-          <sl-icon src=${IconTrash} slot="prefix"></sl-icon>
-        </sl-button>
-      </sl-details>  
-    </div>
+      <div class="event-container">
+        <div class="date-container">
+          <div class="event-date">${this.event_startDate} ${this.event_endDate ? `- ${this.event_endDate}` : ''}</div>
+          <div class="line"></div>
+        </div>
+        
+        <div class="event-content">
+          <div class="event-title">${this.event_title}</div>
+          <sl-icon color=" text-red" src=${IconBook}  @click=${this.showEventContent} slot="prefix"></sl-icon>
+          <div class="event-element" id="event_elements" hidden>
+            <slot></slot>
+              <sl-button variant="primary" outline @click="${this.addParagraph}">
+                <sl-icon src=${IconTextPlus} slot="prefix"></sl-icon>
+              </sl-button>
+              <sl-button variant="danger" outline @click="${this.removeEvent}">
+                <sl-icon src=${IconTrash} slot="prefix"></sl-icon>
+              </sl-button>
+          </div>
+        </div>
+      </div>
     `;
+  }
+
+  showEventContent(){
+    if(this.event_element.hidden){
+      this.event_element.hidden = false; 
+    } else {
+      this.event_element.hidden = true; 
+    }
   }
 
   setConstructorAttributes(eventData: TlEventData){
@@ -102,7 +167,6 @@ export class EventContainer extends LitElementWw {
         composed: true,
       })
     );
-    // console.log("Delete request started: " + this.id);
   }
 
   // convert string into date for sorting dates

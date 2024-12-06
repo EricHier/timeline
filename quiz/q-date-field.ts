@@ -33,6 +33,7 @@ export class QuizDateField extends LitElementWw {
       color: #666;
       font-weight: 400;
       flex-direction: column;
+      font-size:  1.1rem;
       width: auto; 
       max-width: calc(100% - 10px); 
     }
@@ -44,7 +45,7 @@ export class QuizDateField extends LitElementWw {
       border: 2px dashed #d6d6da;
       border-radius: 7px;
       margin: 5px;
-      min-width: 100px; 
+      min-width: 50px; 
       min-height: 35px;
       max-width: calc(100% - 10px); 
       flex-direction: column;
@@ -76,13 +77,12 @@ export class QuizDateField extends LitElementWw {
       color: #c92c1b;
       border: 2px solid #e58e85;
     }
-
-.drop-section > * {
-  max-width: 100%;  
-  white-space: nowrap; 
-  overflow: hidden;  
-  text-overflow: ellipsis;  
-}
+    .drop-section > * {
+      max-width: 100%;  
+      white-space: nowrap; 
+      overflow: hidden;  
+      text-overflow: ellipsis;  
+    }
 
   `;
 
