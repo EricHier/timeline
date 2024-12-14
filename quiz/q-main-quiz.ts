@@ -97,6 +97,9 @@ export class MainQuiz extends LitElementWw {
       .button-spacer{
         padding-right: 5px; 
       }
+      :host(:not([contenteditable=true]):not([contenteditable=""])) .author-only {
+        display: none;
+      }
     `;
   }
 
@@ -121,7 +124,7 @@ export class MainQuiz extends LitElementWw {
         <div class="quiz-options" id="quiz-options">
           <sl-select
             id="quiz-selection"
-            class="quiz-selection"
+            class="quiz-selection author-only"
             label="Select Quiz Feedback"
             help-text="Please select which feedback the students should get."
             @sl-change="${this.saveQuizSelection}">
@@ -132,7 +135,7 @@ export class MainQuiz extends LitElementWw {
           </sl-select>
         </div>
         <div class="text-error" id="formatError" hidden> Please select one feedback option.</div>
-
+       
         <div class="quiz-border">
           <p>Drag the correct title to the drop section</p>
           <div class="quiz-container">
@@ -156,12 +159,15 @@ export class MainQuiz extends LitElementWw {
               variant="danger" outline 
               @click="${this.endQuiz}">End Quiz 
             </sl-button>
-          
+ 
             <sl-button 
               variant="neutral" outline 
+              class="author-only"
               @click="${this.resetAnswers}">Reset Quiz 
             </sl-button>
+
           </div>
+
           <sl-button
             id="check-matches"
             variant="primary" outline
@@ -171,6 +177,7 @@ export class MainQuiz extends LitElementWw {
             }}"
             ?disabled=${this.droppedTitles.length === 0}>Check Match
           </sl-button>
+
         </div>
       </div>
     `;
@@ -347,6 +354,7 @@ checkMatch() {
     }
   }
 
+  // to do: selection should be set once and then applies in the student view. (not author-only)
   saveQuizSelection(){
     this.selected_option = Number(this.quiz_selection.value);
     if(this.selected_option !== undefined || this.selected_option === "defaultValue"){

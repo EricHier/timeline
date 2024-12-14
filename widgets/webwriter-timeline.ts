@@ -56,7 +56,9 @@ export class WebWriterTimeline extends LitElementWw {
         display: flex;
         justify-content: start;
       }
-      
+      :host(:not([contenteditable=true]):not([contenteditable=""])) .author-only {
+        display: none;
+      }
     `;
   }
 
@@ -86,19 +88,17 @@ export class WebWriterTimeline extends LitElementWw {
         <h4>My Timeline</h4>
         <div class="timeline"> </div>
         <slot name="event-slot"></slot>
-        ${this.isContentEditable
-          ? html`
-              <timeline-dialog
-                id="timelineID"
-                @request-add=${(e) => this.eventManager.addEvent(e, this)}>
-              </timeline-dialog>
-              `
-          : null}
-              <!-- <reactive-controller></reactive-controller> -->
+
+        <timeline-dialog
+          id="timelineID"
+          class="author-only"
+          @request-add=${(e) => this.eventManager.addEvent(e, this)}>
+        </timeline-dialog>    
+        <!-- <reactive-controller></reactive-controller> -->
         <div class="button-container">
           <sl-button 
             id="addButton" 
-            class="buttton-left"
+            class="buttton-left author-only"
             @click=${this.openingTLDialog}>Add Event
           </sl-button>
       

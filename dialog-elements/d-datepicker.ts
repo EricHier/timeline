@@ -83,6 +83,7 @@ export class DialogDatePicker extends LitElement {
             : "date-div"}"
         >
           <sl-icon-button src=${IconCalendarMonth}></sl-icon-button>
+          <!-- day -->
           <sl-input
             class="date"
             type="text"
@@ -101,6 +102,7 @@ export class DialogDatePicker extends LitElement {
             valueAsString
           ></sl-input>
           <span class="divider">/</span>
+          <!-- month -->
           <sl-input
            class="date"
             type="text"
@@ -119,6 +121,8 @@ export class DialogDatePicker extends LitElement {
             valueAsString
           ></sl-input>
           <span class="divider">/</span>
+
+          <!-- year -->
           <sl-input
             class="date"
             type="text"
@@ -130,7 +134,7 @@ export class DialogDatePicker extends LitElement {
             }}"
             @keypress="${this.validateYearInput}"
             @sl-blur="${this.validateForErrors}"
-            placeholder="YYYY *"
+            placeholder="* YYYY"
             ?disabled="${!this.useTimePeriod && this.useEndDate}"
             maxlength="5"
             valueAsString
@@ -232,14 +236,16 @@ export class DialogDatePicker extends LitElement {
 
   // validate day and month input, TO DO: fix css for input fields when invalid
   validateForErrors() {
-    // const dayInput = this.shadowRoot.querySelector('#day') as SlInput;
-    // const monthInput = this.shadowRoot.querySelector('#month') as SlInput;
-    // const yearInput = this.shadowRoot.querySelector('#year') as SlInput;
-
     const dayValidation = this.validateDay();
     const monthValidation = this.validateMonth();
     const yearValidation = this.validateYear();
     const formatValidation = this.validateFormat();
+
+    if(this.day.length >= 1){
+      this.monthInput.setAttribute("placeholder","* MM");
+    } else {
+      this.monthInput.setAttribute("placeholder", "MM");
+    }
 
 
     // invalid day, dispatch error message to dialog
@@ -287,10 +293,8 @@ export class DialogDatePicker extends LitElement {
       );
     }
      // invalid year, dispatch error message to dialog
-    //  debugger;
-     if ((this.day.length > 0 || this.month.length > 0) && !yearValidation.valid) {
-      this.yearInput.setAttribute('todo','true');
-      this.yearInput.removeAttribute('invalid');
+     if (this.day.length > 0 && this.month.length > 0 && !yearValidation.valid) {
+      this.yearInput.setAttribute('invalid','true');
       this.dispatchEvent(
         new CustomEvent("show-year-validation-error", {
           detail: { errorMessage: yearValidation.errorMessage },
@@ -298,14 +302,8 @@ export class DialogDatePicker extends LitElement {
           composed: true,
         })
       );
-      if(this.day.length > 0 && this.month.length > 0){
-        this.yearInput.removeAttribute('todo');
-        this.yearInput.setAttribute('invalid','true');
-
-      }
     } else {
-        this.yearInput.removeAttribute('invalid');
-        this.yearInput.removeAttribute('todo');
+      this.yearInput.removeAttribute('invalid');
       this.dispatchEvent(
         new CustomEvent("hide-year-validation-error", {
           bubbles: true,
@@ -350,6 +348,7 @@ export class DialogDatePicker extends LitElement {
     if(this.yearInput.hasAttribute('todo')){
       this.yearInput.removeAttribute('todo');
     }
+    this.monthInput.setAttribute("placeholder", "MM");
 
     this.dates?.forEach((input: SlInput) => {
       input.value = "";
