@@ -48,6 +48,15 @@ export class WebWriterTimeline extends LitElementWw {
         width: 100%;
         padding-top: 15px; 
       }
+
+      .timeline { 
+        height: 500px;
+        width: 2px;    
+        background: #484848;
+        display: flex;
+        justify-content: start;
+      }
+      
     `;
   }
 
@@ -75,7 +84,7 @@ export class WebWriterTimeline extends LitElementWw {
     return html`
       <div class="border" id="parent">
         <h4>My Timeline</h4>
-        <tl-timeline></tl-timeline>
+        <div class="timeline"> </div>
         <slot name="event-slot"></slot>
         ${this.isContentEditable
           ? html`

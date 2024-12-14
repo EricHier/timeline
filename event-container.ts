@@ -2,7 +2,8 @@ import { LitElement, html, PropertyValues, css } from "lit";
 import { LitElementWw } from "@webwriter/lit";
 import { customElement, property, query } from "lit/decorators.js";
 import IconTextPlus from "@tabler/icons/outline/text-plus.svg";
-import IconBook from "@tabler/icons/outline/book.svg";
+import IconArrowsDiagonal from "@tabler/icons/outline/arrows-diagonal.svg";
+import IconArrowsDiagonalMinimize2 from "@tabler/icons/outline/arrows-diagonal-minimize-2.svg";
 import IconTrash from "@tabler/icons/outline/trash.svg";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { SlButton, SlDetails, SlIcon } from "@shoelace-style/shoelace";
@@ -14,6 +15,9 @@ export class EventContainer extends LitElementWw {
   @property({ type: String }) event_title;
   @property({ type: String }) event_startDate;
   @property({ type: String }) event_endDate;
+  @property({ type: Boolean }) accessor hiddenDiv = true;
+
+
   // @property({ type: Number, attribute: true, reflect: true })
 
   @query("#event_elements") accessor event_element;
@@ -31,38 +35,20 @@ export class EventContainer extends LitElementWw {
   
   static get styles() {
     return css`  
-      .line { 
-        height: 1px;
-        width: 150px;     //to do: shouldnt have a fixed size but should be same length as date + padding left and right 5px;
-        background: #484848;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        grid-column: 1;
-        grid-row: 2;
-      }
-
-      .line::before {
-        content: "\ ";
-        display: inline-block;
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: #484848;
-      }
-
-      //to do: align date to the middle of the line
-      .date-container{
-        display: grid;
-        align-items: center;
-
-      }
-      .event-container {
+      .event {
         display: flex;
         /* justify-content: space-between; */
         align-items: center;
         padding: 16px ;
         position: relative;
+        flex-direction: row;
+        width: auto;
+        max-width: 100%;
+      }
+
+      .date-container{
+        display: grid;
+        align-items: center;       //to do: align date to the middle of the line
       }
 
       .event-date {
@@ -74,11 +60,32 @@ export class EventContainer extends LitElementWw {
         grid-row: 1;
       }
 
+      .date-line { 
+        flex-grow: 1;
+        height: 1px;
+        width: 150px;     //to do: shouldnt have a fixed size but should be same length as date + padding left and right 5px;
+        background: #484848;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .date-line::before {
+        content: "\ ";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #484848;
+      }
+
       .event-content {
         border: 3px solid #E0E0E0;
         border-radius: 5px;
         flex-grow: 1;
-        display: flex; 
+        display: inline-block; 
         align-items: center;
         justify-content: space-between;
       }
@@ -90,9 +97,14 @@ export class EventContainer extends LitElementWw {
         text-align: center;  
         color:  #484848;
       }
-      //to do: is still showing the details arrow and label
-      details summary {
-        display: none;
+      .event-description-container {
+        border: 3px solid #E0E0E0;
+        border-radius: 5px;
+        flex-grow: 1;
+        display: inline-block; 
+        align-items: center;
+        justify-content: space-between;
+        width: auto; 
       }
     `;
   }
@@ -106,24 +118,29 @@ export class EventContainer extends LitElementWw {
   }
   // will run again in student view, TO DO: use other way to append new paragraph
   protected firstUpdated(_changedProperties: PropertyValues): void {
-    // this.addParagraph();
-    // console.log('First update completed. Current properties:', this.event_title, this.event_startDate, this.event_endDate);
   }
   
 
   render() {
     return html`
-      <div class="event-container">
+      <div class="event">
         <div class="date-container">
           <div class="event-date">${this.event_startDate} ${this.event_endDate ? `- ${this.event_endDate}` : ''}</div>
-          <div class="line"></div>
+          <div class="date-line"></div>
         </div>
         
-        <div class="event-content">
+        <div class="event-description-container">
           <div class="event-title">${this.event_title}</div>
-          <sl-icon color=" text-red" src=${IconBook}  @click=${this.showEventContent} slot="prefix"></sl-icon>
-          <div class="event-element" id="event_elements" hidden>
-            <slot></slot>
+          <sl-icon 
+            src=${this.hiddenDiv 
+              ? IconArrowsDiagonal 
+              : IconArrowsDiagonalMinimize2}
+            @click=${this.showEventContent}
+            slot="prefix">
+          </sl-icon>
+
+          <div id="event_elements" hidden>
+            <slot placeholder="enter a event description"></slot>
               <sl-button variant="primary" outline @click="${this.addParagraph}">
                 <sl-icon src=${IconTextPlus} slot="prefix"></sl-icon>
               </sl-button>
@@ -137,10 +154,14 @@ export class EventContainer extends LitElementWw {
   }
 
   showEventContent(){
+    // <!-- <sl-icon color=" text-red" src=${IconArrowsDiagonal}  @click=${this.showEventContent} slot="prefix"></sl-icon> -->
+
     if(this.event_element.hidden){
       this.event_element.hidden = false; 
+      this.hiddenDiv = false;
     } else {
       this.event_element.hidden = true; 
+      this.hiddenDiv = true; 
     }
   }
 
