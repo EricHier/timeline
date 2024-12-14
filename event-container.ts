@@ -31,9 +31,11 @@ export class EventContainer extends LitElementWw {
       display: flex;
       align-items: flex-start;
       padding: 16px;
+      padding-left: 0px;
       position: relative;
-      width: auto;
-      max-width: 100%;
+      width: max-content;
+      /* width: auto; */
+      /* max-width: 100%; */
     }
 
     .date-container {
@@ -49,6 +51,7 @@ export class EventContainer extends LitElementWw {
       margin-right: 16px;
       grid-column: 1;
       grid-row: 1;
+      padding-left: 7px;
     }
 
     .date-line {
@@ -88,22 +91,17 @@ export class EventContainer extends LitElementWw {
       text-align: left;
       color: #484848;
       flex: 1;
+      padding-right: 7px;
     }
 
     .event-title-icon {
       flex-direction: row; 
       display: flex; 
+      align-items: center;
     }
-
-
-    /* .event-content slot::before {
-      content: "enter a event description";
-      color: lightgray;
-      display: block;
+    .event-trash-can {
+      align-self:right; 
     }
-    .event-content slot::slotted(:not(:empty)) {
-      color: #484848;
-    } */
     `;
   }
 
@@ -133,7 +131,8 @@ export class EventContainer extends LitElementWw {
         
         <div class="event-description-container">
           <div class="event-title-icon">
-            <div class="event-title">${this.event_title}</div>
+            <div 
+            class="event-title">${this.event_title}</div>
             <sl-icon 
               class="event-icon"
               src=${this.hiddenDiv 
@@ -157,7 +156,7 @@ export class EventContainer extends LitElementWw {
               </sl-button> -->
 
             <sl-button 
-              class="author-only" 
+              class="author-only event-trash-can" 
               variant="danger" outline 
               @click="${this.removeEvent}">
               <sl-icon 
@@ -175,6 +174,11 @@ export class EventContainer extends LitElementWw {
     if(this.event_element.hidden){
       this.event_element.hidden = false; 
       this.hiddenDiv = false;
+
+      if(this.childElementCount == 0){
+        this.addParagraph();
+      }
+
     } else {
       this.event_element.hidden = true; 
       this.hiddenDiv = true; 
@@ -190,7 +194,7 @@ export class EventContainer extends LitElementWw {
   // on button press a paragraph with "add description" is added to slot
   addParagraph() {
     const parDescription = document.createElement("p");
-    parDescription.textContent = "Modify event content";
+    parDescription.textContent = "Modify event details";
     this.appendChild(parDescription);
   }
 
@@ -225,7 +229,7 @@ export class EventContainer extends LitElementWw {
       startMonth ? `-${startMonth}` : ""
     }${startDay ? `-${startDay}` : ""}`;
     var d = new Date(Date.parse(sortStartDate));
-    console.log(" start date is : ", d, " the parsed date is: ", sortStartDate);
+    // console.log(" start date is : ", d, " the parsed date is: ", sortStartDate);
     return d;
   }
 

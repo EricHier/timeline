@@ -7,7 +7,6 @@ import "@shoelace-style/shoelace/dist/themes/light.css";
 import { SlButton, SlDialog, SlIcon, SlInput } from "@shoelace-style/shoelace";
 import { EventController } from "../tl-event-controller";
 import { EventContainer } from "../event-container";
-import { DialogInput } from "../dialog-elements/d-input";
 import { TimelineDialog } from "../tl-dialog";
 import { EventManager } from "../event-manager";
 import { MainQuiz } from "../quiz/q-main-quiz";
@@ -49,13 +48,23 @@ export class WebWriterTimeline extends LitElementWw {
         padding-top: 15px; 
       }
 
+      .timeline-parent { 
+        display: flex;
+        justify-content: start;
+        flex-direction: row; 
+      }
+      .timeline-container { 
+        display: flex;
+        justify-content: start;
+        flex-direction: column; 
+      }
+
       .timeline { 
         height: 500px;
         width: 2px;    
         background: #484848;
-        display: flex;
-        justify-content: start;
       }
+
       :host(:not([contenteditable=true]):not([contenteditable=""])) .author-only {
         display: none;
       }
@@ -64,7 +73,6 @@ export class WebWriterTimeline extends LitElementWw {
 
   static get scopedElements() {
     return {
-      "dialog-input": DialogInput,
       "event-manager": EventManager,
       "event-container": EventContainer,
       "timeline-dialog": TimelineDialog,
@@ -86,9 +94,13 @@ export class WebWriterTimeline extends LitElementWw {
     return html`
       <div class="border" id="parent">
         <h4>My Timeline</h4>
-        <div class="timeline"> </div>
-        <slot name="event-slot"></slot>
-
+        <div class="timeline-parent"> 
+          <div class="timeline"> 
+            <!-- <div class="timeline"></div> -->
+            <slot name="event-slot"></slot>
+          </div>
+        </div>
+        
         <timeline-dialog
           id="timelineID"
           class="author-only"

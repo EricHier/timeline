@@ -15,9 +15,8 @@ import {
 
 import { DialogInput } from "./dialog-elements/d-input";
 import { EventManager } from "./event-manager";
-import { EventContainer } from "./event-container";
 import { DialogToggle } from "./dialog-elements/d-toggle";
-import {DialogDatePicker } from "./dialog-elements/d-datepicker";
+import { DialogDatePicker } from "./dialog-elements/d-datepicker";
 import { TlEventData } from "./tl-event-data";
 
 @customElement("timeline-dialog")
@@ -119,7 +118,6 @@ static styles = css`
       "dialog-input": DialogInput,
       "dialog-toggle": DialogToggle,
       
-      "event-container": EventContainer,
       "event-manager": EventManager,
       
       "sl-button": SlButton,

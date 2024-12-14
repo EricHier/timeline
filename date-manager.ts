@@ -42,12 +42,9 @@ export class DateManager extends LitElementWw {
 
   // creates array of timeline children elements (events) and sorts them via start date, re-append after
   sortEvents(timeline){
-    // const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
-    // console.log("sorting");
     [...timeline.children]
       .sort((a: EventContainer, b:EventContainer) => {return a.getStartDate() > b.getStartDate() ? 1 : -1})
       .forEach(node => timeline.appendChild(node));
-      // console.log("sorted succesfully");
   }
 
   // get name of the month 
