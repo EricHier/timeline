@@ -33,7 +33,7 @@ export class MainQuiz extends LitElementWw {
   @query("#score-feedback") accessor score_feedback: HTMLParagraphElement;
   @query("#quiz-selection") accessor quiz_selection: SlSelect;
   @query("#check-button") accessor check_button: SlSelect;
-  @query("#formatError") accessor formatError;
+  // @query("#formatError") accessor formatError;
 
 
   static get styles() {
@@ -125,9 +125,7 @@ export class MainQuiz extends LitElementWw {
   render() {
     return html`
       <div class="border" id="parent">
-        
-        
-       
+
         <div class="quiz-border">
           <p>Drag the correct title to the drop section</p>
           <div class="quiz-container">
@@ -146,12 +144,7 @@ export class MainQuiz extends LitElementWw {
 
         <div class="button-container">
           <div class="button-left-container">
-            <sl-button 
-              class="button-spacer"
-              variant="danger" outline 
-              @click="${this.endQuiz}">End Quiz 
-            </sl-button>
- 
+    
             <sl-button 
               variant="neutral" outline 
               @click="${this.resetAnswers}">Reset Quiz 
@@ -196,16 +189,6 @@ export class MainQuiz extends LitElementWw {
     });
   }
 
-  endQuiz() {
-    this.resetQuiz();
-    this.dispatchEvent(
-      new CustomEvent("request-close-quiz", {
-        bubbles: true,
-        composed: true,
-      })
-    );
-  }
-
   resetQuiz() {
     this.resetAnswers();
     this.date_container.innerHTML = "";
@@ -239,7 +222,7 @@ export class MainQuiz extends LitElementWw {
     this.score = 0; 
     this.quiz_selection.value = "defaultValue";
     this.selected_option = 0; 
-    this.formatError.hidden = true;
+    // this.formatError.hidden = true;
     this.noNeedToReset = true; 
   }
 
@@ -322,13 +305,12 @@ export class MainQuiz extends LitElementWw {
   
 checkMatch() {
   this.droppedTitles.forEach(({ element, dropSection, dropDate }) => {
-    debugger; 
     const titleId = element.id;
     const matchFound = this.appendedEvents.find(event => 
         `title-${event.title}` === titleId && event.date === dropDate
     );
     if(this.selected_option === undefined){
-      this.formatError.hidden = false;
+      // this.formatError.hidden = false;
       console.log("undefined option, show error");
     }
 
@@ -336,14 +318,14 @@ checkMatch() {
       if(this.selected_option === 1|| this.selected_option ===2){
         element.setAttribute('quiz-result', 'match');
         dropSection.setAttribute('quiz-result', 'match');
-        this.formatError.hidden = true;
+        // this.formatError.hidden = true;
       }
       this.matchCount++;
     } else {
       if(this.selected_option === 1|| this.selected_option ===2){
         element.setAttribute('quiz-result', 'mismatch');
         dropSection.setAttribute('quiz-result', 'mismatch'); 
-        this.formatError.hidden = true;
+        // this.formatError.hidden = true;
       }
     }
   });
@@ -368,12 +350,10 @@ checkMatch() {
   }
 
   // to do: selection should be set once and then applies in the student view. (not author-only)
-  saveQuizSelection(){
-    this.selected_option = Number(this.quiz_selection.value);
-    if(this.selected_option !== undefined || this.selected_option === "defaultValue"){
-      this.formatError.hidden = true;
-      console.log("show error no selection");
-    }
+ 
+  retriveSelection(selection){
+    this.quiz_selection = selection; 
+    this.selected_option =  Number(this.quiz_selection.value);
   }
  
 }

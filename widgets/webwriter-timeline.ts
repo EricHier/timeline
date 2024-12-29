@@ -13,35 +13,42 @@ import {
   SlSelect, 
   SlOption, 
   SlTabShowEvent,
-  SlSwitch } from "@shoelace-style/shoelace";
-import { EventController } from "../tl-event-controller";
+  SlSwitch,
+  SlIcon,
+  SlTooltip,
+ } from "@shoelace-style/shoelace";
 import { EventContainer } from "../event-container";
 import { TimelineDialog } from "../tl-dialog";
 import { EventManager } from "../event-manager";
 import { MainQuiz } from "../quiz/q-main-quiz";
-import { TlEventData } from "../tl-event-data";
 import { TlTimeline } from "./tl-timeline";
+import IconCirclePlusFilled from "@tabler/icons/outline/circle-plus.svg";
 
 @customElement("webwriter-timeline")
 export class WebWriterTimeline extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   @property({ type: Boolean, attribute: true, reflect: true }) accessor quizTabOpen = false;
+  @property({ type: Boolean, attribute: true, reflect: true }) accessor isChecked = false;
+  @property({ type: Boolean, attribute: true, reflect: true }) accessor noChildren = true;
+  @property({ type: Number, attribute: true, reflect: true }) accessor selected_option;
 
+  @query("#quiz-selection") accessor quiz_selection: SlSelect;
   @query("#quiz") accessor quiz: MainQuiz;
   @query("#timelineID") accessor dialog: TimelineDialog;
-  @query("#quizPanel") accessor quizPanel: SlTab;
+  @query("#quiz-panel") accessor quizPanel: SlTab;
+  @query("#quiz-toggle") accessor quizToggle: SlSwitch;
+  @query("#formatError") accessor formatError;
 
   static get styles() {
     return css`
       .border {
-        /* border: 1px solid lightgray;
-        border-radius: 5px; */
         min-height: 700px;
         width: 100%;
-        padding-left: 10px;
+        padding-left: 20px;
         padding-right: 10px;
         box-sizing: border-box;
         margin-bottom: 20px; 
+        margin-top: 20px; 
       }
 
       h4 {
@@ -57,24 +64,30 @@ export class WebWriterTimeline extends LitElementWw {
         width: 100%;
         padding-top: 15px; 
       }
-
       .timeline-parent { 
         display: flex;
         justify-content: start;
         flex-direction: row; 
+        position: relative;
       }
-      .timeline-container { 
-        display: flex;
-        justify-content: start;
-        flex-direction: column; 
-      }
-
       .timeline { 
         height: 500px;
         width: 2px;    
         background: #484848;
+        position: relative;
+      } 
+      .timeline::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 10px solid #484848;
       }
-
       :host(:not([contenteditable=true]):not([contenteditable=""])) .author-only {
         display: none;
       }
@@ -82,7 +95,21 @@ export class WebWriterTimeline extends LitElementWw {
         border-top: 1px solid darkgray;
         border-bottom: 1px solid darkgray;
       }
-      
+      .quiz-selection {
+        padding-left: 10px;
+      }  
+      .add-event-icon {
+        position: absolute;
+        left: -15px; 
+        bottom: 0;
+        transform: translateY(-20px);
+        background-color: white;
+        color: #83b9e0;
+        font-size: 32px;
+      }  
+      .quiz-selection {
+        width: max-content; 
+      }
     `;
   }
 
@@ -101,6 +128,9 @@ export class WebWriterTimeline extends LitElementWw {
       "sl-select": SlSelect,
       "sl-option": SlOption,
       "sl-switch": SlSwitch,
+      "sl-icon": SlIcon,
+      "sl-tooltip": SlTooltip,
+
     };
   }
 
@@ -110,58 +140,65 @@ export class WebWriterTimeline extends LitElementWw {
     this.addEventListener("request-remove", (e) =>
       this.eventManager.removeEvent(e)
     );
-
-    // this.addEventListener("quiz-updates",this.startQuiz);
-    // this.quizPanel.addEventListener("sl-tab-show", this.startQuiz);  
+    this.changeQuizDisablilty;
   }
 
   render() {
     return html`
-      <sl-tab-group class="ww-timeline-widget"  @sl-tab-show=${(e:SlTabShowEvent) => this.checkSelectedTab(e.detail.name)}>
-        <sl-tab slot="nav" panel="timeline">Timeline</sl-tab>
+      <sl-tab-group 
+        class="ww-timeline-widget"  
+        @sl-tab-show=${(e:SlTabShowEvent) => 
+          this.checkSelectedTab(e.detail.name)}>
+
+        <sl-tab 
+          slot="nav" 
+          panel="timeline">
+          Timeline
+        </sl-tab>
         <sl-tab 
           slot="nav" 
           panel="quiz"
-          id="quizPanel"
-        >Quiz
+          id="quiz-panel"
+          disabled>
+          Quiz
         </sl-tab>
         
 
         <sl-tab-panel name="timeline">
           <div class="border" id="parent">
-          <!-- <sl-input placeholder="Enter timeline title" id="title"></sl-input>
-          <p></p> -->
 
             <div class="timeline-parent"> 
               <div class="timeline"> 
                 <slot name="event-slot"></slot>
+                <sl-tooltip 
+                  content="Click me to add events to the timeline."
+                  placement="right"
+                  hoist
+                  style="--show-delay: 1000ms;">
+                  <sl-icon 
+                    src=${IconCirclePlusFilled} 
+                    class="add-event-icon"
+                    id="addButton" 
+                    class="buttton-left author-only"
+                    @click=${this.openingTLDialog}>
+                  </sl-icon>
+                </sl-tooltip>
               </div>
             </div>
             
+
             <timeline-dialog
               id="timelineID"
               class="author-only"
               @request-add=${(e) => this.eventManager.addEvent(e, this)}>
             </timeline-dialog>    
-            <!-- <reactive-controller></reactive-controller> -->
-            <div class="button-container">
-              <sl-button 
-                id="addButton" 
-                class="buttton-left author-only"
-                @click=${this.openingTLDialog}>Add Event
-              </sl-button>
-          
-              <sl-button 
-                id="quizButton" 
-                variant="primary" outline
-                @click=${this.startQuiz}>
-                ${this.quizTabOpen ? "Refresh Quiz" : "Open Quiz"}
-              </sl-button>
-            </div>
+
+           
+
           </div>
         </sl-tab-panel>
 
-        <sl-tab-panel name="quiz">
+        <sl-tab-panel name="quiz" >
           <main-quiz id="quiz"></main-quiz>
         </sl-tab-panel>
       </sl-tab-group>
@@ -175,6 +212,7 @@ export class WebWriterTimeline extends LitElementWw {
                       class="quiz-selection"
                       label="Select Quiz Feedback"
                       help-text="Please select which feedback the students should get."
+                      @sl-change=${() => this.quiz.resetAnswers()}
                       >
                         <sl-option value="1">Score and Correct Answers</sl-option>
                         <sl-option value="2">Correct Answers Only</sl-option>
@@ -183,9 +221,30 @@ export class WebWriterTimeline extends LitElementWw {
                     </sl-select>
                     <div class="text-error" id="formatError" hidden> Please select one feedback option.</div>
                   </div>`
-          : html`<sl-switch>Use Timeline Quiz</sl-switch>`}
+          : html` <sl-tooltip content="Toggle me to use the timeline-quiz-mode in the second tab."
+                    placement="bottom-start"
+                    hoist
+                    style="--show-delay: 1000ms;" >
+                      <sl-switch 
+                        id="quiz-toggle" 
+                        class="quiz-selection" 
+                        @sl-change=${(e) => this.changeQuizDisablilty(e)} 
+                        .checked=${this.isChecked}>
+                        Use Timeline Quiz
+                      </sl-switch>
+                  </sl-tooltip>`} 
+          <!-- highlight switch when clicked on tab but disabled  -->
       </div>
     `;
+  }
+
+//enable/disable quiz tab 
+  changeQuizDisablilty(e) {
+    this.isChecked = e.target.checked; 
+
+    if(this.quizPanel){
+        this.quizPanel.disabled = !this.isChecked; 
+    }
   }
 
   // chek if quiz tab is selected 
@@ -208,5 +267,16 @@ export class WebWriterTimeline extends LitElementWw {
   // show quiz and add events to it
   startQuiz() {
     this.quiz.startQuiz([...this.children]);
+  }
+
+  saveQuizSelection(){
+    this.selected_option = Number(this.quiz_selection.value);
+    if(this.selected_option !== undefined || this.selected_option === "defaultValue"){
+      this.formatError.hidden = true;
+    } else {
+      this.formatError.hidden = false;
+    }
+    
+    this.quiz.retriveSelection(this.quiz_selection);
   }
 }
