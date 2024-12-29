@@ -39,8 +39,8 @@ export class MainQuiz extends LitElementWw {
   static get styles() {
     return css`
       .border {
-        border: 1px solid lightgray;
-        border-radius: 5px;
+        /* border: 1px solid lightgray;
+        border-radius: 5px; */
         min-height: 700px;
         width: 100%;
         padding-left: 10px;
@@ -51,13 +51,13 @@ export class MainQuiz extends LitElementWw {
         text-align: center;
       }
       .quiz-container {
-        border-radius: 5px;
+        /* border-radius: 5px; */
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px;
         width: 100%;
         min-height: 200px;
-        border: 1px solid #d6d6da;
+        /* border: 1px solid #d6d6da; */
         flex-direction: column;
       }
       .quiz-border {
@@ -116,31 +116,23 @@ export class MainQuiz extends LitElementWw {
     };
   }
 
+  protected firstUpdated(_changedProperties: PropertyValues): void {
+  
+    // console.log("quiz-update requested.");
+  }
+  
+
   render() {
     return html`
       <div class="border" id="parent">
-        <h4>My Quiz</h4>
-
-        <div class="quiz-options" id="quiz-options">
-          <sl-select
-            id="quiz-selection"
-            class="quiz-selection author-only"
-            label="Select Quiz Feedback"
-            help-text="Please select which feedback the students should get."
-            @sl-change="${this.saveQuizSelection}">
-              <sl-option value="1">Score and Correct Answers</sl-option>
-              <sl-option value="2">Correct Answers Only</sl-option>
-              <sl-option value="3">Score Only</sl-option>
-              <sl-option value="4">None</sl-option>
-          </sl-select>
-        </div>
-        <div class="text-error" id="formatError" hidden> Please select one feedback option.</div>
+        
+        
        
         <div class="quiz-border">
           <p>Drag the correct title to the drop section</p>
           <div class="quiz-container">
             <quiz-date-field id="date-container">
-              
+              <!-- id could -->
             </quiz-date-field>
             <quiz-title id="title-container"></quiz-title>
           </div>
@@ -162,7 +154,6 @@ export class MainQuiz extends LitElementWw {
  
             <sl-button 
               variant="neutral" outline 
-              class="author-only"
               @click="${this.resetAnswers}">Reset Quiz 
             </sl-button>
 
@@ -181,6 +172,28 @@ export class MainQuiz extends LitElementWw {
         </div>
       </div>
     `;
+  }
+
+  startQuiz(events){
+    const existingEvents = this.appendedEvents;
+
+    const eventsToAppend = events.filter((event) => {
+      const title = event.getAttribute('event_title');
+      const date = event.getAttribute('event_startdate');
+
+      const newEvent = !existingEvents.some(
+        (existingEvent) => 
+          existingEvent.title === title || 
+          existingEvent.date === date
+      ); 
+      return newEvent;
+    });
+
+    eventsToAppend.forEach((event) => {
+      let date = event.getAttribute("event_startDate");
+      const title = event.getAttribute("event_title");
+      this.addEventElements(date, title);
+    });
   }
 
   endQuiz() {

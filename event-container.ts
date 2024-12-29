@@ -48,7 +48,7 @@ export class EventContainer extends LitElementWw {
       font-size: 14px;
       font-weight: 700;
       color: #484848;
-      margin-right: 16px;
+      //margin-right: 16px;
       grid-column: 1;
       grid-row: 1;
       padding-left: 7px;

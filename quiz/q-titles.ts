@@ -21,11 +21,11 @@ export class QuizTitles extends LitElementWw {
       border: 1px solid #d6d6da;
       background: #f7f7f8;
       border-radius: 5px;
-      margin: 10px;
+      /* margin: 10px; */
       padding: 10px; 
       box-sizing: border-box;
       min-height: 50px; 
-      width: calc(100% - 20px);
+      width: 100%;
     }
 
     .title-border {

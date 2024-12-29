@@ -14,10 +14,10 @@ export class QuizDateField extends LitElementWw {
       background: #f7f7f8;
       border-radius: 5px;
       /* width: 100%; */
-      margin-left: 10px;
+      /* margin-left: 10px; */
       /* margin-right: 10px; */
-      margin-top: 10px;
-      margin-bottom: 10px;
+      /* margin-top: 10px; */
+      /* margin-bottom: 10px; */
       box-sizing: border-box;
       min-height: 50px; 
       max-width:100%;
