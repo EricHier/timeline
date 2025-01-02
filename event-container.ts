@@ -6,7 +6,7 @@ import IconArrowsDiagonal from "@tabler/icons/outline/arrows-diagonal.svg";
 import IconArrowsDiagonalMinimize2 from "@tabler/icons/outline/arrows-diagonal-minimize-2.svg";
 import IconTrash from "@tabler/icons/outline/trash.svg";
 import "@shoelace-style/shoelace/dist/themes/light.css";
-import { SlButton, SlDetails, SlIcon } from "@shoelace-style/shoelace";
+import { SlButton, SlDetails, SlIcon, SlDialog, SlTooltip  } from "@shoelace-style/shoelace";
 import { TlEventData } from "./tl-event-data";
 
 @customElement("event-container")
@@ -18,8 +18,7 @@ export class EventContainer extends LitElementWw {
   @property({ type: Boolean }) accessor hiddenDiv = true;
 
   @query("#event_elements") accessor event_element;
-
-  accessor tabIndex = -1;
+  @query("#delete-event-dialog") accessor dialog : SlDialog;
 
   constructor() {
     super();
@@ -57,7 +56,7 @@ export class EventContainer extends LitElementWw {
     .date-line {
       flex-grow: 1;
       height: 1px;
-      width: 160px; //to do: shouldnt have a fixed size but should be same length as date + padding left and right 5px;
+      width: 160px; 
       background: #484848;
       display: flex;
       justify-content: space-between;
@@ -65,6 +64,18 @@ export class EventContainer extends LitElementWw {
       grid-column: 1;
       grid-row: 2;
     }
+    .date-time-period-line {
+      flex-grow: 1;
+      height: 1px;
+      width: 320px; 
+      background: #484848;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      grid-column: 1;
+      grid-row: 2;
+    }
+
     .date-line::before {
       content: "\ ";
       display: inline-block;
@@ -101,6 +112,17 @@ export class EventContainer extends LitElementWw {
     }
     .event-trash-can {
       align-self:right; 
+      padding-right: 20px;
+    }
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .button {
+      padding-top: 5px; 
+      width: 100px; 
     }
     `;
   }
@@ -110,6 +132,8 @@ export class EventContainer extends LitElementWw {
       "sl-details": SlDetails,
       "sl-button": SlButton,
       "sl-icon": SlIcon,
+      "sl-dialog": SlDialog,
+      "sl-tooltip": SlTooltip,
     };
   }
   // will run again in student view, TO DO: use other way to append new paragraph
@@ -124,46 +148,76 @@ export class EventContainer extends LitElementWw {
   render() {
     return html`
       <div class="event">
-        <div class="date-container">
+        <!-- <div class="date-container">
           <div class="event-date">${this.event_startDate} ${this.event_endDate ? `- ${this.event_endDate}` : ''}</div>
           <div class="date-line"></div>
-        </div>
+        </div> -->
         
+        <div class="date-container"> 
+        ${this.event_endDate === ""
+          ? html`
+            <div class="event-date">${this.event_startDate}</div>
+            <div class="date-line"></div>`
+          : html`
+            <div class="event-date">${this.event_startDate}${" - "}${this.event_endDate}</div>
+            <div class="date-time-period-line"></div>`
+        }
+        </div>
+
         <div class="event-description-container">
           <div class="event-title-icon">
             <div 
             class="event-title">${this.event_title}</div>
+            ${this.hiddenDiv === false
+              ? html`
+                <sl-icon 
+                    class="author-only event-trash-can" 
+                    src=${IconTrash} 
+                    slot="prefix"
+                    @click="${() => this.dialog.show()}">
+                  </sl-icon>`
+              : html``
+            }
+
             <sl-icon 
               class="event-icon"
               src=${this.hiddenDiv 
                 ? IconArrowsDiagonal 
                 : IconArrowsDiagonalMinimize2}
-              @click=${this.showEventContent}
+              @click=${() =>this.showEventContent()}
               slot="prefix">
             </sl-icon>
           </div>
-          
+          <sl-dialog
+          id="delete-event-dialog"
+          label='Do you want to delete this timeline event "${this.event_title}" ?'>
+
+            <div class="button-container">
+              <sl-button 
+                class="button" 
+                id="closeButton" 
+                slot="footer" 
+                variant="default"
+                @click="${() => this.dialog.hide()}">Exit
+              </sl-button>
+ 
+              <sl-button 
+                class="button" 
+                id="deleteButton" 
+                slot="footer" 
+                variant="danger" 
+                @click="${() => this.removeEvent()}">Delete
+              </sl-button>
+            </div>
+          </sl-dialog>
           <div id="event_elements" class="event-content" hidden>
             <slot></slot> 
-              <!-- <sl-button 
-                class="author-only" 
-                variant="primary" outline 
-                @click="${this.addParagraph}">
-                <sl-icon 
-                  src=${IconTextPlus} s
-                  lot="prefix">
-                </sl-icon>
-              </sl-button> -->
 
-            <sl-button 
+            <!-- <sl-button 
               class="author-only event-trash-can" 
               variant="danger" outline 
-              @click="${this.removeEvent}">
-              <sl-icon 
-                src=${IconTrash} 
-                slot="prefix">
-              </sl-icon>
-            </sl-button>
+              @click="${this.removeEvent}"> -->
+            <!-- </sl-button> -->
           </div>
         </div>
       </div>
@@ -193,6 +247,7 @@ export class EventContainer extends LitElementWw {
 
   // on button press a paragraph with "add description" is added to slot
   addParagraph() {
+    console.log(this.event_endDate, "end date");
     const parDescription = document.createElement("p");
     parDescription.textContent = "Modify event details";
     this.appendChild(parDescription);

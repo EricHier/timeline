@@ -50,7 +50,7 @@ static styles = css`
 
       sl-dialog::part(base) {
         position: absolute;
-        height: 700px;
+        height: 100%;
       }
 
       sl-dialog::part(overlay) {
