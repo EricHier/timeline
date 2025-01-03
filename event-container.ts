@@ -29,7 +29,7 @@ export class EventContainer extends LitElementWw {
     .event {
       display: flex;
       align-items: flex-start;
-      padding: 16px;
+      padding: 15px;
       padding-left: 0px;
       position: relative;
       width: max-content;
@@ -37,6 +37,17 @@ export class EventContainer extends LitElementWw {
       /* max-width: 100%; */
     }
 
+    .event:first-child {
+      display: flex;
+      align-items: flex-start;
+      padding: 16px;
+      padding-top: 5px;
+      padding-left: 0px;
+      position: relative;
+      width: max-content;
+      /* width: auto; */
+      /* max-width: 100%; */
+    }
     .date-container {
       display: grid;
       align-items: center;
@@ -75,8 +86,16 @@ export class EventContainer extends LitElementWw {
       grid-column: 1;
       grid-row: 2;
     }
-
     .date-line::before {
+      content: "\ ";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #484848;
+    }
+
+    .date-time-period-line::before {
       content: "\ ";
       display: inline-block;
       width: 6px;
@@ -93,6 +112,10 @@ export class EventContainer extends LitElementWw {
       align-items: left;
       justify-content: space-between;
       width: 100%;
+      max-width: 500px;
+      max-height: 400px;
+      overflow-wrap: break-word;
+      overflow-y: auto;
       flex-direction: column; 
     }
 
@@ -148,11 +171,6 @@ export class EventContainer extends LitElementWw {
   render() {
     return html`
       <div class="event">
-        <!-- <div class="date-container">
-          <div class="event-date">${this.event_startDate} ${this.event_endDate ? `- ${this.event_endDate}` : ''}</div>
-          <div class="date-line"></div>
-        </div> -->
-        
         <div class="date-container"> 
         ${this.event_endDate === ""
           ? html`
@@ -178,15 +196,12 @@ export class EventContainer extends LitElementWw {
                   </sl-icon>`
               : html``
             }
-
             <sl-icon 
               class="event-icon"
-              src=${this.hiddenDiv 
-                ? IconArrowsDiagonal 
-                : IconArrowsDiagonalMinimize2}
-              @click=${() =>this.showEventContent()}
+              .src=${this.hiddenDiv ? IconArrowsDiagonal : IconArrowsDiagonalMinimize2}
+              @click=${() => this.showEventContent()}
               slot="prefix">
-            </sl-icon>
+            </sl-icon>        
           </div>
           <sl-dialog
           id="delete-event-dialog"
@@ -212,12 +227,6 @@ export class EventContainer extends LitElementWw {
           </sl-dialog>
           <div id="event_elements" class="event-content" hidden>
             <slot></slot> 
-
-            <!-- <sl-button 
-              class="author-only event-trash-can" 
-              variant="danger" outline 
-              @click="${this.removeEvent}"> -->
-            <!-- </sl-button> -->
           </div>
         </div>
       </div>
@@ -247,7 +256,6 @@ export class EventContainer extends LitElementWw {
 
   // on button press a paragraph with "add description" is added to slot
   addParagraph() {
-    console.log(this.event_endDate, "end date");
     const parDescription = document.createElement("p");
     parDescription.textContent = "Modify event details";
     this.appendChild(parDescription);
@@ -284,7 +292,6 @@ export class EventContainer extends LitElementWw {
       startMonth ? `-${startMonth}` : ""
     }${startDay ? `-${startDay}` : ""}`;
     var d = new Date(Date.parse(sortStartDate));
-    // console.log(" start date is : ", d, " the parsed date is: ", sortStartDate);
     return d;
   }
 

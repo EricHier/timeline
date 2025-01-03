@@ -31,6 +31,7 @@ export class WebWriterTimeline extends LitElementWw {
   @property({ type: Boolean, attribute: true, reflect: true }) accessor isChecked = false;
   @property({ type: Boolean, attribute: true, reflect: true })  accessor noChildren = true;
   @property({ type: Number, attribute: true, reflect: true })  accessor quizFeedbackOption;
+  @property({ type: Number, attribute: true, reflect: true }) accessor childrenCount = this.childElementCount;
 
   @query("#quiz-selection") accessor quizFeedbackSelecter: SlSelect;
   @query("#quiz") accessor quiz: MainQuiz;
@@ -38,11 +39,16 @@ export class WebWriterTimeline extends LitElementWw {
   @query("#quiz-panel") accessor quizPanel: SlTab;
   @query("#quiz-toggle") accessor quizToggle: SlSwitch;
   @query("#formatError") accessor formatError;
+  @query("#add-tooltip") accessor addToolTip;
+
 
   static get styles() {
     return css`
       .border {
         height: 500px;
+        max-height: 500px; 
+        overflow-wrap: break-word;
+        overflow-y: auto;
         width: 100%;
         padding-left: 20px;
         padding-right: 20px;
@@ -70,10 +76,15 @@ export class WebWriterTimeline extends LitElementWw {
         position: relative;
       }
       .timeline {
-        height: 500px;
+        min-height: 15px; 
+        height: auto;
         width: 2px;
         background: #484848;
         position: relative;
+        padding-bottom: 50px;
+      }
+      .timeline-item:last-child {
+        margin-bottom: 40px; 
       }
       .timeline::after {
         content: "";
@@ -102,7 +113,7 @@ export class WebWriterTimeline extends LitElementWw {
         position: absolute;
         left: -15px;
         bottom: 0;
-        transform: translateY(-20px);
+        transform: translateY(-15px);
         background-color: white;
         color: #83b9e0;
         font-size: 32px;
@@ -110,6 +121,7 @@ export class WebWriterTimeline extends LitElementWw {
       .quiz-selection {
         width: 100%;
       }
+    
     `;
   }
 
@@ -135,11 +147,16 @@ export class WebWriterTimeline extends LitElementWw {
 
   private eventManager = new EventManager();
 
-  protected firstUpdated(_changedProperties: PropertyValues): void {
+  protected updated(_changedProperties: PropertyValues): void {
     this.addEventListener("request-remove", (e) =>
       this.eventManager.removeEvent(e)
     );
     this.changeQuizDisablilty;
+
+    // to do: fix
+    if(this.childrenCount === 0) {
+      this.addToolTip.show();
+    }
   }
 
   render() {
@@ -160,6 +177,7 @@ export class WebWriterTimeline extends LitElementWw {
                 <sl-tooltip
                   content="Click me to add events to the timeline."
                   placement="right"
+                  id="add-tooltip"
                   hoist
                   style="--show-delay: 1000ms;"
                 >

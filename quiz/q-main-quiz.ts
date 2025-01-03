@@ -299,7 +299,7 @@ export class MainQuiz extends LitElementWw {
       );
       if (this.selectedOption === undefined) {
         // this.formatError.hidden = false;
-        console.log("undefined option, show error");
+        // console.log("undefined option, show error");
       }
 
       if (matchFound) {

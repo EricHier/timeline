@@ -45,7 +45,6 @@ export class EventManager extends LitElementWw {
 
   // adding event to webwriter-timeline slot by creating event-container, 
   addEvent(event: CustomEvent<TlEventData>, timeline) {
-    console.log("Event detail:", event.detail);
     // const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const tldialog = timeline?.shadowRoot?.querySelector("timeline-dialog") as TimelineDialog;
 
