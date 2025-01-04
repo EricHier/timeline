@@ -16,6 +16,7 @@ export class EventContainer extends LitElementWw {
   @property({ type: String }) event_startDate;
   @property({ type: String }) event_endDate;
   @property({ type: Boolean }) accessor hiddenDiv = true;
+  @property({ type: Number }) accessor event_width;
 
   @query("#event_elements") accessor event_element;
   @query("#delete-event-dialog") accessor dialog : SlDialog;
@@ -32,7 +33,7 @@ export class EventContainer extends LitElementWw {
       padding: 15px;
       padding-left: 0px;
       position: relative;
-      width: max-content;
+      width: 100%;
       /* width: auto; */
       /* max-width: 100%; */
     }
@@ -44,7 +45,7 @@ export class EventContainer extends LitElementWw {
       padding-top: 5px;
       padding-left: 0px;
       position: relative;
-      width: max-content;
+      width: 100%;
       /* width: auto; */
       /* max-width: 100%; */
     }
@@ -62,23 +63,27 @@ export class EventContainer extends LitElementWw {
       grid-column: 1;
       grid-row: 1;
       padding-left: 7px;
+      padding-right: 7px;
+      width: 100%;
+      min-width:155px;
     }
 
     .date-line {
       flex-grow: 1;
-      height: 1px;
-      width: 160px; 
+      height: 2px;
+      width: 100%; 
       background: #484848;
       display: flex;
       justify-content: space-between;
       align-items: center;
       grid-column: 1;
       grid-row: 2;
+      padding-left: -1px;
     }
     .date-time-period-line {
       flex-grow: 1;
       height: 1px;
-      width: 320px; 
+      width: 100%; 
       background: #484848;
       display: flex;
       justify-content: space-between;
@@ -111,8 +116,8 @@ export class EventContainer extends LitElementWw {
       display: flex;
       align-items: left;
       justify-content: space-between;
-      width: 100%;
-      max-width: 500px;
+      width: max-content;
+      max-width: 100%;
       max-height: 400px;
       overflow-wrap: break-word;
       overflow-y: auto;
@@ -165,6 +170,7 @@ export class EventContainer extends LitElementWw {
     if(this.childElementCount == 0){
       this.addParagraph();
     }
+    this.event_width = this.parentElement.offsetWidth
   }
   
 
@@ -205,7 +211,7 @@ export class EventContainer extends LitElementWw {
           </div>
           <sl-dialog
           id="delete-event-dialog"
-          label='Do you want to delete this timeline event "${this.event_title}" ?'>
+          label='Do you want to delete the timeline event "${this.event_title}" ?'>
 
             <div class="button-container">
               <sl-button 
@@ -256,6 +262,7 @@ export class EventContainer extends LitElementWw {
 
   // on button press a paragraph with "add description" is added to slot
   addParagraph() {
+    // console.log(this.event_endDate, "end date");
     const parDescription = document.createElement("p");
     parDescription.textContent = "Modify event details";
     this.appendChild(parDescription);

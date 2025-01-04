@@ -82,7 +82,10 @@ export class DialogDatePicker extends LitElement {
             ? "date-div-disabled"
             : "date-div"}"
         >
-          <sl-icon-button src=${IconCalendarMonth}></sl-icon-button>
+          <sl-icon-button 
+            src=${IconCalendarMonth}
+            class="calender-icon">
+          </sl-icon-button>
           <!-- day -->
           <sl-input
             class="date"

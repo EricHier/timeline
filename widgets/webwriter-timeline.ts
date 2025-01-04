@@ -74,12 +74,13 @@ export class WebWriterTimeline extends LitElementWw {
         justify-content: start;
         flex-direction: row;
         position: relative;
+        vertical-align: center     
       }
       .timeline {
         min-height: 15px; 
         height: auto;
-        width: 2px;
-        background: #484848;
+        width: 100%;
+        border-left: 2px solid #484848;
         position: relative;
         padding-bottom: 50px;
       }
@@ -90,8 +91,8 @@ export class WebWriterTimeline extends LitElementWw {
         content: "";
         position: absolute;
         bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
+        /* left: 50%; */
+        transform: translateX(-58%);
         width: 0;
         height: 0;
         border-left: 6px solid transparent;
@@ -111,7 +112,7 @@ export class WebWriterTimeline extends LitElementWw {
       }
       .add-event-icon {
         position: absolute;
-        left: -15px;
+        left: -17px;
         bottom: 0;
         transform: translateY(-15px);
         background-color: white;
@@ -154,9 +155,9 @@ export class WebWriterTimeline extends LitElementWw {
     this.changeQuizDisablilty;
 
     // to do: fix
-    if(this.childrenCount === 0) {
-      this.addToolTip.show();
-    }
+    // if(this.childrenCount === 0) {
+    //   this.addToolTip.show();
+    // }
   }
 
   render() {
