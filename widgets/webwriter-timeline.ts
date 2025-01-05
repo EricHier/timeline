@@ -27,8 +27,8 @@ import IconCirclePlusFilled from "@tabler/icons/outline/circle-plus.svg";
 @customElement("webwriter-timeline")
 export class WebWriterTimeline extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
-  @property({ type: Boolean, attribute: true, reflect: true })  accessor quizTabOpen = false;
-  @property({ type: Boolean, attribute: true, reflect: true }) accessor isChecked = false;
+  @property({ type: Boolean, attribute: true, reflect: true })  accessor quizTabOpen;
+  @property({ type: Boolean, attribute: true, reflect: true }) accessor isChecked;
   @property({ type: Boolean, attribute: true, reflect: true })  accessor noChildren = true;
   @property({ type: Number, attribute: true, reflect: true })  accessor quizFeedbackOption;
   @property({ type: Number, attribute: true, reflect: true }) accessor childrenCount = this.childElementCount;
@@ -40,6 +40,7 @@ export class WebWriterTimeline extends LitElementWw {
   @query("#quiz-toggle") accessor quizToggle: SlSwitch;
   @query("#formatError") accessor formatError;
   @query("#add-tooltip") accessor addToolTip;
+  @query("#tab-group") accessor tabGroup;
 
 
   static get styles() {
@@ -153,19 +154,19 @@ export class WebWriterTimeline extends LitElementWw {
       this.eventManager.removeEvent(e)
     );
   }
-  // protected update(changedProperties: PropertyValues): void {
-  //   this.quizPanel.disabled = !this.isChecked;    
-  // }
 
   render() {
     return html`
       <sl-tab-group
         class="ww-timeline-widget"
+        id="tab-group"
         @sl-tab-show=${(e: SlTabShowEvent) =>
+          this.checkSelectedTab(e.detail.name)}
+        @sl-tab-hide=${(e: SlTabShowEvent) =>
           this.checkSelectedTab(e.detail.name)}
       >
         <sl-tab slot="nav" panel="timeline"> Timeline </sl-tab>
-        <sl-tab slot="nav" panel="quiz" id="quiz-panel" disabled> Quiz </sl-tab>
+        <sl-tab slot="nav" panel="quiz" id="quiz-panel" ?disabled=${!this.isChecked}> Quiz </sl-tab>
 
         <sl-tab-panel name="timeline">
           <div class="border" id="parent">
@@ -233,7 +234,7 @@ export class WebWriterTimeline extends LitElementWw {
               <sl-switch
                 id="quiz-toggle"
                 class="quiz-selection"
-                @sl-change=${(e) => this.changeQuizDisablilty(e)}
+                @sl-change=${(e) => this.isChecked = e.target.checked}
                 .checked=${this.isChecked}
               >
                 Use Timeline Quiz
@@ -242,26 +243,11 @@ export class WebWriterTimeline extends LitElementWw {
       </div>
     `;
   }
-
-  //enable/disable quiz tab
-  changeQuizDisablilty(e) {
-    this.isChecked = e.target.checked;
-
-    if (this.quizPanel) {
-      this.quizPanel.disabled = !this.isChecked;
-    } else {
-      // console.error("Quiz Panel not set.")
-    }
-  }
-
-  // chek if quiz tab is selected
+  // check if quiz tab is selected
   checkSelectedTab(selectedTab) {
-    console.log(selectedTab);
-    if (selectedTab == "quiz") {
+      if (selectedTab === "quiz" && this.isChecked) {
       this.startQuiz();
-      this.quizTabOpen = true;
     } else {
-      this.quizTabOpen = false;
       this.quiz.resetQuiz();
     }
   }
