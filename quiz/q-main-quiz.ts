@@ -95,6 +95,9 @@ export class MainQuiz extends LitElementWw {
         .author-only {
         display: none;
       }
+      .quiz-element{
+        width: 100%;
+      } 
     `;
   }
 
@@ -192,7 +195,9 @@ export class MainQuiz extends LitElementWw {
     });
 
     const date_attacher = this.date_container.shadowRoot.querySelector("#date");
-    date_attacher.innerHTML = "";
+    if(date_attacher) {
+      date_attacher.innerHTML = "";
+    }
     this.appendedEvents.forEach((event) => {
       this.initializeDate(event.date);
     });
@@ -209,18 +214,20 @@ export class MainQuiz extends LitElementWw {
     this.noNeedToReset = true;
   }
 
-  getAppendedEvents() {
-    return this.appendedEvents;
-  }
-
   addEventElements(date, title) {
     this.initializeDate(date);
     this.initializeTitle(title);
     this.appendedEvents.push({ date, title });
   }
 
+  
   initializeDate(date) {
-    const date_attacher = this.date_container.shadowRoot.querySelector("#date");
+    const newQuizElement = document.createElement("div");
+    newQuizElement.classList.add("quiz-element");
+    newQuizElement.id = `quiz-element`;
+    newQuizElement.setAttribute("slot", "quiz-slot");
+
+    // const date_attacher = this.date_container.shadowRoot.querySelector("#date");
 
     const date_element = document.createElement("div");
     date_element.textContent = date;
@@ -249,8 +256,10 @@ export class MainQuiz extends LitElementWw {
         this.dropTitle(data, date_drop_section, date);
       }
     });
-    date_attacher.appendChild(date_element);
-    date_attacher.appendChild(date_drop_section);
+
+    this.date_container.appendChild(newQuizElement);
+    newQuizElement.appendChild(date_element);
+    newQuizElement.appendChild(date_drop_section);
   }
 
   initializeTitle(title) {

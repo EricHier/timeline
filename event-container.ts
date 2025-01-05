@@ -27,6 +27,10 @@ export class EventContainer extends LitElementWw {
   
   static get styles() {
     return css`  
+     :host(:not([contenteditable="true"]):not([contenteditable=""]))
+        .author-only {
+        display: none;
+      }
     .event {
       display: flex;
       align-items: flex-start;
@@ -34,8 +38,6 @@ export class EventContainer extends LitElementWw {
       padding-left: 0px;
       position: relative;
       width: 100%;
-      /* width: auto; */
-      /* max-width: 100%; */
     }
 
     .event:first-child {
@@ -46,8 +48,7 @@ export class EventContainer extends LitElementWw {
       padding-left: 0px;
       position: relative;
       width: 100%;
-      /* width: auto; */
-      /* max-width: 100%; */
+    
     }
     .date-container {
       display: grid;
@@ -59,16 +60,15 @@ export class EventContainer extends LitElementWw {
       font-size: 14px;
       font-weight: 700;
       color: #484848;
-      //margin-right: 16px;
       grid-column: 1;
       grid-row: 1;
       padding-left: 7px;
-      padding-right: 7px;
-      width: 100%;
-      min-width:155px;
+      padding-right: 5px;
+      width: 100%; 
     }
 
     .date-line {
+      min-width:150px;
       flex-grow: 1;
       height: 2px;
       width: 100%; 
@@ -78,11 +78,12 @@ export class EventContainer extends LitElementWw {
       align-items: center;
       grid-column: 1;
       grid-row: 2;
-      padding-left: -1px;
+      transform: translateX(-3.5px);
     }
     .date-time-period-line {
+      min-width:150px;
       flex-grow: 1;
-      height: 1px;
+      height: 2px;
       width: 100%; 
       background: #484848;
       display: flex;
@@ -90,6 +91,7 @@ export class EventContainer extends LitElementWw {
       align-items: center;
       grid-column: 1;
       grid-row: 2;
+      transform: translateX(-3.5px);
     }
     .date-line::before {
       content: "\ ";
@@ -109,20 +111,39 @@ export class EventContainer extends LitElementWw {
       background: #484848;
     }
 
-    .event-description-container {
+    .event-description-container-closed {
       border: 3px solid #E0E0E0;
       border-radius: 5px;
       padding: 8px;
       display: flex;
       align-items: left;
       justify-content: space-between;
-      width: max-content;
+      width: 100%;
+      max-width: max-content;
+      max-height: 400px;
+      overflow-wrap: break-word;
+      overflow-y: auto;
+      flex-direction: column; 
+      transform: translateX(-3.5px);
+    }
+    .event-description-container-open {
+      border: 3px solid #E0E0E0;
+      border-radius: 5px;
+      padding: 8px;
+      display: flex;
+      align-items: left;
+      justify-content: space-between;
+      width: 100%;
       max-width: 100%;
       max-height: 400px;
       overflow-wrap: break-word;
       overflow-y: auto;
       flex-direction: column; 
+      transform: translateX(-3.5px);
     }
+    /* .event-content {
+      width
+    } */
 
     .event-title {
       font-size: 16px;
@@ -164,9 +185,7 @@ export class EventContainer extends LitElementWw {
       "sl-tooltip": SlTooltip,
     };
   }
-  // will run again in student view, TO DO: use other way to append new paragraph
   protected firstUpdated(_changedProperties: PropertyValues): void {
-    // debugger;
     if(this.childElementCount == 0){
       this.addParagraph();
     }
@@ -188,7 +207,7 @@ export class EventContainer extends LitElementWw {
         }
         </div>
 
-        <div class="event-description-container">
+        <div class=${this.hiddenDiv ? "event-description-container-closed" : "event-description-container-open"}>
           <div class="event-title-icon">
             <div 
             class="event-title">${this.event_title}</div>
@@ -203,7 +222,6 @@ export class EventContainer extends LitElementWw {
               : html``
             }
             <sl-icon 
-              class="event-icon"
               .src=${this.hiddenDiv ? IconArrowsDiagonal : IconArrowsDiagonalMinimize2}
               @click=${() => this.showEventContent()}
               slot="prefix">
@@ -262,7 +280,6 @@ export class EventContainer extends LitElementWw {
 
   // on button press a paragraph with "add description" is added to slot
   addParagraph() {
-    // console.log(this.event_endDate, "end date");
     const parDescription = document.createElement("p");
     parDescription.textContent = "Modify event details";
     this.appendChild(parDescription);

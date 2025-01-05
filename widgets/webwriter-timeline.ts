@@ -148,17 +148,14 @@ export class WebWriterTimeline extends LitElementWw {
 
   private eventManager = new EventManager();
 
-  protected updated(_changedProperties: PropertyValues): void {
+  protected firstUpdated(_changedProperties: PropertyValues): void {
     this.addEventListener("request-remove", (e) =>
       this.eventManager.removeEvent(e)
     );
-    this.changeQuizDisablilty;
-
-    // to do: fix
-    // if(this.childrenCount === 0) {
-    //   this.addToolTip.show();
-    // }
   }
+  // protected update(changedProperties: PropertyValues): void {
+  //   this.quizPanel.disabled = !this.isChecked;    
+  // }
 
   render() {
     return html`
@@ -184,7 +181,7 @@ export class WebWriterTimeline extends LitElementWw {
                 >
                   <sl-icon
                     src=${IconCirclePlusFilled}
-                    class="add-event-icon"
+                    class="add-event-icon author-only"
                     id="addButton"
                     class="buttton-left author-only"
                     @click=${this.openingTLDialog}
@@ -208,7 +205,7 @@ export class WebWriterTimeline extends LitElementWw {
         </sl-tab-panel>
       </sl-tab-group>
 
-      <div part="options">
+      <div part="options" class="author-only">
         ${this.quizTabOpen
           ? html`<div class="quiz-options" id="quiz-options">
               <sl-select
@@ -252,6 +249,8 @@ export class WebWriterTimeline extends LitElementWw {
 
     if (this.quizPanel) {
       this.quizPanel.disabled = !this.isChecked;
+    } else {
+      // console.error("Quiz Panel not set.")
     }
   }
 

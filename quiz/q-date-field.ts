@@ -21,12 +21,17 @@ export class QuizDateField extends LitElementWw {
       box-sizing: border-box;
       min-height: 50px; 
       max-width:100%;
-
+    }
+    .quiz-element {
+      display: grid;
+      grid-template-columns: auto auto;
     }
     .date-border {
       /* background: white; */
       /* border: 1px solid  #d6d6da;
       border-radius: 5px; */
+      grid-column: 1;
+      grid-row: 1;
       margin: 5px;
       max-width: 250px;
       text-align: left; 
@@ -35,9 +40,11 @@ export class QuizDateField extends LitElementWw {
       flex-direction: column;
       font-size:  1.1rem;
       width: auto; 
-      max-width: calc(100% - 10px); 
+      max-width:auto; 
     }
     .drop-section {
+      grid-column: 2;
+      grid-row: 1;
       display: flex;
       align-items: center;  
       justify-content: center;  
@@ -45,9 +52,9 @@ export class QuizDateField extends LitElementWw {
       border: 2px dashed #d6d6da;
       border-radius: 7px;
       margin: 5px;
-      min-width: 50px; 
+      min-width: auto; 
       min-height: 35px;
-      max-width: calc(100% - 10px); 
+      max-width: auto; 
       flex-direction: column;
 
       padding: 10px;
@@ -83,6 +90,36 @@ export class QuizDateField extends LitElementWw {
       overflow: hidden;  
       text-overflow: ellipsis;  
     }
+    .timeline-parent {
+      display: flex;
+      justify-content: start;
+      flex-direction: row;
+      position: relative;
+      vertical-align: center;
+    }
+    .timeline {
+      min-height: 15px; 
+      height: auto;
+      width: 100%;
+      border-left: 2px solid #484848;
+      position: relative;
+      padding-bottom: 50px;
+    }
+    .timeline-item:last-child {
+      margin-bottom: 40px; 
+    }
+    .timeline::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      /* left: 50%; */
+      transform: translateX(-58%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 10px solid #484848;
+    }
 
   `;
 
@@ -92,7 +129,12 @@ export class QuizDateField extends LitElementWw {
   
   render() {
     return html`
-    <div id="date" class="border" lable="My Timeline">
+    <!-- <div class="border" lable="My Timeline"> -->
+    <div class="timeline-parent">
+          <div class="timeline">
+            <slot name="quiz-slot"></slot>
+      <!-- <div id="date"></div> -->
+          </div>
     </div>
     `;
   }
