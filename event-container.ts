@@ -173,6 +173,9 @@ export class EventContainer extends LitElementWw {
       padding-top: 5px; 
       width: 100px; 
     }
+    .expand-icon {
+      padding-right: 15px;
+    }
     `;
   }
 
@@ -222,6 +225,7 @@ export class EventContainer extends LitElementWw {
               : html``
             }
             <sl-icon 
+              class=${this.hiddenDiv ? "" : "expand-icon"} 
               .src=${this.hiddenDiv ? IconArrowsDiagonal : IconArrowsDiagonalMinimize2}
               @click=${() => this.showEventContent()}
               slot="prefix">

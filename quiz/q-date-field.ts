@@ -9,18 +9,48 @@ import "@shoelace-style/shoelace/dist/themes/light.css";
 
 export class QuizDateField extends LitElementWw {
   static styles = css`
-    .border {
+    /* .border {
       border: 1px solid  #d6d6da;
       background: #f7f7f8;
       border-radius: 5px;
-      /* width: 100%; */
-      /* margin-left: 10px; */
-      /* margin-right: 10px; */
-      /* margin-top: 10px; */
-      /* margin-bottom: 10px; */
+      width: 100%; 
+       margin-left: 10px; 
+       margin-right: 10px; 
+       margin-top: 10px; 
+       margin-bottom: 10px; 
       box-sizing: border-box;
       min-height: 50px; 
       max-width:100%;
+    } */
+      .timeline-parent {
+      display: flex;
+      justify-content: start;
+      flex-direction: row;
+      position: relative;
+      vertical-align: center;
+    }
+    .timeline {
+      min-height: 15px; 
+      height: auto;
+      width: 100%;
+      border-left: 2px solid #484848;
+      position: relative;
+      padding-bottom: 50px;
+    }
+    .timeline-item:last-child {
+      margin-bottom: 40px; 
+    }
+    .timeline::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      /* left: 50%; */
+      transform: translateX(-58%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 10px solid #484848;
     }
     .quiz-element {
       display: grid;
@@ -30,17 +60,17 @@ export class QuizDateField extends LitElementWw {
       /* background: white; */
       /* border: 1px solid  #d6d6da;
       border-radius: 5px; */
+      font-size: 14px;
+      font-weight: 700;
+      color: #484848;
       grid-column: 1;
       grid-row: 1;
-      margin: 5px;
-      max-width: 250px;
+      padding-left: 7px;
+      padding-right: 5px;
+      width: 100%; 
+      height:auto;
       text-align: left; 
       color: #666;
-      font-weight: 400;
-      flex-direction: column;
-      font-size:  1.1rem;
-      width: auto; 
-      max-width:auto; 
     }
     .drop-section {
       grid-column: 2;
@@ -56,8 +86,6 @@ export class QuizDateField extends LitElementWw {
       min-height: 35px;
       max-width: auto; 
       flex-direction: column;
-
-      padding: 10px;
       flex-wrap: wrap; 
       box-sizing: border-box;
     }
@@ -90,37 +118,35 @@ export class QuizDateField extends LitElementWw {
       overflow: hidden;  
       text-overflow: ellipsis;  
     }
-    .timeline-parent {
-      display: flex;
-      justify-content: start;
-      flex-direction: row;
-      position: relative;
-      vertical-align: center;
-    }
-    .timeline {
-      min-height: 15px; 
-      height: auto;
-      width: 100%;
-      border-left: 2px solid #484848;
-      position: relative;
-      padding-bottom: 50px;
-    }
-    .timeline-item:last-child {
-      margin-bottom: 40px; 
-    }
-    .timeline::after {
-      content: "";
-      position: absolute;
-      bottom: -10px;
-      /* left: 50%; */
-      transform: translateX(-58%);
-      width: 0;
-      height: 0;
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-top: 10px solid #484848;
-    }
 
+    .date-line {
+      min-width:150px;
+      flex-grow: 1;
+      height: 2px;
+      width: 100%; 
+      background: #484848;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      grid-column: 1;
+      grid-row: 2;
+      transform: translateX(-3.5px);
+    }
+    .date-line::before {
+      content: "\ ";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #484848;
+    }
+    .date-container {
+      display: grid;
+      align-items: center;
+      position: relative;
+      grid-column: 1;
+      grid-row: 1;
+    }
   `;
 
 
@@ -129,11 +155,9 @@ export class QuizDateField extends LitElementWw {
   
   render() {
     return html`
-    <!-- <div class="border" lable="My Timeline"> -->
     <div class="timeline-parent">
-          <div class="timeline">
-            <slot name="quiz-slot"></slot>
-      <!-- <div id="date"></div> -->
+          <div  id="date" class="timeline">
+            <!-- <slot name="quiz-slot"></slot> -->
           </div>
     </div>
     `;

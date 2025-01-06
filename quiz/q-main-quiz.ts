@@ -95,9 +95,11 @@ export class MainQuiz extends LitElementWw {
         .author-only {
         display: none;
       }
-      .quiz-element{
+      .quiz-element {
+        display: grid;
+        grid-template-columns: auto auto ;
         width: 100%;
-      } 
+      }
     `;
   }
 
@@ -222,12 +224,18 @@ export class MainQuiz extends LitElementWw {
 
   
   initializeDate(date) {
+    const newDateContainer = document.createElement("div");
+    newDateContainer.classList.add("date-container");
+
     const newQuizElement = document.createElement("div");
     newQuizElement.classList.add("quiz-element");
     newQuizElement.id = `quiz-element`;
     newQuizElement.setAttribute("slot", "quiz-slot");
 
-    // const date_attacher = this.date_container.shadowRoot.querySelector("#date");
+    const dateLineQuiz = document.createElement("div");
+    dateLineQuiz.classList.add("date-line");
+
+    const date_attacher = this.date_container.shadowRoot.querySelector("#date");
 
     const date_element = document.createElement("div");
     date_element.textContent = date;
@@ -256,10 +264,20 @@ export class MainQuiz extends LitElementWw {
         this.dropTitle(data, date_drop_section, date);
       }
     });
-
-    this.date_container.appendChild(newQuizElement);
-    newQuizElement.appendChild(date_element);
+    newQuizElement.appendChild(newDateContainer);
+    newDateContainer.appendChild(date_element);
+    newDateContainer.appendChild(dateLineQuiz);
+    // newQuizElement.appendChild(dateLineQuiz);
+    // newQuizElement.appendChild(date_element);
     newQuizElement.appendChild(date_drop_section);
+
+    // console.log(newQuizElement, " new quiz element looks like this");
+    date_attacher.appendChild(newQuizElement);
+    // date_attacher.appendChild(date_element);
+    // date_attacher.appendChild(date_drop_section);
+
+    // this.date_attacher.appendChild(newQuizElement);
+
   }
 
   initializeTitle(title) {
