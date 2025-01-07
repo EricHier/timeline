@@ -141,10 +141,6 @@ export class EventContainer extends LitElementWw {
       flex-direction: column; 
       transform: translateX(-3.5px);
     }
-    /* .event-content {
-      width
-    } */
-
     .event-title {
       font-size: 16px;
       font-weight: 500;

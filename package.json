@@ -2,7 +2,7 @@
   "name": "@webwriter/timeline",
   "description": "Create/learn with a digital timeline and test your knowledge.",
   "license": "MIT",
-  "version": "0.0.1-local",
+  "version": "0.0.1",
   "author": "Nura Zimmermann <nura.zimmermann@rwth-aachen.de>",
   "keywords": [
     "webwriter-widget",

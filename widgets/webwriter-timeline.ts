@@ -5,8 +5,6 @@ import { customElement, property, query } from "lit/decorators.js";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
 import {
-  SlButton,
-  SlInput,
   SlTab,
   SlTabGroup,
   SlTabPanel,
@@ -17,37 +15,40 @@ import {
   SlIcon,
   SlTooltip,
 } from "@shoelace-style/shoelace";
-import { EventContainer } from "../event-container";
 import { TimelineDialog } from "../tl-dialog";
 import { EventManager } from "../event-manager";
 import { MainQuiz } from "../quiz/q-main-quiz";
-import { TlTimeline } from "./tl-timeline";
 import IconCirclePlusFilled from "@tabler/icons/outline/circle-plus.svg";
 
 @customElement("webwriter-timeline")
 export class WebWriterTimeline extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
-  @property({ type: Boolean, attribute: true, reflect: true })  accessor quizTabOpen;
+  @property({ type: Boolean, attribute: true, reflect: true }) accessor quizTabOpen;
   @property({ type: Boolean, attribute: true, reflect: true }) accessor isChecked;
-  @property({ type: Boolean, attribute: true, reflect: true })  accessor noChildren = true;
-  @property({ type: Number, attribute: true, reflect: true })  accessor quizFeedbackOption;
-  @property({ type: Number, attribute: true, reflect: true }) accessor childrenCount = this.childElementCount;
+  @property({ type: Number, attribute: true, reflect: true }) accessor quizFeedbackOption;
 
   @query("#quiz-selection") accessor quizFeedbackSelecter: SlSelect;
-  @query("#quiz") accessor quiz: MainQuiz;
-  @query("#timelineID") accessor dialog: TimelineDialog;
+  @query("#quiz-component") accessor quiz: MainQuiz;
+  @query("#tl-component") accessor dialog: TimelineDialog;
   @query("#quiz-panel") accessor quizPanel: SlTab;
   @query("#quiz-toggle") accessor quizToggle: SlSwitch;
-  @query("#formatError") accessor formatError;
-  @query("#add-tooltip") accessor addToolTip;
-  @query("#tab-group") accessor tabGroup;
-
+  @query("#feedback-error") accessor feedbackError: HTMLDivElement;
+  @query("#add-event-tooltip") accessor addToolTip: SlTooltip;
+  @query("#tab-group") accessor tabGroup: SlTabGroup;
 
   static get styles() {
     return css`
+     :host(:not([contenteditable="true"]):not([contenteditable=""]))
+        .author-only {
+        display: none;
+      }
+    .ww-timeline {
+        border-top: 1px solid darkgray;
+        border-bottom: 1px solid darkgray;
+      }
       .border {
         height: 500px;
-        max-height: 500px; 
+        max-height: 500px;
         overflow-wrap: break-word;
         overflow-y: auto;
         width: 100%;
@@ -57,28 +58,15 @@ export class WebWriterTimeline extends LitElementWw {
         margin-bottom: 20px;
         margin-top: 20px;
       }
-      h4 {
-        text-align: center;
-      }
-      .quiz-mode {
-        display: none;
-      }
-      .button-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        padding-top: 15px;
-      }
-      .timeline-parent {
+      .timeline-container {
         display: flex;
         justify-content: start;
         flex-direction: row;
         position: relative;
-        vertical-align: center     
+        vertical-align: center;
       }
       .timeline {
-        min-height: 15px; 
+        min-height: 15px;
         height: auto;
         width: 100%;
         border-left: 2px solid #484848;
@@ -86,13 +74,12 @@ export class WebWriterTimeline extends LitElementWw {
         padding-bottom: 50px;
       }
       .timeline-item:last-child {
-        margin-bottom: 40px; 
+        margin-bottom: 40px;
       }
       .timeline::after {
         content: "";
         position: absolute;
         bottom: -10px;
-        /* left: 50%; */
         transform: translateX(-58%);
         width: 0;
         height: 0;
@@ -100,16 +87,9 @@ export class WebWriterTimeline extends LitElementWw {
         border-right: 6px solid transparent;
         border-top: 10px solid #484848;
       }
-      :host(:not([contenteditable="true"]):not([contenteditable=""]))
-        .author-only {
-        display: none;
-      }
-      .ww-timeline-widget {
-        border-top: 1px solid darkgray;
-        border-bottom: 1px solid darkgray;
-      }
       .quiz-selection {
         padding-left: 10px;
+        width: 100%;
       }
       .add-event-icon {
         position: absolute;
@@ -120,25 +100,17 @@ export class WebWriterTimeline extends LitElementWw {
         color: #83b9e0;
         font-size: 32px;
       }
-      .quiz-selection {
-        width: 100%;
-      }
-    
     `;
   }
 
   static get scopedElements() {
     return {
       "event-manager": EventManager,
-      "event-container": EventContainer,
       "timeline-dialog": TimelineDialog,
       "main-quiz": MainQuiz,
-      "sl-button": SlButton,
-      "tl-timeline": TlTimeline,
       "sl-tab": SlTab,
       "sl-tab-group": SlTabGroup,
       "sl-tab-panel": SlTabPanel,
-      "sl-input": SlInput,
       "sl-select": SlSelect,
       "sl-option": SlOption,
       "sl-switch": SlSwitch,
@@ -158,25 +130,37 @@ export class WebWriterTimeline extends LitElementWw {
   render() {
     return html`
       <sl-tab-group
-        class="ww-timeline-widget"
+        class="ww-timeline"
         id="tab-group"
         @sl-tab-show=${(e: SlTabShowEvent) =>
           this.checkSelectedTab(e.detail.name)}
         @sl-tab-hide=${(e: SlTabShowEvent) =>
           this.checkSelectedTab(e.detail.name)}
       >
-        <sl-tab slot="nav" panel="timeline"> Timeline </sl-tab>
-        <sl-tab slot="nav" panel="quiz" id="quiz-panel" ?disabled=${!this.isChecked}> Quiz </sl-tab>
+        <sl-tab 
+          slot="nav" 
+          panel="timeline-panel"
+        > 
+          Timeline 
+        </sl-tab>
+        <sl-tab
+          slot="nav"
+          panel="quiz-panel"
+          id="quiz-panel"
+          ?disabled=${!this.isChecked}
+        >
+          Quiz
+        </sl-tab>
 
-        <sl-tab-panel name="timeline">
-          <div class="border" id="parent">
-            <div class="timeline-parent">
+        <sl-tab-panel name="timeline-panel">
+          <div class="border">
+            <div class="timeline-container">
               <div class="timeline">
                 <slot name="event-slot"></slot>
                 <sl-tooltip
                   content="Click me to add events to the timeline."
                   placement="right"
-                  id="add-tooltip"
+                  id="add-event-tooltip"
                   hoist
                   style="--show-delay: 1000ms;"
                 >
@@ -193,7 +177,7 @@ export class WebWriterTimeline extends LitElementWw {
             </div>
 
             <timeline-dialog
-              id="timelineID"
+              id="tl-component"
               class="author-only"
               @request-add=${(e) => this.eventManager.addEvent(e, this)}
             >
@@ -201,8 +185,8 @@ export class WebWriterTimeline extends LitElementWw {
           </div>
         </sl-tab-panel>
 
-        <sl-tab-panel name="quiz">
-          <main-quiz id="quiz"></main-quiz>
+        <sl-tab-panel name="quiz-panel">
+          <main-quiz id="quiz-component"></main-quiz>
         </sl-tab-panel>
       </sl-tab-group>
 
@@ -221,12 +205,12 @@ export class WebWriterTimeline extends LitElementWw {
                 <sl-option value="3">Score Only</sl-option>
                 <sl-option value="4">None</sl-option>
               </sl-select>
-              <div class="text-error" id="formatError" hidden>
+              <div class="text-error" id="feedback-error" hidden>
                 Please select one feedback option.
               </div>
             </div>`
           : html` <sl-tooltip
-              content="Toggle me to use the timeline-quiz-mode in the second tab."
+              content="Toggle me to use the timeline quiz-mode in the second tab."
               placement="bottom-start"
               hoist
               style="--show-delay: 1000ms;"
@@ -234,7 +218,7 @@ export class WebWriterTimeline extends LitElementWw {
               <sl-switch
                 id="quiz-toggle"
                 class="quiz-selection"
-                @sl-change=${(e) => this.isChecked = e.target.checked}
+                @sl-change=${(e) => (this.isChecked = e.target.checked)}
                 .checked=${this.isChecked}
               >
                 Use Timeline Quiz
@@ -243,33 +227,34 @@ export class WebWriterTimeline extends LitElementWw {
       </div>
     `;
   }
-  // check if quiz tab is selected
+  // if quiz panel is selected start quiz + manage options window
   checkSelectedTab(selectedTab) {
-      if (selectedTab === "quiz" && this.isChecked) {
+    if (selectedTab === "quiz-panel" && this.isChecked) {
       this.startQuiz();
+      this.quizTabOpen = true;
     } else {
-      this.quiz.resetQuiz();
+      this.quizTabOpen = false;
     }
   }
 
-  // open dialog, dealing with input and event storage in sub-structures
+  // open dialog
   openingTLDialog() {
     this.dialog.showDialog();
   }
 
-  // show quiz and add events to it
+  // to do: check for doubles  ... show quiz and add events to it
   startQuiz() {
     this.quiz.startQuiz([...this.children]);
   }
 
+  // transmit selected option for quiz feedback
   saveQuizSelection() {
     this.quizFeedbackOption = Number(this.quizFeedbackSelecter.value);
     if (this.quizFeedbackOption !== undefined) {
-      this.formatError.hidden = true;
+      this.feedbackError.hidden = true;
       this.quiz.retriveSelection(this.quizFeedbackOption);
     } else {
-      this.formatError.hidden = false;
+      this.feedbackError.hidden = false;
     }
-    this.quiz.resetAnswers();
   }
 }

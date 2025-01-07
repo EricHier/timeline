@@ -3,8 +3,8 @@ import { customElement, property, query,queryAll } from "lit/decorators.js";
 import IconCalendarMonth from "@tabler/icons/outline/calendar-month.svg";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { SlInput } from "@shoelace-style/shoelace";
-import { TimelineDialog } from "../tl-dialog";
-import { EventManager } from "../event-manager";
+import { SlIcon } from "@shoelace-style/shoelace";
+
 
 @customElement("dialog-date-picker")
 export class DialogDatePicker extends LitElement {
@@ -70,7 +70,10 @@ export class DialogDatePicker extends LitElement {
     }
   `;
   static get scopedElements() {
-    return {};
+    return {
+      "sl-icon": SlIcon,
+      "sl-input": SlInput,
+    };
   }
 
   render() {
