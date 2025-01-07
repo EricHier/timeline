@@ -87,12 +87,6 @@ export class EventManager extends LitElementWw {
 
     timeline.appendChild(timeline_event);
 
-    // this.dispatchEvent(new CustomEvent("request-appendEvent", {
-    //   detail: timeline_event,
-    //   bubbles: true,
-    //   composed: true
-    // }));
-
     this.dateManager.sortEvents(timeline); 
 
     tldialog.hideDialog(); 

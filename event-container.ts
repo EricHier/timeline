@@ -16,7 +16,6 @@ export class EventContainer extends LitElementWw {
   @property({ type: String }) event_startDate;
   @property({ type: String }) event_endDate;
   @property({ type: Boolean }) accessor hiddenDiv = true;
-  @property({ type: Number }) accessor event_width;
 
   @query("#event_elements") accessor event_element;
   @query("#delete-event-dialog") accessor dialog : SlDialog;
@@ -188,7 +187,6 @@ export class EventContainer extends LitElementWw {
     if(this.childElementCount == 0){
       this.addParagraph();
     }
-    this.event_width = this.parentElement.offsetWidth
   }
   
 

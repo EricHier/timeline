@@ -21,16 +21,15 @@ export class MainQuiz extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   @property({ type: Array, attribute: true, reflect: true }) accessor appendedEvents: Array<{ date: string; title: string }> = [];
   @property({ type: Array, attribute: true, reflect: true }) accessor droppedTitles = [];
-  @property({ type: Number, attribute: true, reflect: true }) accessor matchCount = 0;
+  @property({ type: Number, attribute: true, reflect: true })  accessor matchCount = 0;
   @property({ type: Number, attribute: true, reflect: true }) accessor score;
   @property({ type: Number, attribute: true, reflect: true }) accessor selectedOption = 0;
-  @property({ type: Boolean, attribute: true, reflect: true })  accessor noNeedToReset = true;
+  @property({ type: Boolean, attribute: true, reflect: true }) accessor noNeedToReset = true;
 
   @query("#date-container") accessor date_container: QuizDateField;
   @query("#title-container") accessor title_container: QuizTitles;
   @query("#score-feedback") accessor score_feedback: HTMLParagraphElement;
   @query("#check-button") accessor check_button: SlSelect;
-  // @query("#formatError") accessor formatError;
 
   static get styles() {
     return css`
@@ -97,7 +96,7 @@ export class MainQuiz extends LitElementWw {
       }
       .quiz-element {
         display: grid;
-        grid-template-columns: auto auto ;
+        grid-template-columns: auto auto;
         width: 100%;
       }
     `;
@@ -159,70 +158,63 @@ export class MainQuiz extends LitElementWw {
 
   startQuiz(events) {
     const existingEvents = this.appendedEvents;
+    const formatDate = (startDate, endDate) => {
+      return endDate ? `${startDate} - ${endDate}` : startDate;
+    };
+
     const eventsToAppend = events.filter((event) => {
       const title = event.getAttribute("event_title");
       const startdate = event.getAttribute("event_startdate");
       const enddate = event.getAttribute("event_enddate");
-      const date = startdate + " - " + enddate;
-      const newEvent = !existingEvents.some(
+      const date = formatDate(startdate, enddate);
+     
+      const isNewEvent = !existingEvents.some(
         (existingEvent) =>
           existingEvent.title === title || existingEvent.date === date
       );
-      return newEvent;
+      return isNewEvent;
     });
 
     eventsToAppend.forEach((event) => {
-      let date = event.getAttribute("event_startDate");
       const title = event.getAttribute("event_title");
-      this.addEventElements(date, title);
+      const startDate = event.getAttribute("event_startdate");
+      const endDate = event.getAttribute("event_enddate");
+      const date = formatDate(startDate, endDate);
+      this.initializeDate(date);
+      this.initializeTitle(title);
+      this.appendedEvents.push({ date, title });
     });
   }
 
   resetQuiz() {
-    this.resetAnswers();
-    // this.date_container.innerHTML = "";
-    // this.title_container.innerHTML = "";
-    this.selectedOption = 0;
-    // this.appendedEvents = [];
-    // this.droppedTitles = [];
-  }
-
-  resetAnswers() {
-    const drop_section =
+    const drop_sections =
       this.date_container.shadowRoot.querySelectorAll(".drop-section");
-    drop_section.forEach((section) => {
+
+    drop_sections.forEach((section) => {
       section.removeAttribute("dropped");
       section.removeAttribute("quiz-result");
       section.innerHTML = "";
     });
 
-    const date_attacher = this.date_container.shadowRoot.querySelector("#date");
-    if(date_attacher) {
-      date_attacher.innerHTML = "";
-    }
-    this.appendedEvents.forEach((event) => {
-      this.initializeDate(event.date);
-    });
-
     const title_attacher =
       this.title_container.shadowRoot.querySelector("#title");
     title_attacher.innerHTML = "";
+    const date_attacher = this.date_container.shadowRoot.querySelector("#date");
+    date_attacher.innerHTML = "";
+
+    this.droppedTitles = [];
+    console.log(this.appendedEvents, " appended events ");
     this.appendedEvents.forEach((event) => {
       this.initializeTitle(event.title);
+      this.initializeDate(event.date);
     });
-    this.droppedTitles = [];
+
     this.matchCount = 0;
     this.score = 0;
     this.noNeedToReset = true;
+    this.selectedOption = 4;
   }
 
-  addEventElements(date, title) {
-    this.initializeDate(date);
-    this.initializeTitle(title);
-    this.appendedEvents.push({ date, title });
-  }
-
-  
   initializeDate(date) {
     const newDateContainer = document.createElement("div");
     newDateContainer.classList.add("date-container");
@@ -277,7 +269,6 @@ export class MainQuiz extends LitElementWw {
     // date_attacher.appendChild(date_drop_section);
 
     // this.date_attacher.appendChild(newQuizElement);
-
   }
 
   initializeTitle(title) {
@@ -313,7 +304,12 @@ export class MainQuiz extends LitElementWw {
       dropSection.appendChild(draggedElement);
       this.droppedTitles = [
         ...this.droppedTitles,
-        { element: draggedElement, dropSection, dropDate },
+        {
+          element: draggedElement,
+          title: draggedElement.textContent,
+          dropSection,
+          dropDate,
+        },
       ];
     }
   }
