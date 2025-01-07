@@ -4,15 +4,8 @@ import { customElement, property, query } from "lit/decorators.js";
 
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
-import {
-  SlButton,
-  SlSelect,
-  SlOption,
-  SlRadioGroup,
-  SlRadio,
-} from "@shoelace-style/shoelace";
+import { SlButton } from "@shoelace-style/shoelace";
 
-import { WebWriterTimeline } from "../widgets/webwriter-timeline";
 import { QuizTitles } from "./q-titles";
 import { QuizDateField } from "./q-date-field";
 
@@ -24,15 +17,17 @@ export class MainQuiz extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true })  accessor matchCount = 0;
   @property({ type: Number, attribute: true, reflect: true }) accessor score;
   @property({ type: Number, attribute: true, reflect: true }) accessor selectedOption = 0;
-  @property({ type: Boolean, attribute: true, reflect: true }) accessor noNeedToReset = true;
 
   @query("#date-container") accessor date_container: QuizDateField;
   @query("#title-container") accessor title_container: QuizTitles;
   @query("#score-feedback") accessor score_feedback: HTMLParagraphElement;
-  @query("#check-button") accessor check_button: SlSelect;
 
   static get styles() {
     return css`
+      :host(:not([contenteditable="true"]):not([contenteditable=""]))
+        .author-only {
+        display: none;
+      }
       .border {
         height: 500px;
         width: 100%;
@@ -42,8 +37,8 @@ export class MainQuiz extends LitElementWw {
         margin-bottom: 20px;
         margin-top: 20px;
       }
-      h4 {
-        text-align: center;
+      .quiz-border {
+        font-weight: 500;
       }
       .quiz-container {
         display: grid;
@@ -53,63 +48,39 @@ export class MainQuiz extends LitElementWw {
         min-height: 200px;
         flex-direction: column;
       }
-      .quiz-border {
-        font-weight: 500;
-      }
-      .date-box,
-      .title-box {
-        border: 1px solid #ccc;
-        padding: 10px;
-        text-align: center;
-        cursor: pointer;
-      }
-      .quiz-options {
-        display: flex;
-      }
-      .quiz-options {
+      .quiz-header {
+        display: grid;
         width: 100%;
-        margin-bottom: 5px;
+        padding-bottom: 15px;
+        justify-content: space-between;
       }
-      .text-error {
-        font-size: var(--sl-input-help-text-font-size-medium);
-        color: var(--sl-color-warning-700);
+      .quiz-description {
+        grid-column: 1;
+        grid-row: 1;
       }
       .button-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        padding-top: 15px;
+        grid-column: 2;
+        grid-row: 1;
+        display: grid; 
       }
-      .button-left-container {
-        display: flex;
-        justify-content: start;
-        align-items: center;
-        width: 100%;
+      #reset-button {
+        grid-column: 1;
+        grid-row: 1;
+        padding-right: 15px;
+        width: max-content;
       }
-      .button-spacer {
-        padding-right: 5px;
-      }
-      :host(:not([contenteditable="true"]):not([contenteditable=""]))
-        .author-only {
-        display: none;
-      }
-      .quiz-element {
-        display: grid;
-        grid-template-columns: auto auto;
-        width: 100%;
+      #check-match-button {
+        grid-column: 2;
+        grid-row: 1;
+        width: max-content;
       }
     `;
   }
 
   static get scopedElements() {
     return {
-      "webwriter-timelin": WebWriterTimeline,
       "sl-button": SlButton,
-      "sl-option": SlOption,
-      "sl-select": SlSelect,
-      "sl-radio-group": SlRadioGroup,
-      "sl-radio": SlRadio,
+
       "quiz-title": QuizTitles,
       "quiz-date-field": QuizDateField,
     };
@@ -120,8 +91,28 @@ export class MainQuiz extends LitElementWw {
   render() {
     return html`
       <div class="border" id="parent">
+        <div class="quiz-header">
+          <p class="quiz-description">Drag the correct title to the drop section</p>
+          <div class="button-container">
+            <sl-button id="reset-button" variant="neutral" outline @click="${this.resetQuiz}"
+              >Reset Quiz
+            </sl-button>
+            
+            <sl-button
+              id="check-match-button"
+              variant="primary"
+              outline
+              @click="${() => {
+                this.checkMatch();
+                this.calculateScore();
+              }}"
+              ?disabled=${this.droppedTitles.length === 0}
+              >Check Match
+            </sl-button>
+          </div>
+        </div>
+
         <div class="quiz-border">
-          <p>Drag the correct title to the drop section</p>
           <div class="quiz-container">
             <quiz-date-field id="date-container"></quiz-date-field>
             <quiz-title id="title-container"></quiz-title>
@@ -132,30 +123,16 @@ export class MainQuiz extends LitElementWw {
         this.score !== undefined
           ? html`<p id="score-feedback">Your Score: ${this.score + " %"}</p>`
           : ""}
-
-        <div class="button-container">
-          <div class="button-left-container">
-            <sl-button variant="neutral" outline @click="${this.resetQuiz}"
-              >Reset Quiz
-            </sl-button>
-          </div>
-
-          <sl-button
-            id="check-matches"
-            variant="primary"
-            outline
-            @click="${() => {
-              this.checkMatch();
-              this.calculateScore();
-            }}"
-            ?disabled=${this.droppedTitles.length === 0}
-            >Check Match
-          </sl-button>
-        </div>
       </div>
     `;
   }
 
+  // get selected feedback option
+  retriveSelection(selected) {
+    this.selectedOption = selected;
+  }
+
+  // append new events to quiz, save appended events to array
   startQuiz(events) {
     const existingEvents = this.appendedEvents;
     const formatDate = (startDate, endDate) => {
@@ -186,6 +163,7 @@ export class MainQuiz extends LitElementWw {
     });
   }
 
+  // reset quiz to restart
   resetQuiz() {
     const drop_sections =
       this.date_container.shadowRoot.querySelectorAll(".drop-section");
@@ -210,14 +188,13 @@ export class MainQuiz extends LitElementWw {
     });
 
     this.matchCount = 0;
-    this.score = 0;
-    this.noNeedToReset = true;
-    this.selectedOption = 4;
+    this.score = undefined;
   }
 
+  // set up date container + timeline + drop sections
   initializeDate(date) {
     const newDateContainer = document.createElement("div");
-    newDateContainer.classList.add("date-container");
+    newDateContainer.classList.add("new-date-container");
 
     const newQuizElement = document.createElement("div");
     newQuizElement.classList.add("quiz-element");
@@ -271,6 +248,7 @@ export class MainQuiz extends LitElementWw {
     // this.date_attacher.appendChild(newQuizElement);
   }
 
+  // set up titles
   initializeTitle(title) {
     const title_attacher =
       this.title_container.shadowRoot.querySelector("#title");
@@ -295,6 +273,15 @@ export class MainQuiz extends LitElementWw {
     this.randomiseTitleOrder(title_attacher);
   }
 
+  // randomise the order of draggable titles 
+  randomiseTitleOrder(title_attacher) {
+    const titles = Array.from(title_attacher.children);
+    titles.sort(() => Math.random() - 0.5);
+    title_attacher.innerHTML = "";
+    titles.forEach((box) => title_attacher.appendChild(box));
+  }
+
+  // save drop dragged title 
   dropTitle(titleId, dropSection, dropDate) {
     const draggedElement =
       this.title_container.shadowRoot.getElementById(titleId);
@@ -314,55 +301,43 @@ export class MainQuiz extends LitElementWw {
     }
   }
 
+  // check date and dropped title for match 
   checkMatch() {
     this.droppedTitles.forEach(({ element, dropSection, dropDate }) => {
       const titleId = element.id;
       const matchFound = this.appendedEvents.find(
         (event) => `title-${event.title}` === titleId && event.date === dropDate
       );
-      if (this.selectedOption === undefined) {
-        // this.formatError.hidden = false;
-        // console.log("undefined option, show error");
+      if (this.selectedOption === undefined || this.selectedOption === 0 ) {
+        this.dispatchEvent(
+          new CustomEvent("show-quiz-feedback-error", {
+            bubbles: true,
+            composed: true,
+          })
+        );
       }
 
       if (matchFound) {
         if (this.selectedOption === 1 || this.selectedOption === 2) {
           element.setAttribute("quiz-result", "match");
           dropSection.setAttribute("quiz-result", "match");
-          // this.formatError.hidden = true;
         }
         this.matchCount++;
       } else {
         if (this.selectedOption === 1 || this.selectedOption === 2) {
           element.setAttribute("quiz-result", "mismatch");
           dropSection.setAttribute("quiz-result", "mismatch");
-          // this.formatError.hidden = true;
         }
       }
     });
   }
 
-  randomiseTitleOrder(title_attacher) {
-    const titles = Array.from(title_attacher.children);
-    titles.sort(() => Math.random() - 0.5);
-    title_attacher.innerHTML = "";
-    titles.forEach((box) => title_attacher.appendChild(box));
-  }
-
+  // calculate score of matches
   calculateScore() {
-    if (this.noNeedToReset) {
-      const achievedPoints = this.matchCount;
-      const possiblePoints = this.appendedEvents.length;
-      this.score = parseFloat(
-        ((achievedPoints / possiblePoints) * 100).toFixed(2)
-      );
-      this.noNeedToReset = false;
-    } else {
-      this.score = this.score;
-    }
-  }
-
-  retriveSelection(selected) {
-    this.selectedOption = selected;
+    const achievedPoints = this.matchCount;
+    const possiblePoints = this.appendedEvents.length;
+    this.score = parseFloat(
+      ((achievedPoints / possiblePoints) * 100).toFixed(2)
+    );
   }
 }

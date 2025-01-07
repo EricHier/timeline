@@ -140,7 +140,7 @@ export class QuizDateField extends LitElementWw {
       border-radius: 50%;
       background: #484848;
     }
-    .date-container {
+    .new-date-container {
       display: grid;
       align-items: center;
       position: relative;

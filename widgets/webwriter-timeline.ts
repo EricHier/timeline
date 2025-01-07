@@ -100,6 +100,11 @@ export class WebWriterTimeline extends LitElementWw {
         color: #83b9e0;
         font-size: 32px;
       }
+      .text-error {
+        padding-left: 10px;
+        font-size: var(--sl-input-help-text-font-size-medium);
+        color: var(--sl-color-danger-700);
+      }
     `;
   }
 
@@ -124,6 +129,9 @@ export class WebWriterTimeline extends LitElementWw {
   protected firstUpdated(_changedProperties: PropertyValues): void {
     this.addEventListener("request-remove", (e) =>
       this.eventManager.removeEvent(e)
+    );
+    this.addEventListener("show-quiz-feedback-error", () =>
+      this.feedbackError.hidden = false
     );
   }
 
@@ -206,7 +214,7 @@ export class WebWriterTimeline extends LitElementWw {
                 <sl-option value="4">None</sl-option>
               </sl-select>
               <div class="text-error" id="feedback-error" hidden>
-                Please select one feedback option.
+                Please select a feedback option.
               </div>
             </div>`
           : html` <sl-tooltip
@@ -250,7 +258,7 @@ export class WebWriterTimeline extends LitElementWw {
   // transmit selected option for quiz feedback
   saveQuizSelection() {
     this.quizFeedbackOption = Number(this.quizFeedbackSelecter.value);
-    if (this.quizFeedbackOption !== undefined) {
+    if (this.quizFeedbackOption !== undefined || this.quizFeedbackOption !== 0) {
       this.feedbackError.hidden = true;
       this.quiz.retriveSelection(this.quizFeedbackOption);
     } else {
