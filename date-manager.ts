@@ -63,6 +63,6 @@ export class DateManager extends LitElementWw {
     if (year.includes("-")) {
         yearName = year.replace("-", "").padStart(4, "0") + " BCE";
     }
-    return `${day ? `${day}. ` : ""}${month ? `${monthName}. ` : ""}${yearName}`;
+    return `${day ? `${day}. ` : ""}${month ? `${monthName} ` : ""}${yearName}`;
   }
 }

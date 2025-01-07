@@ -47,7 +47,6 @@ export class EventContainer extends LitElementWw {
       padding-left: 0px;
       position: relative;
       width: 100%;
-    
     }
     .date-container {
       display: grid;

@@ -57,6 +57,10 @@ export class MainQuiz extends LitElementWw {
       .quiz-description {
         grid-column: 1;
         grid-row: 1;
+        margin-top: 0px;
+        font-size: 18px;
+        font-weight: 500;
+        color: #484848;
       }
       .button-container {
         grid-column: 2;
@@ -208,7 +212,7 @@ export class MainQuiz extends LitElementWw {
 
     const date_element = document.createElement("div");
     date_element.textContent = date;
-    date_element.classList.add("date-border");
+    date_element.classList.add("date-element");
 
     const date_drop_section = document.createElement("section");
     date_drop_section.classList.add("drop-section");

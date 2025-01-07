@@ -53,10 +53,29 @@ export class QuizDateField extends LitElementWw {
       border-top: 10px solid #484848;
     }
     .quiz-element {
+      grid-template-columns: auto auto; 
       display: grid;
-      grid-template-columns: auto auto;
+      align-items: flex-start;
+      padding: 16px;
+      padding-top: 5px;
+      padding-left: 0px;
+      position: relative;
+      width: 100%;
+      /* display: flex; */
+      /* min-height:60px;     */
     }
-    .date-border {
+    .quiz-element:first-child {
+      display: grid;
+      grid-template-columns: auto auto; 
+      
+      align-items: flex-start;
+      padding: 16px;
+      padding-top: 5px;
+      padding-left: 0px;
+      position: relative;
+      width: 100%;
+    }
+    .date-element {
       /* background: white; */
       /* border: 1px solid  #d6d6da;
       border-radius: 5px; */
@@ -73,31 +92,37 @@ export class QuizDateField extends LitElementWw {
       color: #666;
     }
     .drop-section {
-      grid-column: 2;
-      grid-row: 1;
+      /* grid-column: 2;
+      grid-row: 1; */
       display: flex;
       align-items: center;  
       justify-content: center;  
       background: white;
       border: 2px dashed #d6d6da;
       border-radius: 7px;
-      margin: 5px;
-      min-width: auto; 
-      min-height: 35px;
-      max-width: auto; 
+      margin-right: 5px;
+      /* min-width: auto;  */
+      min-height: 45px;
+      min-width: 50px;
+      width: max-content;
+      padding: 8px;
+      /* max-width: auto;  */
       flex-direction: column;
       flex-wrap: wrap; 
       box-sizing: border-box;
+      transform: translateX(-3.5px);
+      padding-top:8px;
+      padding-bottom:8px;
     }
-
     .drop-section[dragover] {
       border: 2px dashed #83b9e0;
     }
 
     .drop-section[dropped] {
-      border: 2px solid #d6d6da;
+      border: 3px solid #E0E0E0;
+      border-radius: 5px;
       font-weight: 500;
-      font-size: 1.15rem;
+      font-size: 16px;
       color: #333333;
     }
 
@@ -120,7 +145,7 @@ export class QuizDateField extends LitElementWw {
     }
 
     .date-line {
-      min-width:150px;
+      min-width:50px;
       flex-grow: 1;
       height: 2px;
       width: 100%; 
@@ -144,8 +169,16 @@ export class QuizDateField extends LitElementWw {
       display: grid;
       align-items: center;
       position: relative;
-      grid-column: 1;
-      grid-row: 1;
+      /* grid-column: 1;
+      grid-row: 1; */
+      /* display: flex; */
+      /* align-items: flex-start; */
+      
+      padding-left: 0px;
+      /* position: relative; */
+      width: 100%;
+      /* display: grid; */
+      /* align-items: center; */
     }
   `;
 
