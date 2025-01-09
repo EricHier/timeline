@@ -1,7 +1,7 @@
 import {LitElement, html, PropertyValues, css} from "lit"
 import {LitElementWw} from "@webwriter/lit"
 import {customElement, property, query, queryAll} from "lit/decorators.js"
-
+import moment from 'moment';
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import {
   SlButton,
@@ -463,13 +463,13 @@ export class TimelineDialog extends LitElementWw {
       title: this.eventTitle.value,
 
       startDate: `${this.startDate.year}${
-        this.startDate.month ? `-${this.startDate.month}` : ""
-      }${this.startDate.day ? `-${this.startDate.day}` : ""}`,
+        this.startDate.month ? `+${this.startDate.month}` : ""
+      }${this.startDate.day ? `+${this.startDate.day}` : ""}`,
 
       endDate: this.useTimePeriod
         ? `${this.endDate.year}${
-            this.endDate.month ? `-${this.endDate.month}` : ""
-          }${this.endDate.day ? `-${this.endDate.day}` : ""}`
+            this.endDate.month ? `+${this.endDate.month}` : ""
+          }${this.endDate.day ? `+${this.endDate.day}` : ""}`
         : "",
     };
 

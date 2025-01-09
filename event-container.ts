@@ -295,25 +295,37 @@ export class EventContainer extends LitElementWw {
 
   // convert string into date for sorting dates
   getStartDate(): Date {
-    const parts:  String[] = this.event_startDate.split(". ", -1);
-    const spaceCount: Number = parts.length - 1;
     let startDay, startMonth, startYear = "";
-    if(spaceCount===0){
+
+    if(this.event_startDate.includes(" BCE")){
+      this.event_startDate = this.event_startDate.replace(" BCE","BCE");
+    }
+    const parts:  String[] = this.event_startDate.split(" ", -1);
+    const spaceCount: Number = parts.length - 1;
+    
+    if(spaceCount === 0){
       startDay = "";
       startMonth = "";
       startYear = this.event_startDate;
     } else if( spaceCount === 1){
       startDay = "";
-      [startMonth, startYear] = this.event_startDate.split(". ");
+      [startMonth, startYear] = this.event_startDate.split(" ");
     } else if ( spaceCount === 2 ){
-      [startDay, startMonth, startYear] = this.event_startDate.split(". ");
+      [startDay, startMonth, startYear] = this.event_startDate.split(" ");
+    }
+
+    if(startYear.includes("BCE")) {
+      startYear = startYear.replace("BCE","");
+      startYear = "-" + startYear;
     }
 
     let sortStartDate = `${startYear}${
       startMonth ? `-${startMonth}` : ""
     }${startDay ? `-${startDay}` : ""}`;
-    var d = new Date(Date.parse(sortStartDate));
-    return d;
-  }
 
+    console.log( sortStartDate, " date ready to sort")
+    var date = new Date(Date.parse(sortStartDate));
+    console.log(date, " sorting date" );
+    return date;
+  }
 }

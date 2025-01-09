@@ -9,20 +9,7 @@ import "@shoelace-style/shoelace/dist/themes/light.css";
 
 export class QuizDateField extends LitElementWw {
   static styles = css`
-    /* .border {
-      border: 1px solid  #d6d6da;
-      background: #f7f7f8;
-      border-radius: 5px;
-      width: 100%; 
-       margin-left: 10px; 
-       margin-right: 10px; 
-       margin-top: 10px; 
-       margin-bottom: 10px; 
-      box-sizing: border-box;
-      min-height: 50px; 
-      max-width:100%;
-    } */
-      .timeline-parent {
+    .timeline-parent {
       display: flex;
       justify-content: start;
       flex-direction: row;
@@ -44,7 +31,6 @@ export class QuizDateField extends LitElementWw {
       content: "";
       position: absolute;
       bottom: -10px;
-      /* left: 50%; */
       transform: translateX(-58%);
       width: 0;
       height: 0;
@@ -53,7 +39,7 @@ export class QuizDateField extends LitElementWw {
       border-top: 10px solid #484848;
     }
     .quiz-element {
-      grid-template-columns: auto auto; 
+      grid-template-columns: 50% 50%; 
       display: grid;
       align-items: flex-start;
       padding: 16px;
@@ -61,12 +47,10 @@ export class QuizDateField extends LitElementWw {
       padding-left: 0px;
       position: relative;
       width: 100%;
-      /* display: flex; */
-      /* min-height:60px;     */
     }
     .quiz-element:first-child {
       display: grid;
-      grid-template-columns: auto auto; 
+      /* grid-template-columns: auto auto;  */
       
       align-items: flex-start;
       padding: 16px;
@@ -76,9 +60,6 @@ export class QuizDateField extends LitElementWw {
       width: 100%;
     }
     .date-element {
-      /* background: white; */
-      /* border: 1px solid  #d6d6da;
-      border-radius: 5px; */
       font-size: 14px;
       font-weight: 700;
       color: #484848;
@@ -89,26 +70,23 @@ export class QuizDateField extends LitElementWw {
       width: 100%; 
       height:auto;
       text-align: left; 
-      color: #666;
     }
     .drop-section {
-      /* grid-column: 2;
-      grid-row: 1; */
       display: flex;
       align-items: center;  
-      justify-content: center;  
+      /* justify-content: center;   */
       background: white;
       border: 2px dashed #d6d6da;
       border-radius: 7px;
       margin-right: 5px;
-      /* min-width: auto;  */
       min-height: 45px;
       min-width: 50px;
       width: max-content;
       padding: 8px;
-      /* max-width: auto;  */
       flex-direction: column;
       flex-wrap: wrap; 
+      overflow-wrap: break-word;
+      overflow-y: auto;
       box-sizing: border-box;
       transform: translateX(-3.5px);
       padding-top:8px;
@@ -124,6 +102,7 @@ export class QuizDateField extends LitElementWw {
       font-weight: 500;
       font-size: 16px;
       color: #333333;
+      flex-direction: column;
     }
 
     .drop-section[quiz-result="match"] {
@@ -145,7 +124,7 @@ export class QuizDateField extends LitElementWw {
     }
 
     .date-line {
-      min-width:50px;
+      min-width:150px;
       flex-grow: 1;
       height: 2px;
       width: 100%; 
@@ -169,16 +148,8 @@ export class QuizDateField extends LitElementWw {
       display: grid;
       align-items: center;
       position: relative;
-      /* grid-column: 1;
-      grid-row: 1; */
-      /* display: flex; */
-      /* align-items: flex-start; */
-      
       padding-left: 0px;
-      /* position: relative; */
       width: 100%;
-      /* display: grid; */
-      /* align-items: center; */
     }
   `;
 

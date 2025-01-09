@@ -59,15 +59,16 @@ export class EventManager extends LitElementWw {
     }
 
     const { title: title, startDate: startDate, endDate: endDate } = event.detail;
-    const [startYear, startMonth, startDay] = startDate.split("-");
-    const [endYear, endMonth, endDay] = endDate ? endDate.split("-") : [undefined, undefined, undefined];
+    const [startYear, startMonth, startDay] = startDate.split("+");
+    console.log(startYear, " start year after split");
+    const [endYear, endMonth, endDay] = endDate ? endDate.split("+") : [undefined, undefined, undefined];
 
     const startMonthName = startMonth ? this.dateManager.getMonthName(startMonth) : "";
     const endMonthName = endMonth ? this.dateManager.getMonthName(endMonth) : "";
 
     const displayStartDate = this.dateManager.formatDisplayDate(startYear, startMonth, startDay, startMonthName);
     const displayEndDate = endDate ? this.dateManager.formatDisplayDate(endYear, endMonth, endDay, endMonthName) : "";
-
+    console.log(displayStartDate, " modified start date")
     // TO DO: why cant I use the constructor ??
     // const timeline_event = new EventContainer({
     //   title: title,

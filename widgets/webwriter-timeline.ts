@@ -19,6 +19,7 @@ import { TimelineDialog } from "../tl-dialog";
 import { EventManager } from "../event-manager";
 import { MainQuiz } from "../quiz/q-main-quiz";
 import IconCirclePlusFilled from "@tabler/icons/outline/circle-plus.svg";
+import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSystem.js";
 
 @customElement("webwriter-timeline")
 export class WebWriterTimeline extends LitElementWw {
@@ -45,12 +46,13 @@ export class WebWriterTimeline extends LitElementWw {
     .ww-timeline {
         border-top: 1px solid darkgray;
         border-bottom: 1px solid darkgray;
+        min-height: 500px;
       }
       .border {
-        height: 500px;
-        max-height: 500px;
+        /* height: 500px; */
+        min-zoom: 100%;
         overflow-wrap: break-word;
-        overflow-y: auto;
+        /* overflow-y: auto; */
         width: 100%;
         padding-left: 20px;
         padding-right: 20px;
@@ -73,9 +75,9 @@ export class WebWriterTimeline extends LitElementWw {
         position: relative;
         padding-bottom: 50px;
       }
-      .timeline-item:last-child {
-        margin-bottom: 40px;
-      }
+      /* .timeline-item:last-child {
+        margin-bottom: 20px;
+      } */
       .timeline::after {
         content: "";
         position: absolute;
@@ -121,6 +123,8 @@ export class WebWriterTimeline extends LitElementWw {
       "sl-switch": SlSwitch,
       "sl-icon": SlIcon,
       "sl-tooltip": SlTooltip,
+      "webwriter-helpoverlay": HelpOverlay,
+      "webwriter-helppopup": HelpPopup,
     };
   }
 
@@ -190,6 +194,22 @@ export class WebWriterTimeline extends LitElementWw {
               @request-add=${(e) => this.eventManager.addEvent(e, this)}
             >
             </timeline-dialog>
+
+            <!-- <webwriter-helpoverlay>
+                <webwriter-helppopup
+                    slot="popupContainer"
+                    target="cool-id"
+                >
+                    <div slot="content">
+                        <h4>help heading</h4>
+                        <p>some help</p>
+                    </div>
+                </webwriter-helppopup>
+        </webwriter-helpoverlay> -->
+
+            <!-- <div style="width: 50vw, height: 50vh">
+                <p id="cool-id">my content</p>
+            </div> -->
           </div>
         </sl-tab-panel>
 

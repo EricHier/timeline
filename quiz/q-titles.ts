@@ -12,12 +12,13 @@ export class QuizTitles extends LitElementWw {
   @query("title-element") accessor title_element: HTMLDivElement;
   @property({ type: Array, attribute: true, reflect: true }) titles;
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
+  @property({ type: Boolean, attribute: true, reflect: true }) accessor titleChildren;
 
   static styles = css`
     .border {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: flex-end;
       border: 1px solid #d6d6da;
       background: #f7f7f8;
       border-radius: 5px;
@@ -54,8 +55,6 @@ export class QuizTitles extends LitElementWw {
       background: #e5f4fc;
       border: 2px solid #83b9e0;
     }
-
-    
   `;
 
   render() {

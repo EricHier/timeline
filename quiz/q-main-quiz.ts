@@ -29,7 +29,7 @@ export class MainQuiz extends LitElementWw {
         display: none;
       }
       .border {
-        height: 500px;
+        max-height: 800px;
         width: 100%;
         padding-left: 20px;
         padding-right: 20px;

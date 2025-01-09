@@ -14,8 +14,10 @@
     "@shoelace-style/shoelace": "^2.17.1",
     "@tabler/icons": "^3.21.0",
     "@webwriter/lit": "^2.0.0",
+    "@webwriter/wui": "^0.0.3",
     "lit": "^3.2.1",
-    "lit-flatpickr": "^0.4.0"
+    "lit-flatpickr": "^0.4.0",
+    "moment": "^2.30.1"
   },
   "scripts": {
     "prepublishOnly": "npx @webwriter/build"
