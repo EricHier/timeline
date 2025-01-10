@@ -459,7 +459,7 @@ export class TimelineDialog extends LitElementWw {
 
   // dispatch add request to timeline component
   dispatchAddEvent() {
-    
+    // debugger;
 
     let eventDetails: TlEventData = {
       title: this.eventTitle.value,
@@ -470,7 +470,7 @@ export class TimelineDialog extends LitElementWw {
         ? this.convertToMoment(this.endDate)
         : undefined,
     };
-
+    console.log(eventDetails, " event details dispatched"); 
     this.dispatchEvent(
       new CustomEvent("request-add", {
         detail: eventDetails,

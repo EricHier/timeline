@@ -136,7 +136,7 @@ export class DialogDatePicker extends LitElement {
             .value="${this.year}"
             @sl-input="${(e: Event) => {
               const input = e.target as SlInput;
-              this.year = input.value.padStart(4, "0");
+              this.year = input.value;
             }}"
             @keypress="${this.validateYearInput}"
             @sl-blur="${this.validateForErrors}"

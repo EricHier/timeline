@@ -255,6 +255,7 @@ export class WebWriterTimeline extends LitElementWw {
       </div>
     `;
   }
+  
   // if quiz panel is selected start quiz + manage options window
   checkSelectedTab(selectedTab) {
     if (selectedTab === "quiz-panel" && this.isChecked) {

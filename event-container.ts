@@ -9,6 +9,7 @@ import "@shoelace-style/shoelace/dist/themes/light.css";
 import { SlButton, SlDetails, SlIcon, SlDialog, SlTooltip  } from "@shoelace-style/shoelace";
 import { TlEventData } from "./tl-event-data";
 import moment, { Moment } from "moment";
+import { TimelineDialog } from "./tl-dialog";
 
 @customElement("event-container")
 export class EventContainer extends LitElementWw {
@@ -16,8 +17,7 @@ export class EventContainer extends LitElementWw {
   @property({ type: String }) accessor event_title;
   @property({ type: Array }) accessor event_startDate: TlEventData ["startDate"];
   @property({ type: Array }) accessor event_endDate: TlEventData ["endDate"];
-  @property({ type: String }) accessor event_startDate_display_format;
-  @property({ type: String }) accessor event_endDate_display;
+ 
   @property({ type: Boolean }) accessor hiddenDiv = true;
 
   @query("#event_elements") accessor event_element;
@@ -183,6 +183,7 @@ export class EventContainer extends LitElementWw {
       "sl-icon": SlIcon,
       "sl-dialog": SlDialog,
       "sl-tooltip": SlTooltip,
+      "tl-dialog": TimelineDialog,
     };
   }
   protected firstUpdated(_changedProperties: PropertyValues): void {
@@ -200,7 +201,7 @@ export class EventContainer extends LitElementWw {
         <div class="date-container"> 
         ${this.event_endDate === undefined 
           ? html`
-            <div class="event-date">${this.convertToDisplayDate(this.event_startDate).format(this.convertToDisplayDateFormat(this.event_startDate))}</div>
+            <div class="event-date">${this.displayDate(this.event_startDate)}</div>
             <div class="date-line"></div>`
           : html`
             <div class="event-date">${this.event_startDate}${" - "}${this.event_endDate}</div>
@@ -299,90 +300,57 @@ export class EventContainer extends LitElementWw {
   }
 
   // convert string into date for sorting dates
-  getStartDate(): Moment {    
-    debugger; 
-    
-
+  getStartDate(): Moment {        
     return this.convertToDisplayDate(this.event_startDate);
-   
-    // return moment(this.event_startDate)
-
-    // let startDay, startMonth, startYear = "";
-
-    // if(this.event_startDate.includes(" BCE")){
-    //   this.event_startDate = this.event_startDate.replace(" BCE","BCE");
-    // }
-    // const parts:  String[] = this.event_startDate.split(" ", -1);
-    // const spaceCount: Number = parts.length - 1;
-    
-    // if(spaceCount === 0){
-    //   startDay = "";
-    //   startMonth = "";
-    //   startYear = this.event_startDate;
-    // } else if( spaceCount === 1){
-    //   startDay = "";
-    //   [startMonth, startYear] = this.event_startDate.split(" ");
-    // } else if ( spaceCount === 2 ){
-    //   [startDay, startMonth, startYear] = this.event_startDate.split(" ");
-    // }
-
-    // if(startYear.includes("BCE")) {
-    //   startYear = startYear.replace("BCE","");
-    //   startYear = "-" + startYear;
-    // }
-
-    // let sortStartDate = `${startYear}${
-    //   startMonth ? `-${startMonth}` : ""
-    // }${startDay ? `-${startDay}` : ""}`;
-
-    // console.log( sortStartDate, " date ready to sort")
-    // var date = new Date(Date.parse(sortStartDate));
-    // console.log(date, " sorting date" );
-    // return date;
   }
 
   convertToDisplayDate (date: TlEventData["startDate"]){
-    debugger;
     const [year, month, day] = date;
 
     const result = moment(0)
-    
+
     if(year != null) {
-      result.year(year);
+      result.year(year); 
     }
     if(month != null) {
-      result.month(month);
+      result.month(month-1);
     }
     if(day != null) {
-      result.day(day);
+      result.date(day);
     }
-  
     return result
   }
 
   convertToDisplayDateFormat (date: TlEventData["startDate"]){
-    debugger;
     const [year, month, day] = date;
+    let format = "YYYY";
+    
+    if(month != null ) {
+      format = "MMMM YYYY" ;
+    }
+    if(day != null) {
+      format = "D. MMMM YYYY" ;
+    }
+    
+    return format
+  }
+
+  displayDate(date: TlEventData["startDate"] ){
     const yearBCE = this.checkForYearBC(date);
-    let result = "y";
-    
-    if(month != null && yearBCE === true) {
-      result = "MMMM y NN" ;
-    } else if(month != null) {
-      result = "MMMM y" ;
+    let displayDate;
+    if(yearBCE){
+      displayDate = this.convertToDisplayDate(this.event_startDate).format(this.convertToDisplayDateFormat(this.event_startDate));
+      return displayDate.replace("-","") + " BCE";
+    } else {
+      displayDate = this.convertToDisplayDate(this.event_startDate).format(this.convertToDisplayDateFormat(this.event_startDate));
+      return displayDate;
     }
-    if(day != null && yearBCE === true) {
-      result = "DD. MMMM y NN" ;
-    } else if(day != null) {
-      result = "DD. MMMM y" ;
-    }
-    
-    return result
   }
 
   checkForYearBC(date: TlEventData["startDate"]){
-    const [year, month, day] = date;
-    if(year.toString().includes("-")) {
+    const year = date[0];
+    const year_string = year.toString();
+    if(year_string.includes("-")) {
       return true;
     }
     return false; 

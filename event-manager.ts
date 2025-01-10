@@ -17,11 +17,6 @@ import { TlEventData } from "./tl-event-data";
 export class EventManager extends LitElementWw {  
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
 
-  // @query('webwriter-timeline') accessor timeline: WebWriterTimeline;
-  // @query('webwriter-timeline timeline-dialog') accessor dialog: TimelineDialog;
-  // @query('webwriter-timeline slot[name="event-slot"]') accessor tlslot: HTMLSlotElement;
-
-
   static styles = css`
   `;
 
@@ -46,6 +41,8 @@ export class EventManager extends LitElementWw {
   // adding event to webwriter-timeline slot by creating event-container, 
   addEvent(event: CustomEvent<TlEventData>, timeline) {
     const tldialog = timeline?.shadowRoot?.querySelector("timeline-dialog") as TimelineDialog;
+    const { title, startDate, endDate } = event.detail;
+    const timeline_event = new EventContainer()
 
     if (!event.detail) {
       console.error("Event detail not received");
@@ -57,34 +54,6 @@ export class EventManager extends LitElementWw {
       return;  
     }
 
-    const { title, startDate, endDate } = event.detail;
-    // const [startYear, startMonth, startDay] = startDate.split("+");
-    // console.log(startYear, " start year after split");
-    // const [endYear, endMonth, endDay] = endDate 
-    // ?     endDate.split("+") 
-    // : [undefined, undefined, undefined];
-
-    // const startMonthName = startMonth ? this.dateManager.getMonthName(startMonth) : "";
-    // const endMonthName = endMonth ? this.dateManager.getMonthName(endMonth) : "";
-
-    // const displayStartDate = this.dateManager.formatDisplayDate(startYear, startMonth, startDay, startMonthName);
-    // const displayEndDate = endDate ? this.dateManager.formatDisplayDate(endYear, endMonth, endDay, endMonthName) : "";
-    // console.log(displayStartDate, " modified start date")
-    // // TO DO: why cant I use the constructor ??
-    // // const timeline_event = new EventContainer({
-    // //   title: title,
-    // //   startDate: displayStartDate,
-    // //   endDate: displayEndDate
-    // // });
-    const timeline_event = new EventContainer()
-    // timeline_event.setConstructorAttributes({
-    //     title,
-    //     startDate,
-    //     endDate
-    // });
-    // timeline_event.event_startDate = startDate;
-    // timeline_event.event_endDate = endDate;
-    console.log(timeline_event.event_startDate, " start date", timeline_event.event_endDate, " end date");
     timeline_event.setAttribute("event_title", title);
     timeline_event.setAttribute("event_startDate", JSON.stringify(startDate));
     if(endDate !== undefined){
