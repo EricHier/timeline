@@ -43,7 +43,7 @@
       "source": "./dialog-elements/d-input.ts",
       "default": "./dist/dialog-elements/d-input.*"
     },
-    "./snippets/women-in-tech.html": "./snippets/women-in-tech.html",
+    "./snippets/v2-women-in-tech.html": "./snippets/v2-women-in-tech.html",
     "./package.json": "./package.json"
   },
   "editingConfig": {

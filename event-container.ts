@@ -173,6 +173,14 @@ export class EventContainer extends LitElementWw {
     .expand-icon {
       padding-right: 15px;
     }
+    sl-dialog::part(base) {
+      position: absolute;
+      height: 100%;
+    }
+
+    sl-dialog::part(overlay) {
+      position: absolute;
+    }
     `;
   }
 
@@ -204,7 +212,7 @@ export class EventContainer extends LitElementWw {
             <div class="event-date">${this.displayDate(this.event_startDate)}</div>
             <div class="date-line"></div>`
           : html`
-            <div class="event-date">${this.event_startDate}${" - "}${this.event_endDate}</div>
+            <div class="event-date">${this.displayDate(this.event_startDate)}${" - "}${this.displayDate(this.event_endDate)}</div>
             <div class="date-time-period-line"></div>`
         }
         </div>
@@ -306,7 +314,6 @@ export class EventContainer extends LitElementWw {
 
   convertToDisplayDate (date: TlEventData["startDate"]){
     const [year, month, day] = date;
-
     const result = moment(0)
 
     if(year != null) {
@@ -339,10 +346,10 @@ export class EventContainer extends LitElementWw {
     const yearBCE = this.checkForYearBC(date);
     let displayDate;
     if(yearBCE){
-      displayDate = this.convertToDisplayDate(this.event_startDate).format(this.convertToDisplayDateFormat(this.event_startDate));
+      displayDate = this.convertToDisplayDate(date).format(this.convertToDisplayDateFormat(date));
       return displayDate.replace("-","") + " BCE";
     } else {
-      displayDate = this.convertToDisplayDate(this.event_startDate).format(this.convertToDisplayDateFormat(this.event_startDate));
+      displayDate = this.convertToDisplayDate(date).format(this.convertToDisplayDateFormat(date));
       return displayDate;
     }
   }

@@ -136,6 +136,12 @@ export class TimelineDialog extends LitElementWw {
 
     this.removeEventListener("show-month-validation-error", this.showMonthError);
     this.removeEventListener("hide-month-validation-error", this.hideMonthError);
+    
+    this.removeEventListener("show-year-validation-error", this.showYearError);
+    this.removeEventListener("hide-year-validation-error", this.hideYearError);
+
+    this.removeEventListener("show-format-validation-error", this.showFormatError);
+    this.removeEventListener("hide-format-validation-error", this.hideFormatError);
   }
 
   render() {
@@ -434,27 +440,21 @@ export class TimelineDialog extends LitElementWw {
 
   // to do: check if end date < start date and give error
   evaluateTimeError(): Boolean {
-    const start = Date.parse(
-      `${this.startDate.year ? `${this.startDate.year}` : ""}${
-        this.startDate.month ? `-${this.startDate.month}` : ""
-      }${this.startDate.day ? `-${this.startDate.day}` : ""}`
-    );
-    const end = Date.parse(
-      `${this.endDate.year ? `${this.endDate.year}` : ""}${
-        this.endDate.month ? `-${this.endDate.month}` : ""
-      }${this.endDate.day ? `-${this.endDate.day}` : ""}`
-    );
-
-    if (start > end && this.useTimePeriod == true) {
-      this.timeError.textContent =
-        "Time Error: Invalid format, Start date after end date";
-      this.timeError.hidden = false;
-      return false;
-    } else {
-      this.timeError.textContent = "";
-      this.timeError.hidden = true;
-      return true;
-    }
+    const start = this.convertToMoment(this.startDate);
+    const end =  this.useTimePeriod
+        ? this.convertToMoment(this.endDate)
+        : undefined;
+        if (this.useTimePeriod && (start[0] > end[0] ||
+            (start[0] === end[0] && start[1] > end[1]) ||
+            (start[0] === end[0] && start[1] === end[1] && start[2] > end[2]))) {
+          this.timeError.textContent = "Time Error: Invalid format, Start date after end date";
+          this.timeError.hidden = false;
+          return false;
+        } else {
+          this.timeError.textContent = "";
+          this.timeError.hidden = true;
+          return true;
+        }
   }
 
   // dispatch add request to timeline component
