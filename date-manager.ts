@@ -43,7 +43,11 @@ export class DateManager extends LitElementWw {
   // creates array of timeline children elements (events) and sorts them via start date, re-append after
   sortEvents(timeline){
     [...timeline.children]
-      .sort((a: EventContainer, b:EventContainer) => {return a.getStartDate() > b.getStartDate() ? 1 : -1})
+      .sort((a: EventContainer, b:EventContainer) => {
+        console.log(a.getStartDate(), b.getStartDate(), a.getStartDate().isAfter(b.getStartDate()));
+        
+        return a.getStartDate().isAfter(b.getStartDate()) ? 1 : -1
+      })
       .forEach(node => timeline.appendChild(node));
   }
 

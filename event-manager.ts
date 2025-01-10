@@ -1,4 +1,4 @@
-import {LitElement, html, PropertyValues, css} from "lit"
+import {LitElement, html, PropertyValues, css, defaultConverter} from "lit"
 import {LitElementWw} from "@webwriter/lit"
 import {customElement, property, query} from "lit/decorators.js"
 
@@ -45,7 +45,6 @@ export class EventManager extends LitElementWw {
 
   // adding event to webwriter-timeline slot by creating event-container, 
   addEvent(event: CustomEvent<TlEventData>, timeline) {
-    // const timeline = document.querySelector("webwriter-timeline") as WebWriterTimeline;
     const tldialog = timeline?.shadowRoot?.querySelector("timeline-dialog") as TimelineDialog;
 
     if (!event.detail) {
@@ -58,32 +57,39 @@ export class EventManager extends LitElementWw {
       return;  
     }
 
-    const { title: title, startDate: startDate, endDate: endDate } = event.detail;
-    const [startYear, startMonth, startDay] = startDate.split("+");
-    console.log(startYear, " start year after split");
-    const [endYear, endMonth, endDay] = endDate ? endDate.split("+") : [undefined, undefined, undefined];
+    const { title, startDate, endDate } = event.detail;
+    // const [startYear, startMonth, startDay] = startDate.split("+");
+    // console.log(startYear, " start year after split");
+    // const [endYear, endMonth, endDay] = endDate 
+    // ?     endDate.split("+") 
+    // : [undefined, undefined, undefined];
 
-    const startMonthName = startMonth ? this.dateManager.getMonthName(startMonth) : "";
-    const endMonthName = endMonth ? this.dateManager.getMonthName(endMonth) : "";
+    // const startMonthName = startMonth ? this.dateManager.getMonthName(startMonth) : "";
+    // const endMonthName = endMonth ? this.dateManager.getMonthName(endMonth) : "";
 
-    const displayStartDate = this.dateManager.formatDisplayDate(startYear, startMonth, startDay, startMonthName);
-    const displayEndDate = endDate ? this.dateManager.formatDisplayDate(endYear, endMonth, endDay, endMonthName) : "";
-    console.log(displayStartDate, " modified start date")
-    // TO DO: why cant I use the constructor ??
-    // const timeline_event = new EventContainer({
-    //   title: title,
-    //   startDate: displayStartDate,
-    //   endDate: displayEndDate
+    // const displayStartDate = this.dateManager.formatDisplayDate(startYear, startMonth, startDay, startMonthName);
+    // const displayEndDate = endDate ? this.dateManager.formatDisplayDate(endYear, endMonth, endDay, endMonthName) : "";
+    // console.log(displayStartDate, " modified start date")
+    // // TO DO: why cant I use the constructor ??
+    // // const timeline_event = new EventContainer({
+    // //   title: title,
+    // //   startDate: displayStartDate,
+    // //   endDate: displayEndDate
+    // // });
+    const timeline_event = new EventContainer()
+    // timeline_event.setConstructorAttributes({
+    //     title,
+    //     startDate,
+    //     endDate
     // });
-    const timeline_event = new EventContainer();
-    timeline_event.setConstructorAttributes({
-        title: title,
-        startDate: displayStartDate,
-        endDate: displayEndDate
-    });
+    // timeline_event.event_startDate = startDate;
+    // timeline_event.event_endDate = endDate;
+    console.log(timeline_event.event_startDate, " start date", timeline_event.event_endDate, " end date");
     timeline_event.setAttribute("event_title", title);
-    timeline_event.setAttribute("event_startDate", displayStartDate);
-    timeline_event.setAttribute("event_endDate", displayEndDate);
+    timeline_event.setAttribute("event_startDate", JSON.stringify(startDate));
+    if(endDate !== undefined){
+      timeline_event.setAttribute("event_endDate", JSON.stringify(endDate));
+    }
     timeline_event.setAttribute("slot", "event-slot");
 
     timeline.appendChild(timeline_event);

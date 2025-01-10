@@ -1,7 +1,7 @@
 import {LitElement, html, PropertyValues, css} from "lit"
 import {LitElementWw} from "@webwriter/lit"
 import {customElement, property, query, queryAll} from "lit/decorators.js"
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import {
   SlButton,
@@ -459,18 +459,16 @@ export class TimelineDialog extends LitElementWw {
 
   // dispatch add request to timeline component
   dispatchAddEvent() {
+    
+
     let eventDetails: TlEventData = {
       title: this.eventTitle.value,
 
-      startDate: `${this.startDate.year}${
-        this.startDate.month ? `+${this.startDate.month}` : ""
-      }${this.startDate.day ? `+${this.startDate.day}` : ""}`,
+      startDate: this.convertToMoment(this.startDate),
 
       endDate: this.useTimePeriod
-        ? `${this.endDate.year}${
-            this.endDate.month ? `+${this.endDate.month}` : ""
-          }${this.endDate.day ? `+${this.endDate.day}` : ""}`
-        : "",
+        ? this.convertToMoment(this.endDate)
+        : undefined,
     };
 
     this.dispatchEvent(
@@ -480,5 +478,16 @@ export class TimelineDialog extends LitElementWw {
         composed: true,
       })
     );
+  }
+
+  private convertToMoment(datePicker: DialogDatePicker): TlEventData["startDate"] {
+    const date: TlEventData["startDate"] = [Number(datePicker.year), undefined, undefined]
+    if (datePicker.month) {
+      date[1] = (Number(datePicker.month))
+    }
+    if (datePicker.day) {
+      date[2] =  (Number(datePicker.day))
+    }
+    return date;
   }
 }
