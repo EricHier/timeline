@@ -459,8 +459,6 @@ export class TimelineDialog extends LitElementWw {
 
   // dispatch add request to timeline component
   dispatchAddEvent() {
-    // debugger;
-
     let eventDetails: TlEventData = {
       title: this.eventTitle.value,
 

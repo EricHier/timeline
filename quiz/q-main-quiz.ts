@@ -5,6 +5,7 @@ import { customElement, property, query } from "lit/decorators.js";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
 import { SlButton } from "@shoelace-style/shoelace";
+import { TlEventData, TlEventHelper} from "../tl-event-data";
 
 import { QuizTitles } from "./q-titles";
 import { QuizDateField } from "./q-date-field";
@@ -12,7 +13,9 @@ import { QuizDateField } from "./q-date-field";
 @customElement("main-quiz")
 export class MainQuiz extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
-  @property({ type: Array, attribute: true, reflect: true }) accessor appendedEvents: Array<{ date: string; title: string }> = [];
+  @property({ type: Array }) accessor event_startDate: TlEventData ["startDate"];
+  @property({ type: Array }) accessor event_endDate: TlEventData ["endDate"];
+  @property({ type: Array, attribute: true, reflect: true }) accessor appendedEvents: Array<{ date: String; title: string }> = [];
   @property({ type: Array, attribute: true, reflect: true }) accessor droppedTitles = [];
   @property({ type: Number, attribute: true, reflect: true })  accessor matchCount = 0;
   @property({ type: Number, attribute: true, reflect: true }) accessor score;
@@ -138,7 +141,10 @@ export class MainQuiz extends LitElementWw {
 
   // append new events to quiz, save appended events to array
   startQuiz(events) {
+    console.log(events, " events in event container");
     const existingEvents = this.appendedEvents;
+    
+
     const formatDate = (startDate, endDate) => {
       return endDate ? `${startDate} - ${endDate}` : startDate;
     };
@@ -160,7 +166,16 @@ export class MainQuiz extends LitElementWw {
       const title = event.getAttribute("event_title");
       const startDate = event.getAttribute("event_startdate");
       const endDate = event.getAttribute("event_enddate");
-      const date = formatDate(startDate, endDate);
+
+      const start_parsedArray = JSON.parse(startDate);
+      const display_startdate = TlEventHelper.displayDate(start_parsedArray);
+      var date = display_startdate;
+      if(endDate) {
+        const end_parsedArray = JSON.parse(endDate);
+        const display_enddate = TlEventHelper.displayDate(end_parsedArray);
+        date = formatDate(display_startdate, display_enddate);
+      }
+
       this.initializeDate(date);
       this.initializeTitle(title);
       this.appendedEvents.push({ date, title });

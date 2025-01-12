@@ -7,7 +7,7 @@ import IconArrowsDiagonalMinimize2 from "@tabler/icons/outline/arrows-diagonal-m
 import IconTrash from "@tabler/icons/outline/trash.svg";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { SlButton, SlDetails, SlIcon, SlDialog, SlTooltip  } from "@shoelace-style/shoelace";
-import { TlEventData } from "./tl-event-data";
+import { TlEventData , TlEventHelper } from "./tl-event-data";
 import moment, { Moment } from "moment";
 import { TimelineDialog } from "./tl-dialog";
 
@@ -29,18 +29,19 @@ export class EventContainer extends LitElementWw {
   
   static get styles() {
     return css`  
-     :host(:not([contenteditable="true"]):not([contenteditable=""]))
+      :host(:not([contenteditable="true"]):not([contenteditable=""]))
         .author-only {
         display: none;
       }
-    .event {
-      display: flex;
-      align-items: flex-start;
-      padding: 15px;
-      padding-left: 0px;
-      position: relative;
-      width: 100%;
-    }
+      
+      .event {
+        display: flex;
+        align-items: flex-start;
+        padding: 15px;
+        padding-left: 0px;
+        position: relative;
+        width: 100%;
+      }
 
     .event:first-child {
       display: flex;
@@ -142,6 +143,11 @@ export class EventContainer extends LitElementWw {
       flex-direction: column; 
       transform: translateX(-3.5px);
     }
+    .event-content {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
     .event-title {
       font-size: 16px;
       font-weight: 500;
@@ -165,6 +171,7 @@ export class EventContainer extends LitElementWw {
       justify-content: space-between;
       align-items: center;
       width: 100%;
+      padding: 1rem 0 0 0; 
     }
     .button {
       padding-top: 5px; 
@@ -174,13 +181,15 @@ export class EventContainer extends LitElementWw {
       padding-right: 15px;
     }
     sl-dialog::part(base) {
-      position: absolute;
-      height: 100%;
-    }
+        --width: 100%;
+        margin: 0;
+        position: relative;
+      }
 
-    sl-dialog::part(overlay) {
-      position: absolute;
-    }
+      sl-dialog::part(panel) {
+        margin: 0;
+        padding: 1rem;
+      }
     `;
   }
 
@@ -199,7 +208,7 @@ export class EventContainer extends LitElementWw {
       this.addParagraph();
     }
   }
-  
+
 
   render() {
 
@@ -209,10 +218,10 @@ export class EventContainer extends LitElementWw {
         <div class="date-container"> 
         ${this.event_endDate === undefined 
           ? html`
-            <div class="event-date">${this.displayDate(this.event_startDate)}</div>
+            <div class="event-date">${TlEventHelper.displayDate(this.event_startDate)}</div>
             <div class="date-line"></div>`
           : html`
-            <div class="event-date">${this.displayDate(this.event_startDate)}${" - "}${this.displayDate(this.event_endDate)}</div>
+            <div class="event-date">${TlEventHelper.displayDate(this.event_startDate)}${" - "}${TlEventHelper.displayDate(this.event_endDate)}</div>
             <div class="date-time-period-line"></div>`
         }
         </div>
@@ -263,6 +272,28 @@ export class EventContainer extends LitElementWw {
           <div id="event_elements" class="event-content" hidden>
             <slot></slot> 
           </div>
+          <sl-dialog
+          id="delete-event-dialog"
+          label='Do you want to delete the timeline event "${this.event_title}" ?'>
+
+            <div class="button-container">
+              <sl-button 
+                class="button" 
+                id="closeButton" 
+                slot="footer" 
+                variant="default"
+                @click="${() => this.dialog.hide()}">Exit
+              </sl-button>
+ 
+              <sl-button 
+                class="button" 
+                id="deleteButton" 
+                slot="footer" 
+                variant="danger" 
+                @click="${() => this.removeEvent()}">Delete
+              </sl-button>
+            </div>
+          </sl-dialog>
         </div>
       </div>
     `;
@@ -307,59 +338,8 @@ export class EventContainer extends LitElementWw {
     );
   }
 
-  // convert string into date for sorting dates
-  getStartDate(): Moment {        
-    return this.convertToDisplayDate(this.event_startDate);
-  }
-
-  convertToDisplayDate (date: TlEventData["startDate"]){
-    const [year, month, day] = date;
-    const result = moment(0)
-
-    if(year != null) {
-      result.year(year); 
-    }
-    if(month != null) {
-      result.month(month-1);
-    }
-    if(day != null) {
-      result.date(day);
-    }
-    return result
-  }
-
-  convertToDisplayDateFormat (date: TlEventData["startDate"]){
-    const [year, month, day] = date;
-    let format = "YYYY";
-    
-    if(month != null ) {
-      format = "MMMM YYYY" ;
-    }
-    if(day != null) {
-      format = "D. MMMM YYYY" ;
-    }
-    
-    return format
-  }
-
-  displayDate(date: TlEventData["startDate"] ){
-    const yearBCE = this.checkForYearBC(date);
-    let displayDate;
-    if(yearBCE){
-      displayDate = this.convertToDisplayDate(date).format(this.convertToDisplayDateFormat(date));
-      return displayDate.replace("-","") + " BCE";
-    } else {
-      displayDate = this.convertToDisplayDate(date).format(this.convertToDisplayDateFormat(date));
-      return displayDate;
-    }
-  }
-
-  checkForYearBC(date: TlEventData["startDate"]){
-    const year = date[0];
-    const year_string = year.toString();
-    if(year_string.includes("-")) {
-      return true;
-    }
-    return false; 
+  // convert array into date for sorting dates
+  getStartDate(): Moment {     
+   return  TlEventHelper.convertToDisplayDate(this.event_startDate)
   }
 }
