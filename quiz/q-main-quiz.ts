@@ -7,8 +7,12 @@ import "@shoelace-style/shoelace/dist/themes/light.css";
 import { SlButton } from "@shoelace-style/shoelace";
 import { TlEventData, TlEventHelper} from "../tl-event-data";
 
+import { QuizElementDate } from "./q-element-date"
+
 import { QuizTitles } from "./q-titles";
 import { QuizDateField } from "./q-date-field";
+import { eventListeners } from "@popperjs/core";
+import { QuizElementTitle } from "./q-element-title";
 
 @customElement("main-quiz")
 export class MainQuiz extends LitElementWw {
@@ -16,7 +20,7 @@ export class MainQuiz extends LitElementWw {
   @property({ type: Array }) accessor event_startDate: TlEventData ["startDate"];
   @property({ type: Array }) accessor event_endDate: TlEventData ["endDate"];
   @property({ type: Array, attribute: true, reflect: true }) accessor appendedEvents: Array<{ date: String; title: string }> = [];
-  @property({ type: Array, attribute: true, reflect: true }) accessor droppedTitles = [];
+  @property({ type: Array, attribute: true, reflect: true }) accessor droppedTitles=[];
   @property({ type: Number, attribute: true, reflect: true })  accessor matchCount = 0;
   @property({ type: Number, attribute: true, reflect: true }) accessor score;
   @property({ type: Number, attribute: true, reflect: true }) accessor selectedOption = 0;
@@ -31,82 +35,49 @@ export class MainQuiz extends LitElementWw {
         .author-only {
         display: none;
       }
-      /* Global styles for the quiz component */
-:host {
-  display: block; /* Ensures the component behaves as a block-level element */
-  height: 100%; /* Full height to fill parent */
-  overflow: hidden; /* Ensures no overflow from the component itself */
-}
+     
+      :host {
+        display: block; 
+        height: 100%; 
+        overflow: hidden; 
+      }
 
-/* Styling for the main container that holds everything */
-.border {
-  display: flex;
-  flex-direction: column; /* Stack children vertically */
-  height: 100%; /* Full height to fill parent */
-  max-height: 700px; /* Max height restriction if needed */
-  width: 100%; /* Full width */
-  box-sizing: border-box;
-  margin-bottom: 20px;
-}
-
-/* Styling for the top part of the quiz that should be sticky */
-.quiz-static-top {
-  padding-left: 20px;
-  padding-right: 20px;
-  background-color: white; 
-  padding-bottom: 25px; 
-  height: 15%; /* Takes max 40% of parent container */
-  max-height: 15%;
-  position: sticky;
-  top: 0;
-  display:flex;
-  flex-direction: column; 
-  overflow-y: hidden; 
-  box-sizing: border-box;
-  z-index: 2; /* Higher index to stay above other content */
-}
-
-/* Styling for the container that holds scrollable quiz content */
-.quiz-container {
-  font-weight: 500;
-  padding-left: 20px;
-  padding-right: 20px;
-  flex-grow: 1; /* Takes the rest of the space */
-  /* min-height: 200px; */
-  overflow-y: auto; /* Scroll if content is too much */
-  z-index: 1;
-  height: 50%;
-  /* Lower index to allow static top to overlay */
-}
-/* 
       .border {
-        max-height: 700px;
-        width: 100%;
-        /* padding-left: 20px;
-        padding-right: 20px; 
+        display: flex;
+        flex-direction: column; 
+        height: 100%; 
+        max-height: 700px; 
+        width: 100%; 
         box-sizing: border-box;
-        margin-bottom: 20px;
-        /* overflow-y: hidden; 
-        /* margin-top: 20px; 
-        display: grid;
-        grid-template-rows: auto auto; 
-         overflow: hidden; 
-      } 
-     .quiz-container {
+        /* margin-bottom: 20px; */
+      }
+
+      .quiz-static-top {
+        padding-left: 20px;
+        padding-right: 20px;
+        background-color: white; 
+        padding-bottom: 25px; 
+        height: 15%; 
+        max-height: 15%;
+        position: sticky;
+        top: 0;
+        display:flex;
+        flex-direction: column; 
+        overflow-y: hidden; 
+        box-sizing: border-box;
+        z-index: 2; 
+      }
+
+      .quiz-container {
         font-weight: 500;
         padding-left: 20px;
         padding-right: 20px;
-        /* display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px; */
-        /* width: 100%; 
-        min-height: 200px;
-        max-height: inherit;
-        overflow-y: scroll;
-        right: 0;
-        z-index:-1
-        /* flex-direction: column; 
-      } */
+        flex-grow: 1;
+        overflow-y: auto; 
+        z-index: 1;
+        height: 50%;
+      }
+
       .quiz-header {
         align-items: center; 
         display: grid;
@@ -143,7 +114,6 @@ export class MainQuiz extends LitElementWw {
       height:100%
       display_ flex; 
       flex-direction: column; 
-      /* overflow: hidden;  */
       overflow-y: scroll; 
      }
     `;
@@ -152,14 +122,20 @@ export class MainQuiz extends LitElementWw {
   static get scopedElements() {
     return {
       "sl-button": SlButton,
-
       "quiz-title": QuizTitles,
       "quiz-date-field": QuizDateField,
+      "quiz-element-date": QuizElementDate,
+      "quiz-element-title": QuizElementTitle,
     };
   }
 
   protected firstUpdated(_changedProperties: PropertyValues): void {}
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener("title-dropped", this.dropTitle);
+  }
+  
   render() {
     return html`
       <div class="border" id="parent">
@@ -176,8 +152,7 @@ export class MainQuiz extends LitElementWw {
                 variant="primary"
                 outline
                 @click="${() => {
-                  this.checkMatch();
-                  this.calculateScore();
+                  this.checkMatchAndCalculate();
                 }}"
                 ?disabled=${this.droppedTitles.length === 0}
                 >Check Match
@@ -277,143 +252,161 @@ export class MainQuiz extends LitElementWw {
 
   // set up date container + timeline + drop sections
   initializeDate(date) {
-    const newDateContainer = document.createElement("div");
-    newDateContainer.classList.add("new-date-container");
-
-    const newQuizElement = document.createElement("div");
-    newQuizElement.classList.add("quiz-element");
-    newQuizElement.id = `quiz-element`;
-    newQuizElement.setAttribute("slot", "quiz-slot");
-
-    const dateLineQuiz = document.createElement("div");
-    dateLineQuiz.classList.add("date-line");
-
+    const quizElemenDate = document.createElement("quiz-element-date") as QuizElementDate;
+    quizElemenDate.date = date;
+  
     const date_attacher = this.date_container.shadowRoot.querySelector("#date");
+    quizElemenDate.setAttribute("slot", "quiz-element-date");
 
-    const date_element = document.createElement("div");
-    date_element.textContent = date;
-    date_element.classList.add("date-element");
-
-    const date_drop_section = document.createElement("section");
-    date_drop_section.classList.add("drop-section");
-    date_drop_section.id = `drop-section-${date}`;
-
-    date_drop_section.addEventListener("dragover", (event: DragEvent) => {
-      event.preventDefault();
-      date_drop_section.setAttribute("dragover", "true");
-    });
-
-    date_drop_section.addEventListener("dragleave", () => {
-      date_drop_section.removeAttribute("dragover");
-    });
-
-    date_drop_section.addEventListener("drop", (event: DragEvent) => {
-      event.preventDefault();
-      date_drop_section.removeAttribute("dragover");
-      date_drop_section.setAttribute("dropped", "true");
-
-      const data = event.dataTransfer?.getData("text");
-      if (data) {
-        this.dropTitle(data, date_drop_section, date);
-      }
-    });
-    newQuizElement.appendChild(newDateContainer);
-    newDateContainer.appendChild(date_element);
-    newDateContainer.appendChild(dateLineQuiz);
-    newQuizElement.appendChild(date_drop_section);
-    date_attacher.appendChild(newQuizElement);
+    this.date_container.appendChild(quizElemenDate);
   }
 
   // set up titles
   initializeTitle(title) {
-    const title_attacher =
-      this.title_container.shadowRoot.querySelector("#title");
+    const quizElemenTitle = document.createElement("quiz-element-title") as QuizElementTitle;
+    quizElemenTitle.title = title;
+    
+    quizElemenTitle.setAttribute("slot", "quiz-element-title");
 
-    const title_element = document.createElement("div");
-    title_element.textContent = title;
-    title_element.classList.add("title-border");
-    title_element.setAttribute("draggable", "true");
-
-    title_element.id = `title-${title}`;
-
-    title_element.addEventListener("dragstart", (event: DragEvent) => {
-      title_element.setAttribute("dragging", "true");
-      event.dataTransfer?.setData("text/plain", title_element.id);
-    });
-
-    title_element.addEventListener("dragend", () => {
-      title_element.removeAttribute("dragging");
-    });
-
-    title_attacher.appendChild(title_element);
-    this.randomiseTitleOrder(title_attacher);
+    this.title_container.appendChild(quizElemenTitle);
+    this.title_container.randomiseTitleOrder();
   }
 
-  // randomise the order of draggable titles 
-  randomiseTitleOrder(title_attacher) {
-    const titles = Array.from(title_attacher.children);
-    titles.sort(() => Math.random() - 0.5);
-    title_attacher.innerHTML = "";
-    titles.forEach((box) => title_attacher.appendChild(box));
-  }
-
+  // TO DO: move to q-titles and save droppedTitles array here 
   // save drop dragged title 
-  dropTitle(titleId, dropSection, dropDate) {
-    const draggedElement =
-      this.title_container.shadowRoot.getElementById(titleId);
+  // dropTitle(titleId, dropSection, dropDate) {
+  //   const draggedElement =
+  //     this.title_container.shadowRoot.getElementById(titleId);
 
-    if (draggedElement) {
-      draggedElement.parentElement.removeChild(draggedElement);
-      dropSection.appendChild(draggedElement);
-      this.droppedTitles = [
-        ...this.droppedTitles,
-        {
-          element: draggedElement,
-          title: draggedElement.textContent,
-          dropSection,
-          dropDate,
-        },
-      ];
-    }
+  //   if (draggedElement) {
+  //     draggedElement.parentElement.removeChild(draggedElement);
+  //     dropSection.appendChild(draggedElement);
+  //     this.droppedTitles = [
+  //       ...this.droppedTitles,
+  //       {
+  //         element: draggedElement,
+  //         title: draggedElement.textContent,
+  //         dropSection,
+  //         dropDate,
+  //       },
+  //     ];
+  //   }
+  // }
+
+  dropTitle(event: CustomEvent) {
+    debugger;
+    const { data_content, dropSection , dropSection_id } = event.detail;
+    this.droppedTitles = [
+      ...this.droppedTitles,
+      {
+        title: data_content,
+        section: dropSection,
+        section_date: dropSection_id,
+      },
+    ];
   }
+  
+  checkMatchAndCalculate() {
+    debugger;
+    this.matchCount = 0;
+    this.score = 0;
 
-  // check date and dropped title for match 
-  checkMatch() {
-    this.droppedTitles.forEach(({ element, dropSection, dropDate }) => {
-      const titleId = element.id;
-      const matchFound = this.appendedEvents.find(
-        (event) => `title-${event.title}` === titleId && event.date === dropDate
+    if (this.selectedOption === undefined || this.selectedOption === 0) {
+      this.dispatchEvent(
+        new CustomEvent("show-quiz-feedback-error", {
+          bubbles: true,
+          composed: true,
+        })
       );
-      if (this.selectedOption === undefined || this.selectedOption === 0 ) {
-        this.dispatchEvent(
-          new CustomEvent("show-quiz-feedback-error", {
-            bubbles: true,
-            composed: true,
-          })
-        );
-      }
-
+      return;
+    }
+  
+    this.droppedTitles.forEach(({ title, section, section_date}) => {
+      const matchFound = this.appendedEvents.find(
+        (event) => `${event.title}` === title && event.date === section_date
+      );
+  
       if (matchFound) {
         if (this.selectedOption === 1 || this.selectedOption === 2) {
-          element.setAttribute("quiz-result", "match");
-          dropSection.setAttribute("quiz-result", "match");
+          if (title && section) {
+            // title.setAttribute("quiz-result", "match");
+            section.setAttribute("quiz-result", "match");
+          }
         }
         this.matchCount++;
       } else {
         if (this.selectedOption === 1 || this.selectedOption === 2) {
-          element.setAttribute("quiz-result", "mismatch");
-          dropSection.setAttribute("quiz-result", "mismatch");
+          if (title && section) {
+            // title.setAttribute("quiz-result", "mismatch");
+            section.setAttribute("quiz-result", "mismatch");
+          }
         }
       }
     });
+  
+    if (this.selectedOption === 1 || this.selectedOption === 3) {
+      const achievedPoints = this.matchCount;
+      const possiblePoints = this.appendedEvents.length;
+      this.score = parseFloat(
+        ((achievedPoints / possiblePoints) * 100).toFixed(2)
+      );
+    }
   }
 
-  // calculate score of matches
-  calculateScore() {
-    const achievedPoints = this.matchCount;
-    const possiblePoints = this.appendedEvents.length;
-    this.score = parseFloat(
-      ((achievedPoints / possiblePoints) * 100).toFixed(2)
-    );
-  }
+  // old
+  // dropTitle(event: CustomEvent) {
+  //   const { data, dropSection } = event.detail;
+  
+  //   this.droppedTitles = [
+  //     ...this.droppedTitles,
+  //     {
+  //       title: data.dataTransfer?.getData("text"),
+  //       title_element: data,
+  //       dropSection: dropSection.id,
+  //       dropSection_element: dropSection,
+  //     },
+  //   ];
+  // }
+
+  // // check date and dropped title for match 
+  // checkMatch() {
+  //   debugger;
+  //   this.droppedTitles.forEach(({ title, title_element, dropSection, dropSection_element }) => {
+  //     // console.log(title, title_element, dropSection, dropSection_element, " dropped Titles");
+  //     const matchFound = this.appendedEvents.find(
+  //       (event) => `${event.title}` === title && event.date === dropSection
+  //     );
+  //     if (this.selectedOption === undefined || this.selectedOption === 0 ) {
+  //       this.dispatchEvent(
+  //         new CustomEvent("show-quiz-feedback-error", {
+  //           bubbles: true,
+  //           composed: true,
+  //         })
+  //       );
+  //     }
+  //     if (matchFound) {
+  //       if (this.selectedOption === 1 || this.selectedOption === 2) {
+  //         title_element.setAttribute("quiz-result", "match");
+  //         dropSection_element.setAttribute("quiz-result", "match");
+  //         console.log("match found", matchFound);
+  //       }
+  //       this.matchCount++;
+  //     } else {
+  //       if (this.selectedOption === 1 || this.selectedOption === 2) {
+  //         title_element.setAttribute("quiz-result", "mismatch");
+  //         dropSection_element.setAttribute("quiz-result", "mismatch");
+  //       }
+  //       console.log("no match found", matchFound);
+  //     }
+  //   });
+  // }
+
+  // // calculate score of matches
+  // calculateScore() {
+  //   const achievedPoints = this.matchCount;
+  //   const possiblePoints = this.appendedEvents.length;
+  //   this.score = parseFloat(
+  //     ((achievedPoints / possiblePoints) * 100).toFixed(2)
+  //   );
+  // }
 }

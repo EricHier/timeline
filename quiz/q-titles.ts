@@ -3,6 +3,8 @@ import { LitElementWw } from "@webwriter/lit";
 import { customElement, property, query } from "lit/decorators.js";
 
 import "@shoelace-style/shoelace/dist/themes/light.css";
+import IconArrowBackUp from "@tabler/icons/outline/arrow-back-up.svg";
+import { SlIcon } from "@shoelace-style/shoelace";
 
 
 @customElement('quiz-title')
@@ -31,40 +33,29 @@ export class QuizTitles extends LitElementWw {
       height:100%;
       overflow-y: scroll;
     }
-
-    .title-border {
-      display: flex;
-      /* flex-direction: column; */
-      justify-content: center;
-      align-items: center;
-      background: white;
-      border: 1px solid #d6d6da;
-      border-radius: 7px;
-      margin: 5px;
-      width: auto; 
-      max-width: calc(100% - 10px); 
-      cursor: grab;
-      font-weight: 500;
-      font-size: 1.15rem;
-      color: #333333;
-      min-height: 35px;
-      flex-wrap: wrap;
-      text-align: center;
-      padding: 5px 10px;
-      box-sizing: border-box;
-      overflow-x: scroll;
-      flex-direction: row;
-    }
-
-    .title-border[dragging] {
+    /* .title-border[dragging] {
       background: #e5f4fc;
       border: 2px solid #83b9e0;
-    }
+    } */
   `;
+  static get scopedElements() {
+    return {
+     "sl-icon": SlIcon,
+    };
+  }
+
+  // randomise title order 
+  randomiseTitleOrder() {
+    [...this.children]
+      .sort(() => Math.random() - 0.5)
+      .forEach(title => this.appendChild(title));
+  }
 
   render() {
     return html`
     <div id="title" class="border" lable="Titles">
+      <!-- <button @click=${() => this.randomiseTitleOrder()}>Randomize </button> -->
+      <slot name="quiz-element-title"></slot>
     </div>    `;
   }
 }
