@@ -15,6 +15,8 @@ export class QuizDateField extends LitElementWw {
       flex-direction: row;
       position: relative;
       vertical-align: center;
+      max-height: 100%; 
+      /* overflow-y: auto; */
     }
     .timeline {
       min-height: 15px; 
@@ -22,10 +24,10 @@ export class QuizDateField extends LitElementWw {
       width: 100%;
       border-left: 2px solid #484848;
       position: relative;
-      padding-bottom: 50px;
+      padding-bottom: 20px;
     }
     .timeline-item:last-child {
-      margin-bottom: 40px; 
+      margin-bottom: 20px; 
     }
     .timeline::after {
       content: "";
@@ -82,6 +84,10 @@ export class QuizDateField extends LitElementWw {
       min-height: 45px;
       min-width: 50px;
       width: max-content;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      overflow-y: auto;
+      flex-direction: column;
       padding: 8px;
       flex-direction: column;
       flex-wrap: wrap; 
@@ -118,9 +124,9 @@ export class QuizDateField extends LitElementWw {
     }
     .drop-section > * {
       max-width: 100%;  
-      white-space: nowrap; 
+      /* white-space: nowrap; 
       overflow: hidden;  
-      text-overflow: ellipsis;  
+      text-overflow: ellipsis;   */
     }
 
     .date-line {

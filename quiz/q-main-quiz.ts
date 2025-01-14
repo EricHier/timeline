@@ -31,33 +31,91 @@ export class MainQuiz extends LitElementWw {
         .author-only {
         display: none;
       }
+      /* Global styles for the quiz component */
+:host {
+  display: block; /* Ensures the component behaves as a block-level element */
+  height: 100%; /* Full height to fill parent */
+  overflow: hidden; /* Ensures no overflow from the component itself */
+}
+
+/* Styling for the main container that holds everything */
+.border {
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  height: 100%; /* Full height to fill parent */
+  max-height: 700px; /* Max height restriction if needed */
+  width: 100%; /* Full width */
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+/* Styling for the top part of the quiz that should be sticky */
+.quiz-static-top {
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: white; 
+  padding-bottom: 25px; 
+  height: 15%; /* Takes max 40% of parent container */
+  max-height: 15%;
+  position: sticky;
+  top: 0;
+  display:flex;
+  flex-direction: column; 
+  overflow-y: hidden; 
+  box-sizing: border-box;
+  z-index: 2; /* Higher index to stay above other content */
+}
+
+/* Styling for the container that holds scrollable quiz content */
+.quiz-container {
+  font-weight: 500;
+  padding-left: 20px;
+  padding-right: 20px;
+  flex-grow: 1; /* Takes the rest of the space */
+  /* min-height: 200px; */
+  overflow-y: auto; /* Scroll if content is too much */
+  z-index: 1;
+  height: 50%;
+  /* Lower index to allow static top to overlay */
+}
+/* 
       .border {
-        max-height: 800px;
+        max-height: 700px;
         width: 100%;
-        padding-left: 20px;
-        padding-right: 20px;
+        /* padding-left: 20px;
+        padding-right: 20px; 
         box-sizing: border-box;
         margin-bottom: 20px;
-        margin-top: 20px;
-      }
-      .quiz-border {
-        font-weight: 500;
-      }
-      .quiz-container {
+        /* overflow-y: hidden; 
+        /* margin-top: 20px; 
         display: grid;
+        grid-template-rows: auto auto; 
+         overflow: hidden; 
+      } 
+     .quiz-container {
+        font-weight: 500;
+        padding-left: 20px;
+        padding-right: 20px;
+        /* display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        width: 100%;
+        gap: 10px; */
+        /* width: 100%; 
         min-height: 200px;
-        flex-direction: column;
-      }
+        max-height: inherit;
+        overflow-y: scroll;
+        right: 0;
+        z-index:-1
+        /* flex-direction: column; 
+      } */
       .quiz-header {
+        align-items: center; 
         display: grid;
         width: 100%;
         padding-bottom: 15px;
         justify-content: space-between;
       }
       .quiz-description {
+        padding-top: 20px;
         grid-column: 1;
         grid-row: 1;
         margin-top: 0px;
@@ -81,6 +139,13 @@ export class MainQuiz extends LitElementWw {
         grid-row: 1;
         width: max-content;
       }
+     #title-container {
+      height:100%
+      display_ flex; 
+      flex-direction: column; 
+      /* overflow: hidden;  */
+      overflow-y: scroll; 
+     }
     `;
   }
 
@@ -98,32 +163,32 @@ export class MainQuiz extends LitElementWw {
   render() {
     return html`
       <div class="border" id="parent">
-        <div class="quiz-header">
-          <p class="quiz-description">Drag the correct title to the drop section</p>
-          <div class="button-container">
-            <sl-button id="reset-button" variant="neutral" outline @click="${this.resetQuiz}"
-              >Reset Quiz
-            </sl-button>
-            
-            <sl-button
-              id="check-match-button"
-              variant="primary"
-              outline
-              @click="${() => {
-                this.checkMatch();
-                this.calculateScore();
-              }}"
-              ?disabled=${this.droppedTitles.length === 0}
-              >Check Match
-            </sl-button>
+        <div class="quiz-static-top">
+          <div class="quiz-header">
+            <p class="quiz-description">Drag the correct title to the drop section</p>
+            <div class="button-container">
+              <sl-button id="reset-button" variant="neutral" outline @click="${this.resetQuiz}"
+                >Reset Quiz
+              </sl-button>
+              
+              <sl-button
+                id="check-match-button"
+                variant="primary"
+                outline
+                @click="${() => {
+                  this.checkMatch();
+                  this.calculateScore();
+                }}"
+                ?disabled=${this.droppedTitles.length === 0}
+                >Check Match
+              </sl-button>
+            </div>
           </div>
+          <quiz-title id="title-container"></quiz-title>
         </div>
 
-        <div class="quiz-border">
-          <div class="quiz-container">
-            <quiz-date-field id="date-container"></quiz-date-field>
-            <quiz-title id="title-container"></quiz-title>
-          </div>
+        <div class="quiz-container">   
+          <quiz-date-field id="date-container"></quiz-date-field>
         </div>
 
         ${(this.selectedOption === 1 || this.selectedOption === 3) &&
@@ -255,16 +320,8 @@ export class MainQuiz extends LitElementWw {
     newQuizElement.appendChild(newDateContainer);
     newDateContainer.appendChild(date_element);
     newDateContainer.appendChild(dateLineQuiz);
-    // newQuizElement.appendChild(dateLineQuiz);
-    // newQuizElement.appendChild(date_element);
     newQuizElement.appendChild(date_drop_section);
-
-    // console.log(newQuizElement, " new quiz element looks like this");
     date_attacher.appendChild(newQuizElement);
-    // date_attacher.appendChild(date_element);
-    // date_attacher.appendChild(date_drop_section);
-
-    // this.date_attacher.appendChild(newQuizElement);
   }
 
   // set up titles

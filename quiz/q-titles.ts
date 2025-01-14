@@ -17,21 +17,24 @@ export class QuizTitles extends LitElementWw {
   static styles = css`
     .border {
       display: flex;
-      flex-direction: column;
-      align-items: flex-end;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-start;
       border: 1px solid #d6d6da;
       background: #f7f7f8;
       border-radius: 5px;
-      /* margin: 10px; */
       padding: 10px; 
       box-sizing: border-box;
-      min-height: 50px; 
+      min-height: 70px; 
       width: 100%;
+      max-height: 100%;
+      height:100%;
+      overflow-y: scroll;
     }
 
     .title-border {
       display: flex;
-      flex-direction: column;
+      /* flex-direction: column; */
       justify-content: center;
       align-items: center;
       background: white;
@@ -49,6 +52,8 @@ export class QuizTitles extends LitElementWw {
       text-align: center;
       padding: 5px 10px;
       box-sizing: border-box;
+      overflow-x: scroll;
+      flex-direction: row;
     }
 
     .title-border[dragging] {

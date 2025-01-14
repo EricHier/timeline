@@ -59,6 +59,7 @@ export class WebWriterTimeline extends LitElementWw {
         box-sizing: border-box;
         margin-bottom: 20px;
         margin-top: 20px;
+        max-height: 700px;
       }
       .timeline-container {
         display: flex;
@@ -66,6 +67,7 @@ export class WebWriterTimeline extends LitElementWw {
         flex-direction: row;
         position: relative;
         vertical-align: center;
+        padding-bottom: 25px;
       }
       .timeline {
         min-height: 15px;
@@ -88,6 +90,7 @@ export class WebWriterTimeline extends LitElementWw {
         border-left: 6px solid transparent;
         border-right: 6px solid transparent;
         border-top: 10px solid #484848;
+   
       }
       .quiz-selection {
         padding-left: 10px;
