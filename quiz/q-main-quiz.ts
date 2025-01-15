@@ -224,28 +224,18 @@ export class MainQuiz extends LitElementWw {
 
   // reset quiz to restart
   resetQuiz() {
-    const drop_sections =
-      this.date_container.shadowRoot.querySelectorAll(".drop-section");
+    // debugger; 
+    const quizElementsDate = this.date_container.querySelectorAll("quiz-element-date");
+    const quizElementsTitle = this.date_container.querySelectorAll("quiz-element-date"); 
 
-    drop_sections.forEach((section) => {
-      section.removeAttribute("dropped");
-      section.removeAttribute("quiz-result");
-      section.innerHTML = "";
-    });
+    this.date_container.innerHTML = '';
+    this.title_container.innerHTML = '';
 
-    const title_attacher =
-      this.title_container.shadowRoot.querySelector("#title");
-    title_attacher.innerHTML = "";
-    const date_attacher = this.date_container.shadowRoot.querySelector("#date");
-    date_attacher.innerHTML = "";
-
-    this.droppedTitles = [];
-    console.log(this.appendedEvents, " appended events ");
     this.appendedEvents.forEach((event) => {
       this.initializeTitle(event.title);
       this.initializeDate(event.date);
     });
-
+    this.droppedTitles = [];
     this.matchCount = 0;
     this.score = undefined;
   }
@@ -272,30 +262,12 @@ export class MainQuiz extends LitElementWw {
     this.title_container.randomiseTitleOrder();
   }
 
-  // TO DO: move to q-titles and save droppedTitles array here 
-  // save drop dragged title 
-  // dropTitle(titleId, dropSection, dropDate) {
-  //   const draggedElement =
-  //     this.title_container.shadowRoot.getElementById(titleId);
-
-  //   if (draggedElement) {
-  //     draggedElement.parentElement.removeChild(draggedElement);
-  //     dropSection.appendChild(draggedElement);
-  //     this.droppedTitles = [
-  //       ...this.droppedTitles,
-  //       {
-  //         element: draggedElement,
-  //         title: draggedElement.textContent,
-  //         dropSection,
-  //         dropDate,
-  //       },
-  //     ];
-  //   }
-  // }
-
   dropTitle(event: CustomEvent) {
-    debugger;
     const { data_content, dropSection , dropSection_id } = event.detail;
+    if (dropSection && dropSection.innerHTML.includes(data_content)) {
+      this.title_container.removeTitleForDragging(data_content);
+    }
+
     this.droppedTitles = [
       ...this.droppedTitles,
       {
@@ -307,7 +279,6 @@ export class MainQuiz extends LitElementWw {
   }
   
   checkMatchAndCalculate() {
-    debugger;
     this.matchCount = 0;
     this.score = 0;
 
@@ -329,7 +300,6 @@ export class MainQuiz extends LitElementWw {
       if (matchFound) {
         if (this.selectedOption === 1 || this.selectedOption === 2) {
           if (title && section) {
-            // title.setAttribute("quiz-result", "match");
             section.setAttribute("quiz-result", "match");
           }
         }
@@ -337,7 +307,6 @@ export class MainQuiz extends LitElementWw {
       } else {
         if (this.selectedOption === 1 || this.selectedOption === 2) {
           if (title && section) {
-            // title.setAttribute("quiz-result", "mismatch");
             section.setAttribute("quiz-result", "mismatch");
           }
         }
@@ -352,61 +321,4 @@ export class MainQuiz extends LitElementWw {
       );
     }
   }
-
-  // old
-  // dropTitle(event: CustomEvent) {
-  //   const { data, dropSection } = event.detail;
-  
-  //   this.droppedTitles = [
-  //     ...this.droppedTitles,
-  //     {
-  //       title: data.dataTransfer?.getData("text"),
-  //       title_element: data,
-  //       dropSection: dropSection.id,
-  //       dropSection_element: dropSection,
-  //     },
-  //   ];
-  // }
-
-  // // check date and dropped title for match 
-  // checkMatch() {
-  //   debugger;
-  //   this.droppedTitles.forEach(({ title, title_element, dropSection, dropSection_element }) => {
-  //     // console.log(title, title_element, dropSection, dropSection_element, " dropped Titles");
-  //     const matchFound = this.appendedEvents.find(
-  //       (event) => `${event.title}` === title && event.date === dropSection
-  //     );
-  //     if (this.selectedOption === undefined || this.selectedOption === 0 ) {
-  //       this.dispatchEvent(
-  //         new CustomEvent("show-quiz-feedback-error", {
-  //           bubbles: true,
-  //           composed: true,
-  //         })
-  //       );
-  //     }
-  //     if (matchFound) {
-  //       if (this.selectedOption === 1 || this.selectedOption === 2) {
-  //         title_element.setAttribute("quiz-result", "match");
-  //         dropSection_element.setAttribute("quiz-result", "match");
-  //         console.log("match found", matchFound);
-  //       }
-  //       this.matchCount++;
-  //     } else {
-  //       if (this.selectedOption === 1 || this.selectedOption === 2) {
-  //         title_element.setAttribute("quiz-result", "mismatch");
-  //         dropSection_element.setAttribute("quiz-result", "mismatch");
-  //       }
-  //       console.log("no match found", matchFound);
-  //     }
-  //   });
-  // }
-
-  // // calculate score of matches
-  // calculateScore() {
-  //   const achievedPoints = this.matchCount;
-  //   const possiblePoints = this.appendedEvents.length;
-  //   this.score = parseFloat(
-  //     ((achievedPoints / possiblePoints) * 100).toFixed(2)
-  //   );
-  // }
 }

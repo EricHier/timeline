@@ -468,7 +468,7 @@ export class TimelineDialog extends LitElementWw {
         ? this.convertToMoment(this.endDate)
         : undefined,
     };
-    console.log(eventDetails, " event details dispatched"); 
+    // console.log(eventDetails, " event details dispatched"); 
     this.dispatchEvent(
       new CustomEvent("request-add", {
         detail: eventDetails,

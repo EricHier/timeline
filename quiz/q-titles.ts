@@ -5,6 +5,7 @@ import { customElement, property, query } from "lit/decorators.js";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import IconArrowBackUp from "@tabler/icons/outline/arrow-back-up.svg";
 import { SlIcon } from "@shoelace-style/shoelace";
+import { QuizElementTitle } from "./q-element-title";
 
 
 @customElement('quiz-title')
@@ -33,10 +34,10 @@ export class QuizTitles extends LitElementWw {
       height:100%;
       overflow-y: scroll;
     }
-    /* .title-border[dragging] {
+    .dragging {
       background: #e5f4fc;
       border: 2px solid #83b9e0;
-    } */
+    }
   `;
   static get scopedElements() {
     return {
@@ -51,10 +52,24 @@ export class QuizTitles extends LitElementWw {
       .forEach(title => this.appendChild(title));
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener("title-remove", (e) => this.removeTitleForDragging(e));
+  }
+
+  removeTitleForDragging(title) {
+    const titleElements = this.querySelectorAll('quiz-element-title') as NodeListOf<QuizElementTitle>;
+      titleElements.forEach(element => {
+        if(element.title === title) {
+          element.remove(); 
+
+        }
+      });
+  }
+
   render() {
     return html`
     <div id="title" class="border" lable="Titles">
-      <!-- <button @click=${() => this.randomiseTitleOrder()}>Randomize </button> -->
       <slot name="quiz-element-title"></slot>
     </div>    `;
   }

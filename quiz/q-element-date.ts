@@ -16,47 +16,6 @@ export class QuizElementDate extends LitElementWw {
     @property({ type: Number, attribute: true, reflect: true }) accessor date;
 
   static styles = css`
-    /* .quiz-element {
-      grid-template-columns: 50% 50%; 
-      display: grid;
-      align-items: flex-start;
-      padding: 16px;
-      padding-top: 5px;
-      padding-left: 0px;
-      position: relative;
-      width: 100%;
-    }
-    .quiz-element:first-child {
-      display: grid;      
-      align-items: flex-start;
-      padding: 16px;
-      padding-top: 5px;
-      padding-left: 0px;
-      position: relative;
-      width: 100%;
-    }
-    .date-element {
-      font-size: 14px;
-      font-weight: 700;
-      color: #484848;
-      grid-column: 1;
-      grid-row: 1;
-      padding-left: 7px;
-      padding-right: 5px;
-      width: 100%; 
-      height:auto;
-      text-align: left; 
-    } */
-
-      /* .event {
-        display: flex;
-        align-items: flex-start;
-        padding: 15px;
-        padding-left: 0px;
-        position: relative;
-        width: 100%;
-      } */
-
     .event:first-child {
       display: flex;
       align-items: flex-start;
@@ -82,51 +41,6 @@ export class QuizElementDate extends LitElementWw {
       padding-right: 5px;
       width: 100%; 
     }
-
-    /* .date-line {
-      min-width:150px;
-      flex-grow: 1;
-      height: 2px;
-      width: 100%; 
-      background: #484848;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      grid-column: 1;
-      grid-row: 2;
-      transform: translateX(-3.5px);
-    }
-    .date-time-period-line {
-      min-width:150px;
-      flex-grow: 1;
-      height: 2px;
-      width: 100%; 
-      background: #484848;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      grid-column: 1;
-      grid-row: 2;
-      transform: translateX(-3.5px);
-    } */
-    /* .date-line::before {
-      content: "\ ";
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #484848;
-    } */
-/* 
-    .date-time-period-line::before {
-      content: "\ ";
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #484848;
-    } */
-
     .event-title-container {
       border: 3px solid #E0E0E0;
       border-radius: 5px;
@@ -142,26 +56,6 @@ export class QuizElementDate extends LitElementWw {
       flex-direction: column; 
       transform: translateX(-3.5px);
     }
-    /* .event-description-container-open {
-      border: 3px solid #E0E0E0;
-      border-radius: 5px;
-      padding: 8px;
-      display: flex;
-      align-items: left;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 100%;
-      max-height: 400px;
-      overflow-wrap: break-word;
-      overflow-y: auto;
-      flex-direction: column; 
-      transform: translateX(-3.5px);
-    } */
-    /* .event-content {
-      max-height: 400px;
-      overflow-y: auto;
-    } */
-
     .drop-section {
       display: flex;
       align-items: center;  
@@ -235,13 +129,6 @@ export class QuizElementDate extends LitElementWw {
       border-radius: 50%;
       background: #484848;
     }
-    /* .new-date-container {
-      display: grid;
-      align-items: center;
-      position: relative;
-      padding-left: 0px;
-      width: 100%;
-    } */
     .event { 
       display: flex;
       align-items: flex-start;
@@ -256,45 +143,15 @@ export class QuizElementDate extends LitElementWw {
      "sl-icon": SlIcon,
     };
   }
-  // private droppingTitles(event: DragEvent) {
-  //   event.preventDefault();
-  //   const dropSection = event.target as HTMLElement;
-  //   dropSection.removeAttribute("dragover");
-  //   dropSection.setAttribute("dropped", "true");
-  //   const data = event.dataTransfer?.getData("text");
-  //   if (data) {
-  //     this.addDroppedTitle(data, dropSection);
-  //   }
-  //   console.log(event.dataTransfer?.getData("section"), event, dropSection, dropSection.id, " dropped Titles");
-
-  //   this.dispatchEvent(
-  //     new CustomEvent("title-dropped", {
-  //       detail: { data: event, 
-  //                 dropSection: dropSection, 
-  //                 element: event},
-  //       bubbles: true,
-  //       composed: true,
-  //     })
-  //   );
-  // }
-  
-
-  // private addDroppedTitle (data: string, container: HTMLElement) {
-  //   const content = document.createElement("div");
-  //   content.textContent = data;
-  //   container.appendChild(content);
-  // }
   private droppingTitles(event: DragEvent) {
-    event.preventDefault();
     const dropSection = event.target as HTMLElement;
     dropSection.removeAttribute("dragover");
     dropSection.setAttribute("dropped", "true");
     
     const data = event.dataTransfer?.getData("text");
     if (data) {
-      
+    
     this.addDroppedTitle(data, dropSection );
-      console.log(data, dropSection, dropSection.id,  " elements for dropping" );
       this.dispatchEvent(
         new CustomEvent("title-dropped", {
           detail: {
@@ -325,10 +182,8 @@ export class QuizElementDate extends LitElementWw {
       <section
           class="drop-section"
           id="${this.date}"
-          @dragover=${(e: DragEvent) => e.preventDefault()}
           @dragleave=${(e: DragEvent) => (e.target as HTMLElement)?.removeAttribute("dragover")}
-          @drop=${this.droppingTitles}
-        >
+          @drop=${this.droppingTitles}>
       </section>
       </div>
     </div>

@@ -12,7 +12,7 @@ export class QuizElementTitle extends LitElementWw {
     @query("date-element") accessor title_element: HTMLDivElement;
     @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
     @property({ type: String, attribute: true, reflect: true }) accessor title;
-    @property({ type: Boolean, attribute: true, reflect: true }) accessor dropped = true; // TO DO: link to attribute dropped 
+    @property({ type: Boolean, attribute: true, reflect: true }) accessor dropped = true; 
 
   static styles = css`
   .title-border {
@@ -43,26 +43,34 @@ export class QuizElementTitle extends LitElementWw {
       border: 2px solid #83b9e0;
     }
     sl-icon {
-    margin-left: 8px;
-    cursor: pointer;
-  }
+      margin-left: 8px;
+      cursor: pointer;
+    }
   `;
   static get scopedElements() {
     return {
     };
   }
 
-
-
 private handleDragStart(event: DragEvent) {
-    this.classList.add("ragging");
+    const dragElement = this.shadowRoot?.querySelector('.title-border');
+    dragElement?.classList.add("dragging");
     event.dataTransfer?.setData("text/plain", this.title);
   }
   
 private handleDragEnd() {
     this.classList.remove("dragging");
-}
 
+    this.dispatchEvent(
+        new CustomEvent("title-remove", {
+          detail: {
+          title: this,
+          },
+          bubbles: true,
+          composed: true,
+        })
+    );
+}
 
   render() {
     return html`

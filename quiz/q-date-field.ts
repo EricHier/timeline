@@ -8,6 +8,8 @@ import "@shoelace-style/shoelace/dist/themes/light.css";
 @customElement('quiz-date-field')
 
 export class QuizDateField extends LitElementWw {
+  @property({ type: Array, attribute: true, reflect: true }) dates;
+  @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   static styles = css`
     .timeline-parent {
       display: flex;
@@ -16,7 +18,6 @@ export class QuizDateField extends LitElementWw {
       position: relative;
       vertical-align: center;
       max-height: 100%; 
-      /* overflow-y: auto; */
     }
     .timeline {
       min-height: 15px; 
@@ -24,11 +25,7 @@ export class QuizDateField extends LitElementWw {
       width: 100%;
       border-left: 2px solid #484848;
       position: relative;
-      /* padding-bottom: 20px; */
     }
-    /* .timeline-item:last-child {
-      margin-bottom: 20px; 
-    } */
     .timeline::after {
       content: "";
       position: absolute;
@@ -39,8 +36,8 @@ export class QuizDateField extends LitElementWw {
       border-left: 6px solid transparent;
       border-right: 6px solid transparent;
       border-top: 10px solid #484848;
+      z-index: 4; 
     }
-   
     .drop-section[dropped] {
       border: 3px solid #E0E0E0;
       border-radius: 5px;
@@ -99,8 +96,6 @@ export class QuizDateField extends LitElementWw {
   `;
 
 
-  @property({ type: Array, attribute: true, reflect: true }) dates;
-  @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   
   render() {
     return html`
