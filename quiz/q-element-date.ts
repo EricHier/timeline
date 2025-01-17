@@ -137,58 +137,75 @@ export class QuizElementDate extends LitElementWw {
       position: relative;
       width: 100%;
     }
-  `;
+  // ... your existing styles ...
+
+  .dropped-title {
+    padding: 8px;
+    margin: 4px;
+    background: white;
+    border: 1px solid #d6d6da;
+    border-radius: 5px;
+    cursor: grab;
+    font-weight: 500;
+    font-size: 16px;
+    color: #333333;
+    width: fit-content;
+    user-select: none;
+  }
+
+  .dropped-title.dragging {
+    opacity: 0.5;
+    border: 2px solid #83b9e0;
+    background: #e5f4fc;
+  }
+
+  .drop-section {
+    // ... your existing drop-section styles ...
+    min-height: 45px;
+    min-width: 50px;
+    width: max-content;
+  }
+`;
+
   static get scopedElements() {
     return {
      "sl-icon": SlIcon,
     };
   }
+
   private droppingTitles(event: DragEvent) {
+ 
     const dropSection = event.target as HTMLElement;
     dropSection.removeAttribute("dragover");
+    dropSection.removeAttribute("dragging");
     dropSection.setAttribute("dropped", "true");
-    
-    const data = event.dataTransfer?.getData("text");
-    if (data) {
-    
-    this.addDroppedTitle(data, dropSection );
-      this.dispatchEvent(
-        new CustomEvent("title-dropped", {
-          detail: {
-            data_content: data,
-            dropSection: dropSection,
-            dropSection_id: dropSection.id,
-          },
-          bubbles: true,
-          composed: true,
-        })
-      );
-    }
+
+    this.dispatchEvent(
+      new CustomEvent("title-dropped-in-section", {
+        detail: { target: this },
+        bubbles: true,
+        composed: true,
+      })
+  );
   }
-  
-  private addDroppedTitle(data: string, container: HTMLElement) {
-    const content = document.createElement("div");
-    content.textContent = data;
-    container.appendChild(content);
-  }
+
   render() {
     return html`
-
-    <div class="event">
+      <div class="event" id="date-drop-section">
         <div class="date-container">  
           <div class="event-date">${this.date}</div>
           <div class="date-line"></div>
         </div>
-      <section
+        <div
           class="drop-section"
           id="${this.date}"
-          @dragleave=${(e: DragEvent) => (e.target as HTMLElement)?.removeAttribute("dragover")}
-          @drop=${this.droppingTitles}>
-      </section>
+          @dragover=${(e: DragEvent) => {(e.target as HTMLElement).setAttribute("dragover", "true");}}
+          @dragleave=${(e: DragEvent) => (e.target as HTMLElement).removeAttribute("dragover")}
+          @drop=${this.droppingTitles}
+        >
+          <slot></slot>
+        </div>
       </div>
-    </div>
-      
     `;
   }
-
 }

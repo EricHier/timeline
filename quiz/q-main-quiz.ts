@@ -24,10 +24,17 @@ export class MainQuiz extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true })  accessor matchCount = 0;
   @property({ type: Number, attribute: true, reflect: true }) accessor score;
   @property({ type: Number, attribute: true, reflect: true }) accessor selectedOption = 0;
+  @property({ type: Object, attribute: true, reflect: false }) accessor drag;
+  @property({ type: Object, attribute: true, reflect: false }) accessor source;
+  @property({ type: Object, attribute: true, reflect: false }) accessor target;
+  
+
+
 
   @query("#date-container") accessor date_container: QuizDateField;
   @query("#title-container") accessor title_container: QuizTitles;
   @query("#score-feedback") accessor score_feedback: HTMLParagraphElement;
+
 
   static get styles() {
     return css`
@@ -133,7 +140,34 @@ export class MainQuiz extends LitElementWw {
 
   connectedCallback() {
     super.connectedCallback();
-    this.addEventListener("title-dropped", this.dropTitle);
+    this.addEventListener("title-dropped-in-section",  (e) => this.titleDropped(e));
+    this.addEventListener("title-dropped-in-titles",  (e) => this.titleDropped(e));
+
+
+    this.addEventListener("drag-start-title", (e) => 
+    {
+      this.drag = (e as CustomEvent).detail.title;
+      this.source = (e as CustomEvent).detail.parent;
+      console.log("source", this.drag)
+      console.log("source Parent", this.source)
+      
+    });
+  }
+
+  titleDropped(e){
+    //debugger; 
+    this.target = (e as CustomEvent).detail.target;
+    if((this.target as HTMLElement).tagName.toLowerCase() === 'quiz-element-date' && this.target.childElementCount < 1){
+      this.target.appendChild(this.drag);
+    } else if((this.target as HTMLElement).tagName.toLowerCase() === "quiz-title"){
+      this.target.appendChild(this.drag);
+    }
+    // debugger; 
+    if ((this.source as HTMLElement).tagName.toLocaleLowerCase() === 'quiz-element-date') {
+      const date_parent = this.source.shadowRoot.querySelector("#date-drop-section")
+      date_parent.querySelector(".drop-section").removeAttribute("dropped");
+    }
+    this.drag.shadowRoot.querySelector(".title-border").classList.remove("dragging");
   }
   
   render() {
@@ -144,7 +178,7 @@ export class MainQuiz extends LitElementWw {
             <p class="quiz-description">Drag the correct title to the drop section</p>
             <div class="button-container">
               <sl-button id="reset-button" variant="neutral" outline @click="${this.resetQuiz}"
-                >Reset Quiz
+                >Reset
               </sl-button>
               
               <sl-button
@@ -154,8 +188,8 @@ export class MainQuiz extends LitElementWw {
                 @click="${() => {
                   this.checkMatchAndCalculate();
                 }}"
-                ?disabled=${this.droppedTitles.length === 0}
-                >Check Match
+              
+                >Submit
               </sl-button>
             </div>
           </div>
@@ -181,7 +215,6 @@ export class MainQuiz extends LitElementWw {
 
   // append new events to quiz, save appended events to array
   startQuiz(events) {
-    console.log(events, " events in event container");
     const existingEvents = this.appendedEvents;
     
 
@@ -256,26 +289,10 @@ export class MainQuiz extends LitElementWw {
     const quizElemenTitle = document.createElement("quiz-element-title") as QuizElementTitle;
     quizElemenTitle.title = title;
     
-    quizElemenTitle.setAttribute("slot", "quiz-element-title");
+    // quizElemenTitle.setAttribute("slot", "quiz-element-title");
 
     this.title_container.appendChild(quizElemenTitle);
     this.title_container.randomiseTitleOrder();
-  }
-
-  dropTitle(event: CustomEvent) {
-    const { data_content, dropSection , dropSection_id } = event.detail;
-    if (dropSection && dropSection.innerHTML.includes(data_content)) {
-      this.title_container.removeTitleForDragging(data_content);
-    }
-
-    this.droppedTitles = [
-      ...this.droppedTitles,
-      {
-        title: data_content,
-        section: dropSection,
-        section_date: dropSection_id,
-      },
-    ];
   }
   
   checkMatchAndCalculate() {
@@ -291,27 +308,37 @@ export class MainQuiz extends LitElementWw {
       );
       return;
     }
-  
-    this.droppedTitles.forEach(({ title, section, section_date}) => {
-      const matchFound = this.appendedEvents.find(
-        (event) => `${event.title}` === title && event.date === section_date
-      );
-  
-      if (matchFound) {
-        if (this.selectedOption === 1 || this.selectedOption === 2) {
-          if (title && section) {
-            section.setAttribute("quiz-result", "match");
-          }
+    const date_elements = Array.from(this.date_container.children); 
+ 
+    date_elements.forEach((element) => {
+      const date_el_appended_title = (element.shadowRoot.querySelector("slot") as HTMLSlotElement).assignedElements({ flatten: true });
+      if(date_el_appended_title.length === 1){
+        const title = (date_el_appended_title[0] as QuizElementTitle).title;
+        const date = element.shadowRoot.querySelector(".event-date").textContent;
+        const matchFound = this.appendedEvents.find(
+          (event) => `${event.title}` === title && event.date === date
+        );
+        if (matchFound && this.selectedOption === 1){
+          element.shadowRoot.querySelector(".drop-section").setAttribute("quiz-result", "match");
+          date_el_appended_title[0].shadowRoot.querySelector(".title-border").setAttribute("match", "true");
+          this.matchCount++;
         }
-        this.matchCount++;
-      } else {
-        if (this.selectedOption === 1 || this.selectedOption === 2) {
-          if (title && section) {
-            section.setAttribute("quiz-result", "mismatch");
-          }
+        if (matchFound && this.selectedOption === 2){
+          element.shadowRoot.querySelector(".drop-section").setAttribute("quiz-result", "match");
+          date_el_appended_title[0].shadowRoot.querySelector(".title-border").setAttribute("match", "true");
+        }
+        if (matchFound && this.selectedOption === 3){
+          this.matchCount++;
+        }
+        if (matchFound && this.selectedOption === 4){
+          this.matchCount = 0; 
+        }
+        if(matchFound === undefined && (this.selectedOption === 1 || this.selectedOption === 2)){
+          element.shadowRoot.querySelector(".drop-section").setAttribute("quiz-result", "mismatch")
+          date_el_appended_title[0].shadowRoot.querySelector(".title-border").setAttribute("mismatch", "true");
         }
       }
-    });
+    })
   
     if (this.selectedOption === 1 || this.selectedOption === 3) {
       const achievedPoints = this.matchCount;

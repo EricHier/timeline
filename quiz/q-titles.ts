@@ -52,26 +52,20 @@ export class QuizTitles extends LitElementWw {
       .forEach(title => this.appendChild(title));
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.addEventListener("title-remove", (e) => this.removeTitleForDragging(e));
-  }
-
-  removeTitleForDragging(title) {
-    const titleElements = this.querySelectorAll('quiz-element-title') as NodeListOf<QuizElementTitle>;
-      titleElements.forEach(element => {
-        if(element.title === title) {
-          element.remove(); 
-
-        }
-      });
+  droppingTitles() {
+    this.dispatchEvent(
+      new CustomEvent("title-dropped-in-titles", {
+        detail: { target: this },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   render() {
     return html`
-    <div id="title" class="border" lable="Titles">
-      <slot name="quiz-element-title"></slot>
-    </div>    `;
+    <div id="title" class="border" lable="Titles" @drop=${this.droppingTitles}>
+      <slot></slot>
+    </div>`;
   }
 }
-

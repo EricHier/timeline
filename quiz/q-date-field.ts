@@ -1,6 +1,7 @@
 import { LitElement, html, PropertyValues, css } from "lit";
 import { LitElementWw } from "@webwriter/lit";
 import { customElement, property, query } from "lit/decorators.js";
+import { QuizElementDate } from "./q-element-date"
 
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
@@ -95,11 +96,18 @@ export class QuizDateField extends LitElementWw {
     }
   `;
 
-
+removeTitleForDragging(title) {
+  const titleElements = this.querySelectorAll('quiz-element-title') as NodeListOf<QuizElementDate>;
+    titleElements.forEach(element => {
+      if(element.title === title) {
+        element.remove(); 
+      }
+    });
+}
   
   render() {
     return html`
-    <div class="timeline-parent">
+    <div class="timeline-parent" id="date-container">
           <div  id="date" class="timeline">
             <slot name="quiz-element-date"></slot>
           </div>

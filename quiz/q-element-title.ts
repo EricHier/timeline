@@ -15,7 +15,7 @@ export class QuizElementTitle extends LitElementWw {
     @property({ type: Boolean, attribute: true, reflect: true }) accessor dropped = true; 
 
   static styles = css`
-  .title-border {
+    .title-border {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -38,38 +38,46 @@ export class QuizElementTitle extends LitElementWw {
       flex-direction: row;
     }
 
-    .dragging {
+    .title-border.dragging {
       background: #e5f4fc;
       border: 2px solid #83b9e0;
+      cursor: grabbing;
     }
-    sl-icon {
-      margin-left: 8px;
-      cursor: pointer;
+    .title-border[match] {
+      background: #cdefcf;
+      color: #4aad4d;
+      border: 2px solid #4aad4d;
     }
+    .title-border[mismatch] {
+      background: #f5d1ce;
+      color: #c92c1b;
+      border: 2px solid #e58e85;
+    }
+
   `;
   static get scopedElements() {
     return {
     };
   }
 
-private handleDragStart(event: DragEvent) {
+private startDrag(event: DragEvent) {
+  
     const dragElement = this.shadowRoot?.querySelector('.title-border');
     dragElement?.classList.add("dragging");
-    event.dataTransfer?.setData("text/plain", this.title);
-  }
-  
-private handleDragEnd() {
-    this.classList.remove("dragging");
 
     this.dispatchEvent(
-        new CustomEvent("title-remove", {
-          detail: {
-          title: this,
+        new CustomEvent("drag-start-title", {
+          detail: { title: this,
+                    parent: this.parentNode
           },
           bubbles: true,
           composed: true,
         })
     );
+  }
+
+private endDrag() {
+  this.shadowRoot.querySelector(".title-border").classList.remove("dragging");
 }
 
   render() {
@@ -78,8 +86,8 @@ private handleDragEnd() {
         class="title-border"
         id="${this.title}"
         draggable="true"
-        @dragstart=${this.handleDragStart}
-        @dragend=${this.handleDragEnd}
+        @dragstart=${this.startDrag}
+        @dragend=${this.endDrag}
         > ${this.title}
         </div>
     `;
