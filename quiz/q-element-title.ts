@@ -5,14 +5,14 @@ import { customElement, property, query } from "lit/decorators.js";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
 
-@customElement('quiz-element-title')
-
+@customElement("quiz-element-title")
 export class QuizElementTitle extends LitElementWw {
-
-    @query("date-element") accessor title_element: HTMLDivElement;
-    @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
-    @property({ type: String, attribute: true, reflect: true }) accessor title;
-    @property({ type: Boolean, attribute: true, reflect: true }) accessor dropped = true; 
+  @query("date-element") accessor title_element: HTMLDivElement;
+  @property({ type: Number, attribute: true, reflect: true })
+  accessor tabIndex = -1;
+  @property({ type: String, attribute: true, reflect: true }) accessor title;
+  @property({ type: Boolean, attribute: true, reflect: true })
+  accessor dropped = true;
 
   static styles = css`
     .title-border {
@@ -23,8 +23,8 @@ export class QuizElementTitle extends LitElementWw {
       border: 1px solid #d6d6da;
       border-radius: 7px;
       margin: 5px;
-      width: auto; 
-      max-width: calc(100% - 10px); 
+      width: auto;
+      max-width: calc(100% - 10px);
       cursor: grab;
       font-weight: 500;
       font-size: 1.15rem;
@@ -53,43 +53,39 @@ export class QuizElementTitle extends LitElementWw {
       color: #c92c1b;
       border: 2px solid #e58e85;
     }
-
   `;
   static get scopedElements() {
-    return {
-    };
+    return {};
   }
 
-private startDrag(event: DragEvent) {
-  
-    const dragElement = this.shadowRoot?.querySelector('.title-border');
+  private startDrag(event: DragEvent) {
+    const dragElement = this.shadowRoot?.querySelector(".title-border");
     dragElement?.classList.add("dragging");
 
     this.dispatchEvent(
-        new CustomEvent("drag-start-title", {
-          detail: { title: this,
-                    parent: this.parentNode
-          },
-          bubbles: true,
-          composed: true,
-        })
+      new CustomEvent("drag-start-title", {
+        detail: { title: this, parent: this.parentNode },
+        bubbles: true,
+        composed: true,
+      })
     );
   }
 
-private endDrag() {
-  this.shadowRoot.querySelector(".title-border").classList.remove("dragging");
-}
+  private endDrag() {
+    this.shadowRoot.querySelector(".title-border").classList.remove("dragging");
+  }
 
   render() {
     return html`
-        <div 
+      <div
         class="title-border"
         id="${this.title}"
         draggable="true"
         @dragstart=${this.startDrag}
         @dragend=${this.endDrag}
-        > ${this.title}
-        </div>
+      >
+        ${this.title}
+      </div>
     `;
   }
 }

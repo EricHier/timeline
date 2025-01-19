@@ -274,14 +274,14 @@ export class WebWriterTimeline extends LitElementWw {
     this.dialog.showDialog();
   }
 
-  // to do: check for doubles  ... show quiz and add events to it
+  // show quiz and add events to it
   startQuiz() {
     this.quiz.startQuiz([...this.children]);
   }
 
   // transmit selected option for quiz feedback
   saveQuizSelection() {
-    this.quiz.resetQuiz();
+    // this.quiz.resetQuiz();
     this.quizFeedbackOption = Number(this.quizFeedbackSelecter.value);
     if (this.quizFeedbackOption !== undefined || this.quizFeedbackOption !== 0) {
       this.feedbackError.hidden = true;

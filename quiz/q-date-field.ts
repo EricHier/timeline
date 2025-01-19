@@ -61,9 +61,6 @@ export class QuizDateField extends LitElementWw {
     }
     .drop-section > * {
       max-width: 100%;  
-      /* white-space: nowrap; 
-      overflow: hidden;  
-      text-overflow: ellipsis;   */
     }
 
     .date-line {

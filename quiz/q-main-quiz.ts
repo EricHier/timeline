@@ -20,21 +20,17 @@ export class MainQuiz extends LitElementWw {
   @property({ type: Array }) accessor event_startDate: TlEventData ["startDate"];
   @property({ type: Array }) accessor event_endDate: TlEventData ["endDate"];
   @property({ type: Array, attribute: true, reflect: true }) accessor appendedEvents: Array<{ date: String; title: string }> = [];
-  @property({ type: Array, attribute: true, reflect: true }) accessor droppedTitles=[];
   @property({ type: Number, attribute: true, reflect: true })  accessor matchCount = 0;
   @property({ type: Number, attribute: true, reflect: true }) accessor score;
   @property({ type: Number, attribute: true, reflect: true }) accessor selectedOption = 0;
   @property({ type: Object, attribute: true, reflect: false }) accessor drag;
   @property({ type: Object, attribute: true, reflect: false }) accessor source;
   @property({ type: Object, attribute: true, reflect: false }) accessor target;
-  
-
-
+  @property({ type: Boolean, attribute: true, reflect: false }) accessor activateCheck;
 
   @query("#date-container") accessor date_container: QuizDateField;
   @query("#title-container") accessor title_container: QuizTitles;
   @query("#score-feedback") accessor score_feedback: HTMLParagraphElement;
-
 
   static get styles() {
     return css`
@@ -147,27 +143,37 @@ export class MainQuiz extends LitElementWw {
     this.addEventListener("drag-start-title", (e) => 
     {
       this.drag = (e as CustomEvent).detail.title;
-      this.source = (e as CustomEvent).detail.parent;
-      console.log("source", this.drag)
-      console.log("source Parent", this.source)
-      
+      this.source = (e as CustomEvent).detail.parent;      
     });
   }
 
   titleDropped(e){
-    //debugger; 
     this.target = (e as CustomEvent).detail.target;
     if((this.target as HTMLElement).tagName.toLowerCase() === 'quiz-element-date' && this.target.childElementCount < 1){
       this.target.appendChild(this.drag);
+      this.activateCheck = true;
     } else if((this.target as HTMLElement).tagName.toLowerCase() === "quiz-title"){
       this.target.appendChild(this.drag);
     }
-    // debugger; 
     if ((this.source as HTMLElement).tagName.toLocaleLowerCase() === 'quiz-element-date') {
       const date_parent = this.source.shadowRoot.querySelector("#date-drop-section")
       date_parent.querySelector(".drop-section").removeAttribute("dropped");
     }
     this.drag.shadowRoot.querySelector(".title-border").classList.remove("dragging");
+
+    // activate submit button
+    const date_elements = Array.from(this.date_container.children);
+    let isActivated = false;
+
+    for (const element of date_elements) {
+        const date_el_appended_titles = (element.shadowRoot.querySelector("slot") as HTMLSlotElement).assignedElements({ flatten: true });
+        if (date_el_appended_titles.length > 0) {
+            isActivated = true;
+            break; 
+        }
+    }
+    this.activateCheck = isActivated;
+    this.requestUpdate();
   }
   
   render() {
@@ -185,6 +191,7 @@ export class MainQuiz extends LitElementWw {
                 id="check-match-button"
                 variant="primary"
                 outline
+                ?disabled="${!this.activateCheck}"
                 @click="${() => {
                   this.checkMatchAndCalculate();
                 }}"
@@ -194,16 +201,15 @@ export class MainQuiz extends LitElementWw {
             </div>
           </div>
           <quiz-title id="title-container"></quiz-title>
+          ${(this.selectedOption === 1 || this.selectedOption === 3) &&
+        this.score !== undefined
+          ? html`<p id="score-feedback">Your Score: ${this.score + " %"}</p>`
+          : ""}
         </div>
 
         <div class="quiz-container">   
           <quiz-date-field id="date-container"></quiz-date-field>
         </div>
-
-        ${(this.selectedOption === 1 || this.selectedOption === 3) &&
-        this.score !== undefined
-          ? html`<p id="score-feedback">Your Score: ${this.score + " %"}</p>`
-          : ""}
       </div>
     `;
   }
@@ -257,7 +263,6 @@ export class MainQuiz extends LitElementWw {
 
   // reset quiz to restart
   resetQuiz() {
-    // debugger; 
     const quizElementsDate = this.date_container.querySelectorAll("quiz-element-date");
     const quizElementsTitle = this.date_container.querySelectorAll("quiz-element-date"); 
 
@@ -268,9 +273,11 @@ export class MainQuiz extends LitElementWw {
       this.initializeTitle(event.title);
       this.initializeDate(event.date);
     });
-    this.droppedTitles = [];
     this.matchCount = 0;
     this.score = undefined;
+    this.drag =""; 
+    this.source = ""; 
+    this.target ="";
   }
 
   // set up date container + timeline + drop sections
@@ -289,8 +296,6 @@ export class MainQuiz extends LitElementWw {
     const quizElemenTitle = document.createElement("quiz-element-title") as QuizElementTitle;
     quizElemenTitle.title = title;
     
-    // quizElemenTitle.setAttribute("slot", "quiz-element-title");
-
     this.title_container.appendChild(quizElemenTitle);
     this.title_container.randomiseTitleOrder();
   }

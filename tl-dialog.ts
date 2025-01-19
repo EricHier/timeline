@@ -44,26 +44,33 @@ export class TimelineDialog extends LitElementWw {
     sl-dialog::part(base) {
       position: absolute;
       height: 100%;
+      width: 100%;
     }
-
     sl-dialog::part(overlay) {
       position: absolute;
+      width: 100%;
+    }
+    sl-dialog::part(panel) {
+      min-width: 350px;
     }
     .d-width {
       width: 100%;
     }
     .d-input-container {
       padding-top: 10px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-wrap: wrap;
       gap: 16px;
       width: 100%;
+      box-sizing: border-box;
     }
+
     dialog-date-picker {
-      width: 100%;
-      min-width: 0;
+      flex: 1 1 45%;
+      min-width: 270px;
+      max-width: 100%;
+      box-sizing: border-box;
     }
-    // to do: what is this? 
     @media (max-width: 600px) {
       .inputs-container {
         grid-template-columns: 1fr;
@@ -414,7 +421,7 @@ export class TimelineDialog extends LitElementWw {
     }
   }
 
-  //  to do: check if end date is before start date and check if only dd and yyyy have been added
+  //  check if end date is before start date and check if only dd and yyyy have been added
   showFormatError(e) {
     const formatValidation = this.useTimePeriod
       ? this.startDate.validateFormat() && this.endDate.validateFormat()
@@ -438,7 +445,7 @@ export class TimelineDialog extends LitElementWw {
     }
   }
 
-  // to do: check if end date < start date and give error
+  // check if end date < start date and give error
   evaluateTimeError(): Boolean {
     const start = this.convertToMoment(this.startDate);
     const end =  this.useTimePeriod

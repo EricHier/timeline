@@ -129,16 +129,14 @@ export class QuizElementDate extends LitElementWw {
       border-radius: 50%;
       background: #484848;
     }
-    .event { 
-      display: flex;
-      align-items: flex-start;
-      padding: 15px;
-      padding-left: 0px;
-      position: relative;
-      width: 100%;
-    }
-  // ... your existing styles ...
-
+  .event { 
+    display: flex;
+    align-items: flex-start;
+    padding: 15px;
+    padding-left: 0px;
+    position: relative;
+    width: 100%;
+  }
   .dropped-title {
     padding: 8px;
     margin: 4px;
@@ -160,7 +158,6 @@ export class QuizElementDate extends LitElementWw {
   }
 
   .drop-section {
-    // ... your existing drop-section styles ...
     min-height: 45px;
     min-width: 50px;
     width: max-content;

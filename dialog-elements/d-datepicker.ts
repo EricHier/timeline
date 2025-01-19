@@ -24,24 +24,39 @@ export class DialogDatePicker extends LitElement {
   @query("#month") accessor monthInput: SlInput;
   @query("#year") accessor yearInput: SlInput;
 
-  // TO DO: Adjust width of input fields if window is sized down
   static styles = css`
+    
+    .date-div-disabled {
+      background: #f7f7f8;
+    }
     .date-div,
     .date-div-disabled {
       display: flex;
+      flex-direction: row;
+      width: 89%;
+      min-width: 245px; 
+    }
+    .date-container,
+    .date-container-disabled {
+      overflow: hidden; 
+      display: flex; 
+      flex-direction: row; 
       align-items: center;
       border: 1px solid #d6d6da;
       border-radius: 5px;
       background: white;
+      box-sizing: border-box;
       width: 100%;
+      min-width: 0; 
     }
-    .date-div-disabled {
+    .date-container-disabled {
       background: #f7f7f8;
     }
     .divider {
       color: lightgray;
+      width: 10px; 
+      align-self:center;
     }
-
     label {
       font-size: 1rem;
       font-weight: 400;
@@ -52,9 +67,9 @@ export class DialogDatePicker extends LitElement {
       --sl-input-border-width: 0;
       --sl-input-padding-vertical: 0;
       --sl-input-padding-horizontal: 1rem;
-      max-width: 25%;
       text-align: center;
-    }
+      min-width: 3%;
+      }
     .date[disabled]{
       --sl-input-color: gray;
     }
@@ -78,17 +93,21 @@ export class DialogDatePicker extends LitElement {
 
   render() {
     return html`
-      <form class="validity-styles">
+      <div>
         <label>${this.label}</label> <br />
-        <div
-          class="${!this.useTimePeriod && this.useEndDate
-            ? "date-div-disabled"
-            : "date-div"}"
-        >
+        <div class="${!this.useTimePeriod && this.useEndDate
+              ? "date-container-disabled"
+              : "date-container"}" >
           <sl-icon-button 
             src=${IconCalendarMonth}
             class="calender-icon">
           </sl-icon-button>
+          <div
+            class="${!this.useTimePeriod && this.useEndDate
+              ? "date-div-disabled"
+              : "date-div"}"
+          >
+         
           <!-- day -->
           <sl-input
             class="date"
@@ -146,8 +165,9 @@ export class DialogDatePicker extends LitElement {
             valueAsString
             required
           ></sl-input>
+          </div>
         </div>
-      </form>
+      </div>
     `;
   }
 
