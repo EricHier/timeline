@@ -1,8 +1,8 @@
 {
-  "name": "@webwriter/timeline",
+  "name": "@nura_zm/timeline",
   "description": "Create/learn with a digital timeline and test your knowledge.",
   "license": "MIT",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": "Nura Zimmermann <nura.zimmermann@rwth-aachen.de>",
   "keywords": [
     "webwriter-widget",
@@ -16,7 +16,6 @@
     "@webwriter/lit": "^2.0.0",
     "@webwriter/wui": "^0.0.3",
     "lit": "^3.2.1",
-    "lit-flatpickr": "^0.4.0",
     "moment": "^2.30.1"
   },
   "scripts": {
