@@ -42,17 +42,7 @@ export class EventManager extends LitElementWw {
   addEvent(event: CustomEvent<TlEventData>, timeline) {
     const tldialog = timeline?.shadowRoot?.querySelector("timeline-dialog") as TimelineDialog;
     const { title, startDate, endDate } = event.detail;
-    const timeline_event = new EventContainer()
-
-    if (!event.detail) {
-      console.error("Event detail not received");
-      return;
-    }
-    
-    if (!timeline || !tldialog) {
-      console.error("Cannot find timeline or dialog");
-      return;  
-    }
+    const timeline_event = new EventContainer();
 
     timeline_event.setAttribute("event_title", title);
     timeline_event.setAttribute("event_startDate", JSON.stringify(startDate));

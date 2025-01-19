@@ -14,6 +14,7 @@ import { DialogInput } from "./dialog-elements/d-input";
 import { DialogToggle } from "./dialog-elements/d-toggle";
 import { DialogDatePicker } from "./dialog-elements/d-datepicker";
 import { TlEventData } from "./tl-event-data";
+import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSystem.js";
 
 @customElement("timeline-dialog")
 export class TimelineDialog extends LitElementWw {
@@ -85,7 +86,7 @@ export class TimelineDialog extends LitElementWw {
     }
     .text-error {
       font-size: var(--sl-input-help-text-font-size-medium);
-      color: var(--sl-color-danger-700);
+      color: var(--sl-color-warning-700);
     }
     .button-container {
       display: flex;
@@ -116,6 +117,8 @@ export class TimelineDialog extends LitElementWw {
       "sl-button": SlButton,
       "sl-checkbox": SlCheckbox,
       "sl-dialog": SlDialog,
+      "webwriter-helpoverlay": HelpOverlay,
+      "webwriter-helppopup": HelpPopup,
     };
   }
 
@@ -153,6 +156,50 @@ export class TimelineDialog extends LitElementWw {
 
   render() {
     return html`
+    <!-- <webwriter-helpoverlay>
+     
+      <webwriter-helppopup
+        slot="popupContainer"
+        target="event-title"
+      >
+        <div slot="content">
+          <h4>Event Title</h4>
+          <p>Enter a title for the event.</p>
+        </div>
+      </webwriter-helppopup>
+
+      <webwriter-helppopup
+        slot="popupContainer"
+        target="time-period"
+      >
+        <div slot="content">
+          <h4>Time Period Toggle</h4>
+          <p>Toggle me to use a single date or a time period for the event.</p>
+        </div>
+      </webwriter-helppopup>
+
+       <webwriter-helppopup
+        slot="popupContainer"
+        target="event-start-date"
+      >
+        <div slot="content">
+          <h4>Event (Start) Date</h4>
+          <p>Enter a date for the event. Day and Month are optional. Years before the common era (BCE) must be entered with a "-".</p>
+        </div>
+      </webwriter-helppopup>
+
+        <webwriter-helppopup
+        slot="popupContainer"
+        target="event-end-date"
+      >
+        <div slot="content">
+          <h4>Event End Date</h4>
+          <p>If a time period has been selected at the "Time Period Toggle", enter a end date for the event. Day and Month are optional. Years before the common era (BCE) must be entered with a "-".</p>
+        </div>
+      </webwriter-helppopup>
+    </webwriter-helpoverlay> -->
+
+
       <sl-dialog
         id="timeline-dialog"
         class="d-width"
@@ -341,7 +388,7 @@ export class TimelineDialog extends LitElementWw {
   // check if title is empty, give errer message if so
   evaluateTitleError() {
     if (this.eventTitle.value === "") {
-      this.titleError.textContent = "Error: Please enter a title";
+      this.titleError.textContent = "Please enter a title";
       this.titleError.hidden = false;
     } else {
       this.titleError.textContent = "";
@@ -356,7 +403,9 @@ export class TimelineDialog extends LitElementWw {
       : this.startDate.validateDay();
 
     if (dayValidation.valid === false) {
-      this.dayError.textContent = "Day Error: " + e.detail.errorMessage;
+      this.dayError.textContent = 
+     //"Day Error: " +
+      e.detail.errorMessage;
       this.dayError.hidden = false;
     }
   }
@@ -380,7 +429,9 @@ export class TimelineDialog extends LitElementWw {
       : this.startDate.validateMonth();
 
     if (monthValidation.valid === false) {
-      this.monthError.textContent = "Month Error: " + e.detail.errorMessage;
+      this.monthError.textContent = 
+      //"Month Error: " + 
+      e.detail.errorMessage;
       this.monthError.hidden = false;
     }
   }
@@ -403,10 +454,12 @@ export class TimelineDialog extends LitElementWw {
       ? this.startDate.validateYear() && this.endDate.validateYear()
       : this.startDate.validateYear();
 
-    if (yearValidation.valid === false) {
-      this.yearError.textContent = "Year Error: " + e.detail.errorMessage;
-      this.yearError.hidden = false;
-    }
+      if (yearValidation.valid === false) {
+        setTimeout(() => {
+            this.yearError.textContent = e.detail.errorMessage;
+            this.yearError.hidden = false;
+        }, 4500);
+      }
   }
 
   // hide error message for valid year
@@ -428,7 +481,9 @@ export class TimelineDialog extends LitElementWw {
       : this.startDate.validateFormat();
 
     if (formatValidation.valid == false) {
-      this.formatError.textContent = "Format Error: " + e.detail.errorMessage;
+      this.formatError.textContent = 
+      //"Format Error: " + 
+      e.detail.errorMessage;
       this.formatError.hidden = false;
     }
   }
@@ -475,7 +530,6 @@ export class TimelineDialog extends LitElementWw {
         ? this.convertToMoment(this.endDate)
         : undefined,
     };
-    // console.log(eventDetails, " event details dispatched"); 
     this.dispatchEvent(
       new CustomEvent("request-add", {
         detail: eventDetails,

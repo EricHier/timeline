@@ -40,7 +40,6 @@ export class TlEventHelper {
     }
   
     static displayDate(date: TlEventData['startDate']) {
-        // debugger;
       const yearBCE = this.checkForYearBC(date);
       let displayDate;
       if (yearBCE) {

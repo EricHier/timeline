@@ -12,6 +12,7 @@ export class QuizDateField extends LitElementWw {
   @property({ type: Array, attribute: true, reflect: true }) dates;
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   static styles = css`
+  
     .timeline-parent {
       display: flex;
       justify-content: start;

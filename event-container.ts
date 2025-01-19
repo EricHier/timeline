@@ -173,12 +173,15 @@ export class EventContainer extends LitElementWw {
       width: 100%;
       padding: 1rem 0 0 0; 
     }
-    .button {
+    .button .delete-button{
       padding-top: 5px; 
       width: 100px; 
     }
+    .delete-button {
+      padding-right: 5px;
+    }
     .expand-icon {
-      padding-right: 15px;
+      padding-left: 5px;
     }
     sl-dialog::part(base) {
         --width: 100%;
@@ -261,7 +264,7 @@ export class EventContainer extends LitElementWw {
               </sl-button>
  
               <sl-button 
-                class="button" 
+                class="delete-button" 
                 id="deleteButton" 
                 slot="footer" 
                 variant="danger" 

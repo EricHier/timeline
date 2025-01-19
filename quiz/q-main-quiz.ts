@@ -13,6 +13,7 @@ import { QuizTitles } from "./q-titles";
 import { QuizDateField } from "./q-date-field";
 import { eventListeners } from "@popperjs/core";
 import { QuizElementTitle } from "./q-element-title";
+import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSystem.js";
 
 @customElement("main-quiz")
 export class MainQuiz extends LitElementWw {
@@ -78,9 +79,12 @@ export class MainQuiz extends LitElementWw {
         flex-grow: 1;
         overflow-y: auto; 
         z-index: 1;
-        height: 50%;
+        max-height: 50%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-height: 200px;
       }
-
       .quiz-header {
         align-items: center; 
         display: grid;
@@ -129,6 +133,8 @@ export class MainQuiz extends LitElementWw {
       "quiz-date-field": QuizDateField,
       "quiz-element-date": QuizElementDate,
       "quiz-element-title": QuizElementTitle,
+      "webwriter-helpoverlay": HelpOverlay,
+      "webwriter-helppopup": HelpPopup,
     };
   }
 
@@ -178,6 +184,49 @@ export class MainQuiz extends LitElementWw {
   
   render() {
     return html`
+    <!-- <webwriter-helpoverlay>
+      <webwriter-helppopup
+        slot="popupContainer"
+        target="reset-button"
+      >
+        <div slot="content">
+          <h4>Quiz Reset</h4>
+          <p>Reset the quiz answers.</p>
+        </div>
+      </webwriter-helppopup>
+
+       <webwriter-helppopup
+        slot="popupContainer"
+        target="check-match-button"
+      >
+        <div slot="content">
+          <h4>Quiz Submit</h4>
+          <p>Click me to submit the created timeline and get the selected feedback.</p>
+        </div>
+      </webwriter-helppopup>
+     
+
+       <webwriter-helppopup
+        slot="popupContainer"
+        target="title-container"
+      >
+        <div slot="content">
+          <h4>Quiz Titles</h4>
+          <p>Guess which title fits to which timeline event and drag the title to slot. I am scrollable.</p>
+        </div>
+      </webwriter-helppopup>
+
+       <webwriter-helppopup
+        slot="popupContainer"
+        target="date-containerr"
+      >
+        <div slot="content">
+          <h4>Quiz Dates</h4>
+          <p>Guess which title fits to which timeline event and drop the title to here. I am scrollable.</p>
+        </div>
+      </webwriter-helppopup>
+    </webwriter-helpoverlay> -->
+
       <div class="border" id="parent">
         <div class="quiz-static-top">
           <div class="quiz-header">
