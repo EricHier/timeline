@@ -14,12 +14,13 @@ import {
   SlSwitch,
   SlIcon,
   SlTooltip,
+  SlButton,
 } from "@shoelace-style/shoelace";
 import { TimelineDialog } from "../tl-dialog";
 import { EventManager } from "../event-manager";
 import { MainQuiz } from "../quiz/q-main-quiz";
 import IconCirclePlusFilled from "@tabler/icons/outline/circle-plus.svg";
-// import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSystem.js";
+import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSystem.js";
 
 @customElement("webwriter-timeline")
 export class WebWriterTimeline extends LitElementWw {
@@ -127,8 +128,8 @@ export class WebWriterTimeline extends LitElementWw {
       "sl-switch": SlSwitch,
       "sl-icon": SlIcon,
       "sl-tooltip": SlTooltip,
-      // "webwriter-helpoverlay": HelpOverlay,
-      // "webwriter-helppopup": HelpPopup,
+      "webwriter-helpoverlay": HelpOverlay,
+      "webwriter-helppopup": HelpPopup,
     };
   }
 
@@ -153,7 +154,6 @@ export class WebWriterTimeline extends LitElementWw {
     //   this.tabGroup.show('timeline-panel');
     // }
 
-
     this.addEventListener("request-remove", (e) =>
       this.eventManager.removeEvent(e)
     );
@@ -164,7 +164,8 @@ export class WebWriterTimeline extends LitElementWw {
 
   render() {
     return html`
-    <!-- <webwriter-helpoverlay>
+    <webwriter-helpoverlay
+      class="ww-wui">
       <webwriter-helppopup
         slot="popupContainer"
         target="quiz-panel"
@@ -197,6 +198,15 @@ export class WebWriterTimeline extends LitElementWw {
 
       <webwriter-helppopup
         slot="popupContainer"
+        target="timeline-toggle"
+      >
+        <div slot="content">
+          <h4>Timeline Toggle</h4>
+          <p>Toggle me to use the timeline in the first tab.</p>
+        </div>
+      </webwriter-helppopup>
+      <webwriter-helppopup
+        slot="popupContainer"
         target="addButton"
       >
         <div slot="content">
@@ -205,8 +215,51 @@ export class WebWriterTimeline extends LitElementWw {
         </div>
       </webwriter-helppopup>
 
+      <!-- elements from quiz tab -->
 
-      <webwriter-helppopup
+<!-- <webwriter-helppopup
+        slot="popupContainer"
+        target="reset-button"
+      >
+        <div slot="content">
+          <h4>Quiz Reset</h4>
+          <p>Reset the quiz answers.</p>
+        </div>
+      </webwriter-helppopup>
+
+       <webwriter-helppopup
+        slot="popupContainer"
+        target="check-match-button"
+      >
+        <div slot="content">
+          <h4>Quiz Submit</h4>
+          <p>Click me to submit the created timeline and get the selected feedback.</p>
+        </div>
+      </webwriter-helppopup>
+     
+
+       <webwriter-helppopup
+        slot="popupContainer"
+        target="title-container"
+      >
+        <div slot="content">
+          <h4>Quiz Titles</h4>
+          <p>Guess which title fits to which timeline event and drag the title to slot. I am scrollable.</p>
+        </div>
+      </webwriter-helppopup>
+
+       <webwriter-helppopup
+        slot="popupContainer"
+        target="date-containerr"
+      >
+        <div slot="content">
+          <h4>Quiz Dates</h4>
+          <p>Guess which title fits to which timeline event and drop the title to here. I am scrollable.</p>
+        </div>
+      </webwriter-helppopup> -->
+
+      <!-- sl-select from quiz tab -->
+      <!-- <webwriter-helppopup
         slot="popupContainer"
         target="quiz-selection"
       >
@@ -214,8 +267,9 @@ export class WebWriterTimeline extends LitElementWw {
           <h4>Quiz Feedback Selection</h4>
           <p>Select which quiz feedback you want to get.</p>
         </div>
-      </webwriter-helppopup>
-    </webwriter-helpoverlay> -->
+      </webwriter-helppopup> -->
+
+    </webwriter-helpoverlay>
 
       <sl-tab-group
         class="ww-timeline"
@@ -268,7 +322,12 @@ export class WebWriterTimeline extends LitElementWw {
         </sl-tab-panel>
 
         <sl-tab-panel name="quiz-panel">
-          <main-quiz id="quiz-component"></main-quiz>
+          <main-quiz id="quiz-component">
+            <!-- <sl-button id="reset-button">Reset</sl-button>
+            <sl-button id="check-match-button">Submit</sl-button>
+            <quiz-title id="title-container"></quiz-title>
+            <quiz-date-field id="date-container"></quiz-date-field> -->
+          </main-quiz>
         </sl-tab-panel>
       </sl-tab-group>
 

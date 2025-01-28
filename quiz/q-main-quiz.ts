@@ -218,7 +218,7 @@ export class MainQuiz extends LitElementWw {
 
        <webwriter-helppopup
         slot="popupContainer"
-        target="date-containerr"
+        target="date-container"
       >
         <div slot="content">
           <h4>Quiz Dates</h4>
