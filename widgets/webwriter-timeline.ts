@@ -25,8 +25,8 @@ import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSyste
 export class WebWriterTimeline extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   @property({ type: Boolean, attribute: true, reflect: true }) accessor quizTabOpen;
-  @property({ type: Boolean, attribute: true, reflect: true }) accessor activateQuizPanel;
-  @property({ type: Boolean, attribute: true, reflect: true }) accessor deactivateTimelinePanel = true;
+  @property({ type: Boolean, attribute: true, reflect: true }) accessor quizPanelVisible;
+  @property({ type: Boolean, attribute: true, reflect: true }) accessor timelinePanelVisible;
   @property({ type: Number, attribute: true, reflect: true }) accessor quizFeedbackOption;
 
   @query("#quiz-selection") accessor quizFeedbackSelecter: SlSelect;
@@ -134,7 +134,26 @@ export class WebWriterTimeline extends LitElementWw {
 
   private eventManager = new EventManager();
 
-  protected firstUpdated(_changedProperties: PropertyValues): void {
+  protected firstUpdated(_changedProperties: PropertyValues): void {  
+
+    if(this.isContentEditable && this.timelinePanelVisible === undefined){
+      this.timelinePanelVisible = true; 
+    }
+    // else{
+      //   this.deactivateTimelinePanel = e.target.checked
+      //   this.setAttribute("deactivateTimelinePanel", e.target.checked.toString())
+      //  }
+    
+    // if (!this.timelinePanelVisible && this.quizPanelVisible) {
+    //   this.tabGroup?.show('quiz-panel');
+    //   this.quizTabOpen = true;
+    //   console.log(this.tabGroup, "quiz tab yes, timeline tab no")
+    // }
+    // else if (this.timelinePanelVisible && !this.quizPanelVisible) {
+    //   this.tabGroup.show('timeline-panel');
+    // }
+
+
     this.addEventListener("request-remove", (e) =>
       this.eventManager.removeEvent(e)
     );
@@ -210,7 +229,7 @@ export class WebWriterTimeline extends LitElementWw {
           slot="nav" 
           panel="timeline-panel"
           id="timeline-panel"
-          ?disabled=${!this.deactivateTimelinePanel}
+          ?disabled=${!this.timelinePanelVisible}
         > 
           Timeline 
         </sl-tab>
@@ -218,7 +237,7 @@ export class WebWriterTimeline extends LitElementWw {
           slot="nav"
           panel="quiz-panel"
           id="quiz-panel"
-          ?disabled=${!this.activateQuizPanel}
+          ?disabled=${!this.quizPanelVisible}
         >
           Quiz
         </sl-tab>
@@ -274,15 +293,15 @@ export class WebWriterTimeline extends LitElementWw {
                <sl-switch
                 id="timeline-toggle"
                 class="quiz-selection"
-                @sl-change=${(e) => (this.deactivateTimelinePanel = e.target.checked)}
-                .checked=${this.deactivateTimelinePanel}
+                @sl-change=${(e) => (this.timelinePanelVisible = e.target.checked)}
+                .checked=${this.timelinePanelVisible}
               >  Timeline
               </sl-switch>
                <sl-switch
                 id="quiz-toggle"
                 class="quiz-selection"
-                @sl-change=${(e) => (this.activateQuizPanel = e.target.checked)}
-                .checked=${this.activateQuizPanel}
+                @sl-change=${(e) => (this.quizPanelVisible = e.target.checked)}
+                .checked=${this.quizPanelVisible}
               >  Quiz
               </sl-switch>
             </div>`
@@ -290,26 +309,27 @@ export class WebWriterTimeline extends LitElementWw {
               <sl-switch
                 id="timeline-toggle"
                 class="quiz-selection"
-                @sl-change=${(e) => (this.deactivateTimelinePanel = e.target.checked)}
-                .checked=${this.deactivateTimelinePanel}
+                @sl-change=${(e) => (this.timelinePanelVisible = e.target.checked)}
+                .checked=${this.timelinePanelVisible}
               > Timeline 
               </sl-switch>
               <sl-switch
                 id="quiz-toggle"
                 class="quiz-selection"
-                @sl-change=${(e) => (this.activateQuizPanel = e.target.checked)}
-                .checked=${this.activateQuizPanel}
-              >  Quiz
+                @sl-change=${(e) =>  (this.quizPanelVisible = e.target.checked)}
+                .checked=${this.quizPanelVisible}
+              >  Show Quiz
               </sl-switch>
               
            `}
       </div>
     `;
   }
-  
+
+
   // if quiz panel is selected start quiz + manage options window
   checkSelectedTab(selectedTab) {
-    if (selectedTab === "quiz-panel" && this.activateQuizPanel) {
+    if (selectedTab === "quiz-panel" && this.quizPanelVisible) {
       this.startQuiz();
       this.quizTabOpen = true;
     } else {
