@@ -19,7 +19,7 @@ import { TimelineDialog } from "../tl-dialog";
 import { EventManager } from "../event-manager";
 import { MainQuiz } from "../quiz/q-main-quiz";
 import IconCirclePlusFilled from "@tabler/icons/outline/circle-plus.svg";
-import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSystem.js";
+// import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSystem.js";
 
 @customElement("webwriter-timeline")
 export class WebWriterTimeline extends LitElementWw {
@@ -127,8 +127,8 @@ export class WebWriterTimeline extends LitElementWw {
       "sl-switch": SlSwitch,
       "sl-icon": SlIcon,
       "sl-tooltip": SlTooltip,
-      "webwriter-helpoverlay": HelpOverlay,
-      "webwriter-helppopup": HelpPopup,
+      // "webwriter-helpoverlay": HelpOverlay,
+      // "webwriter-helppopup": HelpPopup,
     };
   }
 
