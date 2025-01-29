@@ -238,6 +238,7 @@ export class EventContainer extends LitElementWw {
                 <sl-icon 
                     class="author-only event-trash-can" 
                     src=${IconTrash} 
+                    style="cursor: pointer"
                     slot="prefix"
                     @click="${() => this.dialog.show()}">
                   </sl-icon>`
@@ -245,6 +246,7 @@ export class EventContainer extends LitElementWw {
             }
             <sl-icon 
               class=${this.hiddenDiv ? "" : "expand-icon"} 
+              style="cursor: pointer"
               .src=${this.hiddenDiv ? IconArrowsDiagonal : IconArrowsDiagonalMinimize2}
               @click=${() => this.showEventContent()}
               slot="prefix">

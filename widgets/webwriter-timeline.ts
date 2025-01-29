@@ -106,6 +106,7 @@ export class WebWriterTimeline extends LitElementWw {
         background-color: white;
         color: #83b9e0;
         font-size: 32px;
+        cursor: pointer;
       }
       .text-error {
         padding-left: 10px;
@@ -135,7 +136,7 @@ export class WebWriterTimeline extends LitElementWw {
 
   private eventManager = new EventManager();
 
-  protected firstUpdated(_changedProperties: PropertyValues): void {  
+  protected async firstUpdated(_changedProperties: PropertyValues) {  
 
     if(this.isContentEditable && this.timelinePanelVisible === undefined){
       this.timelinePanelVisible = true; 
@@ -153,6 +154,10 @@ export class WebWriterTimeline extends LitElementWw {
     // else if (this.timelinePanelVisible && !this.quizPanelVisible) {
     //   this.tabGroup.show('timeline-panel');
     // }
+
+    // https://lit.dev/docs/components/events/#async-events
+    await new Promise((resolve) => setTimeout (resolve, 0));
+    this.renderRoot.querySelector("webwriter-helpoverlay").shadowRoot.querySelector("#helpButton").setAttribute("style", "right: 5%");
 
     this.addEventListener("request-remove", (e) =>
       this.eventManager.removeEvent(e)
@@ -354,14 +359,14 @@ export class WebWriterTimeline extends LitElementWw {
                 class="quiz-selection"
                 @sl-change=${(e) => (this.timelinePanelVisible = e.target.checked)}
                 .checked=${this.timelinePanelVisible}
-              >  Timeline
+              > Show Timeline
               </sl-switch>
                <sl-switch
                 id="quiz-toggle"
                 class="quiz-selection"
                 @sl-change=${(e) => (this.quizPanelVisible = e.target.checked)}
                 .checked=${this.quizPanelVisible}
-              >  Quiz
+              > Show Quiz
               </sl-switch>
             </div>`
           : html` 
@@ -370,7 +375,7 @@ export class WebWriterTimeline extends LitElementWw {
                 class="quiz-selection"
                 @sl-change=${(e) => (this.timelinePanelVisible = e.target.checked)}
                 .checked=${this.timelinePanelVisible}
-              > Timeline 
+              > Show Timeline 
               </sl-switch>
               <sl-switch
                 id="quiz-toggle"
