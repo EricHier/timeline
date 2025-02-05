@@ -1,10 +1,8 @@
-import { LitElement, html, PropertyValues, css } from "lit";
+import { html, css } from "lit";
 import { LitElementWw } from "@webwriter/lit";
 import { customElement, property } from "lit/decorators.js";
-
 import "@shoelace-style/shoelace/dist/themes/light.css";
-
-import { SlInput, SlTextarea } from "@shoelace-style/shoelace";
+import { SlInput } from "@shoelace-style/shoelace";
 
 @customElement("dialog-input")
 export class DialogInput extends LitElementWw {
@@ -31,11 +29,8 @@ export class DialogInput extends LitElementWw {
   static get scopedElements() {
     return {
       "sl-input": SlInput,
-      "sl-textarea": SlTextarea,
     };
   }
-
-  protected firstUpdated(_changedProperties: PropertyValues): void {}
 
   render() {
     return html`
@@ -45,13 +40,14 @@ export class DialogInput extends LitElementWw {
         .value=${this.value}
         placeholder=${this.placeholder}
         ?required=${this.required}
-        @sl-change=${this.checkInput}
+        @sl-change=${this.setTnput}
         clearable
       ></sl-input>
     `;
   }
 
-  checkInput(event) {
+  // set the value for input
+  setTnput(event) {
     this.value = event.target.value;
   }
 }

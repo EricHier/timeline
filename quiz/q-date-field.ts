@@ -1,18 +1,15 @@
-import { LitElement, html, PropertyValues, css } from "lit";
+import { html, css } from "lit";
 import { LitElementWw } from "@webwriter/lit";
-import { customElement, property, query } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { QuizElementDate } from "./q-element-date"
-
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
-
 @customElement('quiz-date-field')
-
 export class QuizDateField extends LitElementWw {
   @property({ type: Array, attribute: true, reflect: true }) dates;
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
-  static styles = css`
   
+  static styles = css`
     .timeline-parent {
       display: flex;
       justify-content: start;
@@ -48,13 +45,11 @@ export class QuizDateField extends LitElementWw {
       color: #333333;
       flex-direction: column;
     }
-
     .drop-section[quiz-result="match"] {
       background: #cdefcf;
       color: #4aad4d;
       border: 2px solid #4aad4d;
     }
-
     .drop-section[quiz-result="mismatch"] {
       background: #f5d1ce;
       color: #c92c1b;
@@ -63,7 +58,6 @@ export class QuizDateField extends LitElementWw {
     .drop-section > * {
       max-width: 100%;  
     }
-
     .date-line {
       min-width:150px;
       flex-grow: 1;
@@ -94,6 +88,7 @@ export class QuizDateField extends LitElementWw {
     }
   `;
 
+// remove inner title if dropped somewhere else 
 removeTitleForDragging(title) {
   const titleElements = this.querySelectorAll('quiz-element-title') as NodeListOf<QuizElementDate>;
     titleElements.forEach(element => {

@@ -1,9 +1,7 @@
-import { LitElement, html, PropertyValues, css } from "lit";
+import { html, PropertyValues, css } from "lit";
 import { LitElementWw } from "@webwriter/lit";
 import { customElement, property, query } from "lit/decorators.js";
-
 import "@shoelace-style/shoelace/dist/themes/light.css";
-
 import {
   SlTab,
   SlTabGroup,
@@ -14,7 +12,6 @@ import {
   SlSwitch,
   SlIcon,
   SlTooltip,
-  SlButton,
 } from "@shoelace-style/shoelace";
 import { TimelineDialog } from "../tl-dialog";
 import { EventManager } from "../event-manager";
@@ -41,20 +38,18 @@ export class WebWriterTimeline extends LitElementWw {
 
   static get styles() {
     return css`
-     :host(:not([contenteditable="true"]):not([contenteditable=""]))
+      :host(:not([contenteditable="true"]):not([contenteditable=""]))
         .author-only {
         display: none;
       }
-    .ww-timeline {
+      .ww-timeline {
         border-top: 1px solid darkgray;
         border-bottom: 1px solid darkgray;
         min-height: 500px;
       }
       .border {
-        /* height: 500px; */
         min-zoom: 100%;
         overflow-wrap: break-word;
-        /* overflow-y: auto; */
         width: 100%;
         padding-left: 20px;
         padding-right: 20px;
@@ -79,9 +74,6 @@ export class WebWriterTimeline extends LitElementWw {
         position: relative;
         padding-bottom: 50px;
       }
-      /* .timeline-item:last-child {
-        margin-bottom: 20px;
-      } */
       .timeline::after {
         content: "";
         position: absolute;
@@ -92,7 +84,6 @@ export class WebWriterTimeline extends LitElementWw {
         border-left: 6px solid transparent;
         border-right: 6px solid transparent;
         border-top: 10px solid #484848;
-   
       }
       .quiz-selection {
         padding-left: 10px;
@@ -128,7 +119,6 @@ export class WebWriterTimeline extends LitElementWw {
       "sl-option": SlOption,
       "sl-switch": SlSwitch,
       "sl-icon": SlIcon,
-      "sl-tooltip": SlTooltip,
       "webwriter-helpoverlay": HelpOverlay,
       "webwriter-helppopup": HelpPopup,
     };
@@ -136,145 +126,69 @@ export class WebWriterTimeline extends LitElementWw {
 
   private eventManager = new EventManager();
 
-  protected async firstUpdated(_changedProperties: PropertyValues) {  
-
-    if(this.isContentEditable && this.timelinePanelVisible === undefined){
-      this.timelinePanelVisible = true; 
+  protected async firstUpdated(_changedProperties: PropertyValues) {
+    // set timelinePanel as visble for initial use
+    if (this.isContentEditable && this.timelinePanelVisible === undefined) {
+      this.timelinePanelVisible = true;
     }
-    // else{
-      //   this.deactivateTimelinePanel = e.target.checked
-      //   this.setAttribute("deactivateTimelinePanel", e.target.checked.toString())
-      //  }
-    
-    // if (!this.timelinePanelVisible && this.quizPanelVisible) {
-    //   this.tabGroup?.show('quiz-panel');
-    //   this.quizTabOpen = true;
-    //   console.log(this.tabGroup, "quiz tab yes, timeline tab no")
-    // }
-    // else if (this.timelinePanelVisible && !this.quizPanelVisible) {
-    //   this.tabGroup.show('timeline-panel');
-    // }
 
-    // https://lit.dev/docs/components/events/#async-events
-    await new Promise((resolve) => setTimeout (resolve, 0));
-    this.renderRoot.querySelector("webwriter-helpoverlay").shadowRoot.querySelector("#helpButton").setAttribute("style", "right: 5%");
+    // button position after shaddow dom created  https://lit.dev/docs/components/events/#async-events
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    this.renderRoot
+      .querySelector("webwriter-helpoverlay")
+      .shadowRoot.querySelector("#helpButton")
+      .setAttribute("style", "right: 5%");
 
     this.addEventListener("request-remove", (e) =>
       this.eventManager.removeEvent(e)
     );
-    this.addEventListener("show-quiz-feedback-error", () =>
-      this.feedbackError.hidden = false
+    this.addEventListener(
+      "show-quiz-feedback-error",
+      () => (this.feedbackError.hidden = false)
     );
   }
 
   render() {
     return html`
-    <webwriter-helpoverlay
-      class="ww-wui">
-      <webwriter-helppopup
-        slot="popupContainer"
-        target="quiz-panel"
-      >
-        <div slot="content">
-          <h4>Quiz Panel</h4>
-          <p>Click on this panel to configure a quiz for your timeline. If disabled, toggle the <b>"Use Timeline Quiz" toggle</b> in the options field. </p>
-        </div>
-      </webwriter-helppopup>
+      <webwriter-helpoverlay class="ww-wui">
+        <webwriter-helppopup slot="popupContainer" target="quiz-panel">
+          <div slot="content">
+            <h4>Quiz Panel</h4>
+            <p>
+              Click on this panel to configure a quiz for your timeline. If
+              disabled, toggle the <b>"Use Timeline Quiz" toggle</b> in the
+              options field.
+            </p>
+          </div>
+        </webwriter-helppopup>
 
-      <webwriter-helppopup
-        slot="popupContainer"
-        target="timeline-panel"
-      >
-        <div slot="content">
-          <h4>Timeline Panel</h4>
-          <p>On this panel you can create a timeline.</p>
-        </div>
-      </webwriter-helppopup>
+        <webwriter-helppopup slot="popupContainer" target="timeline-panel">
+          <div slot="content">
+            <h4>Timeline Panel</h4>
+            <p>On this panel you can create a timeline.</p>
+          </div>
+        </webwriter-helppopup>
 
-      <webwriter-helppopup
-        slot="popupContainer"
-        target="quiz-toggle"
-      >
-        <div slot="content">
-          <h4>Quiz Toggle</h4>
-          <p>Toggle me to use the timeline quiz-mode in the second tab.</p>
-        </div>
-      </webwriter-helppopup>
+        <webwriter-helppopup slot="popupContainer" target="quiz-toggle">
+          <div slot="content">
+            <h4>Quiz Toggle</h4>
+            <p>Toggle me to use the timeline quiz-mode in the second tab.</p>
+          </div>
+        </webwriter-helppopup>
 
-      <webwriter-helppopup
-        slot="popupContainer"
-        target="timeline-toggle"
-      >
-        <div slot="content">
-          <h4>Timeline Toggle</h4>
-          <p>Toggle me to use the timeline in the first tab.</p>
-        </div>
-      </webwriter-helppopup>
-      <webwriter-helppopup
-        slot="popupContainer"
-        target="addButton"
-      >
-        <div slot="content">
-          <h4>Add Event Button</h4>
-          <p>Click me to add events to the timeline.</p>
-        </div>
-      </webwriter-helppopup>
-
-      <!-- elements from quiz tab -->
-
-<!-- <webwriter-helppopup
-        slot="popupContainer"
-        target="reset-button"
-      >
-        <div slot="content">
-          <h4>Quiz Reset</h4>
-          <p>Reset the quiz answers.</p>
-        </div>
-      </webwriter-helppopup>
-
-       <webwriter-helppopup
-        slot="popupContainer"
-        target="check-match-button"
-      >
-        <div slot="content">
-          <h4>Quiz Submit</h4>
-          <p>Click me to submit the created timeline and get the selected feedback.</p>
-        </div>
-      </webwriter-helppopup>
-     
-
-       <webwriter-helppopup
-        slot="popupContainer"
-        target="title-container"
-      >
-        <div slot="content">
-          <h4>Quiz Titles</h4>
-          <p>Guess which title fits to which timeline event and drag the title to slot. I am scrollable.</p>
-        </div>
-      </webwriter-helppopup>
-
-       <webwriter-helppopup
-        slot="popupContainer"
-        target="date-containerr"
-      >
-        <div slot="content">
-          <h4>Quiz Dates</h4>
-          <p>Guess which title fits to which timeline event and drop the title to here. I am scrollable.</p>
-        </div>
-      </webwriter-helppopup> -->
-
-      <!-- sl-select from quiz tab -->
-      <!-- <webwriter-helppopup
-        slot="popupContainer"
-        target="quiz-selection"
-      >
-        <div slot="content">
-          <h4>Quiz Feedback Selection</h4>
-          <p>Select which quiz feedback you want to get.</p>
-        </div>
-      </webwriter-helppopup> -->
-
-    </webwriter-helpoverlay>
+        <webwriter-helppopup slot="popupContainer" target="timeline-toggle">
+          <div slot="content">
+            <h4>Timeline Toggle</h4>
+            <p>Toggle me to use the timeline in the first tab.</p>
+          </div>
+        </webwriter-helppopup>
+        <webwriter-helppopup slot="popupContainer" target="addButton">
+          <div slot="content">
+            <h4>Add Event Button</h4>
+            <p>Click me to add events to the timeline.</p>
+          </div>
+        </webwriter-helppopup>
+      </webwriter-helpoverlay>
 
       <sl-tab-group
         class="ww-timeline"
@@ -284,13 +198,13 @@ export class WebWriterTimeline extends LitElementWw {
         @sl-tab-hide=${(e: SlTabShowEvent) =>
           this.checkSelectedTab(e.detail.name)}
       >
-        <sl-tab 
-          slot="nav" 
+        <sl-tab
+          slot="nav"
           panel="timeline-panel"
           id="timeline-panel"
           ?disabled=${!this.timelinePanelVisible}
-        > 
-          Timeline 
+        >
+          Timeline
         </sl-tab>
         <sl-tab
           slot="nav"
@@ -327,12 +241,7 @@ export class WebWriterTimeline extends LitElementWw {
         </sl-tab-panel>
 
         <sl-tab-panel name="quiz-panel">
-          <main-quiz id="quiz-component">
-            <!-- <sl-button id="reset-button">Reset</sl-button>
-            <sl-button id="check-match-button">Submit</sl-button>
-            <quiz-title id="title-container"></quiz-title>
-            <quiz-date-field id="date-container"></quiz-date-field> -->
-          </main-quiz>
+          <main-quiz id="quiz-component"> </main-quiz>
         </sl-tab-panel>
       </sl-tab-group>
 
@@ -354,42 +263,46 @@ export class WebWriterTimeline extends LitElementWw {
               <div class="text-error" id="feedback-error" hidden>
                 Please select a feedback option.
               </div>
-               <sl-switch
+              <sl-switch
                 id="timeline-toggle"
                 class="quiz-selection"
-                @sl-change=${(e) => (this.timelinePanelVisible = e.target.checked)}
+                @sl-change=${(e) =>
+                  (this.timelinePanelVisible = e.target.checked)}
                 .checked=${this.timelinePanelVisible}
-              > Show Timeline
+              >
+                Show Timeline
               </sl-switch>
-               <sl-switch
+              <sl-switch
                 id="quiz-toggle"
                 class="quiz-selection"
                 @sl-change=${(e) => (this.quizPanelVisible = e.target.checked)}
                 .checked=${this.quizPanelVisible}
-              > Show Quiz
+              >
+                Show Quiz
               </sl-switch>
             </div>`
-          : html` 
+          : html`
               <sl-switch
                 id="timeline-toggle"
                 class="quiz-selection"
-                @sl-change=${(e) => (this.timelinePanelVisible = e.target.checked)}
+                @sl-change=${(e) =>
+                  (this.timelinePanelVisible = e.target.checked)}
                 .checked=${this.timelinePanelVisible}
-              > Show Timeline 
+              >
+                Show Timeline
               </sl-switch>
               <sl-switch
                 id="quiz-toggle"
                 class="quiz-selection"
-                @sl-change=${(e) =>  (this.quizPanelVisible = e.target.checked)}
+                @sl-change=${(e) => (this.quizPanelVisible = e.target.checked)}
                 .checked=${this.quizPanelVisible}
-              >  Show Quiz
+              >
+                Show Quiz
               </sl-switch>
-              
-           `}
+            `}
       </div>
     `;
   }
-
 
   // if quiz panel is selected start quiz + manage options window
   checkSelectedTab(selectedTab) {
@@ -413,9 +326,11 @@ export class WebWriterTimeline extends LitElementWw {
 
   // transmit selected option for quiz feedback
   saveQuizSelection() {
-    // this.quiz.resetQuiz();
     this.quizFeedbackOption = Number(this.quizFeedbackSelecter.value);
-    if (this.quizFeedbackOption !== undefined || this.quizFeedbackOption !== 0) {
+    if (
+      this.quizFeedbackOption !== undefined ||
+      this.quizFeedbackOption !== 0
+    ) {
       this.feedbackError.hidden = true;
       this.quiz.retriveSelection(this.quizFeedbackOption);
     } else {

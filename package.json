@@ -2,7 +2,7 @@
   "name": "@nura_zm/timeline",
   "description": "Create/learn with a digital timeline and test your knowledge.",
   "license": "MIT",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Nura Zimmermann <nura.zimmermann@rwth-aachen.de>",
   "keywords": [
     "webwriter-widget",
@@ -30,18 +30,6 @@
       "source": "./event-container.ts",
       "default": "./dist/event-container.*"
     },
-    "./widgets/tl-dialog.*": {
-      "source": "./tl-dialog.ts",
-      "default": "./dist/tl-dialog.*"
-    },
-    "./widgets/event-manager.*": {
-      "source": "./event-manager.ts",
-      "default": "./dist/event-manager.*"
-    },
-    "./widgets/d-input.*": {
-      "source": "./dialog-elements/d-input.ts",
-      "default": "./dist/dialog-elements/d-input.*"
-    },
     "./snippets/v2-women-in-tech.html": "./snippets/v2-women-in-tech.html",
     "./package.json": "./package.json"
   },
@@ -50,13 +38,8 @@
       "content": "flow*"
     },
     "./widgets/event-container": {
-      "content": "flow*"
-    },
-    "./widgets/d-input": {
-      "content": "flow*"
-    },
-    "./widgets/event-manager": {
-      "content": "flow*"
+      "content": "flow*",
+      "uninsertable": true
     }
   }
 }

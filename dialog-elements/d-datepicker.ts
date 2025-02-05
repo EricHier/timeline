@@ -1,10 +1,9 @@
 import { LitElement, html, css } from "lit";
-import { customElement, property, query,queryAll } from "lit/decorators.js";
+import { customElement, property, query, queryAll } from "lit/decorators.js";
 import IconCalendarMonth from "@tabler/icons/outline/calendar-month.svg";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { SlInput } from "@shoelace-style/shoelace";
 import { SlIcon } from "@shoelace-style/shoelace";
-
 
 @customElement("dialog-date-picker")
 export class DialogDatePicker extends LitElement {
@@ -19,13 +18,11 @@ export class DialogDatePicker extends LitElement {
 
   @queryAll("sl-input") accessor dates;
 
-
   @query("#day") accessor dayInput: SlInput;
   @query("#month") accessor monthInput: SlInput;
   @query("#year") accessor yearInput: SlInput;
 
   static styles = css`
-    
     .date-div-disabled {
       background: #f7f7f8;
     }
@@ -34,28 +31,28 @@ export class DialogDatePicker extends LitElement {
       display: flex;
       flex-direction: row;
       width: 89%;
-      min-width: 245px; 
+      min-width: 245px;
     }
     .date-container,
     .date-container-disabled {
-      overflow: hidden; 
-      display: flex; 
-      flex-direction: row; 
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
       align-items: center;
       border: 1px solid #d6d6da;
       border-radius: 5px;
       background: white;
       box-sizing: border-box;
       width: 100%;
-      min-width: 0; 
+      min-width: 0;
     }
     .date-container-disabled {
       background: #f7f7f8;
     }
     .divider {
       color: lightgray;
-      width: 10px; 
-      align-self:center;
+      width: 10px;
+      align-self: center;
     }
     label {
       font-size: 1rem;
@@ -69,19 +66,14 @@ export class DialogDatePicker extends LitElement {
       --sl-input-padding-horizontal: 1rem;
       text-align: center;
       min-width: 3%;
-      }
-    .date[disabled]{
+    }
+    .date[disabled] {
       --sl-input-color: gray;
     }
-    .date[invalid]{
+    .date[invalid] {
       --sl-input-border-color: var(--sl-color-danger-600);
       box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-color-danger-300);
       outline: none;
-    }
-    .date[todo]::placeholder {
-      --label-color: orange;
-      font-size: 5rem;
-      opacity: 1;
     }
   `;
   static get scopedElements() {
@@ -95,76 +87,75 @@ export class DialogDatePicker extends LitElement {
     return html`
       <div>
         <label>${this.label}</label> <br />
-        <div class="${!this.useTimePeriod && this.useEndDate
-              ? "date-container-disabled"
-              : "date-container"}" >
-          <sl-icon-button 
-            src=${IconCalendarMonth}
-            class="calender-icon">
+        <div
+          class="${!this.useTimePeriod && this.useEndDate
+            ? "date-container-disabled"
+            : "date-container"}"
+        >
+          <sl-icon-button src=${IconCalendarMonth} class="calender-icon">
           </sl-icon-button>
           <div
             class="${!this.useTimePeriod && this.useEndDate
               ? "date-div-disabled"
               : "date-div"}"
           >
-         
-          <!-- day -->
-          <sl-input
-            class="date"
-            type="text"
-            id="day"
-            .value="${this.day}"
-            @sl-input="${(e: Event) => {
-              const input = e.target as SlInput;
-              this.day =
-                input.value.length > 0 ? input.value.padStart(2, "0") : "";
-            }}"
-            @keypress="${this.validateInput}"
-            @sl-blur="${this.validateForErrors}"
-            placeholder="DD"
-            ?disabled="${!this.useTimePeriod && this.useEndDate}"
-            maxlength="2"
-            valueAsString
-          ></sl-input>
-          <span class="divider">/</span>
-          <!-- month -->
-          <sl-input
-           class="date"
-            type="text"
-            id="month"
-            .value="${this.month}"
-            @sl-input="${(e: Event) => {
-              const input = e.target as SlInput;
-              this.month =
-                input.value.length > 0 ? input.value.padStart(2, "0") : "";
-            }}"
-            @keypress="${this.validateInput}"
-            @sl-blur="${this.validateForErrors}"
-            placeholder="MM"
-            ?disabled="${!this.useTimePeriod && this.useEndDate}"
-            maxlength="2"
-            valueAsString
-          ></sl-input>
-          <span class="divider">/</span>
+            <!-- day -->
+            <sl-input
+              class="date"
+              type="text"
+              id="day"
+              .value="${this.day}"
+              @sl-input="${(e: Event) => {
+                const input = e.target as SlInput;
+                this.day =
+                  input.value.length > 0 ? input.value.padStart(2, "0") : "";
+              }}"
+              @keypress="${this.validateInput}"
+              @sl-blur="${this.validateForErrors}"
+              placeholder="DD"
+              ?disabled="${!this.useTimePeriod && this.useEndDate}"
+              maxlength="2"
+              valueAsString
+            ></sl-input>
+            <span class="divider">/</span>
+            <!-- month -->
+            <sl-input
+              class="date"
+              type="text"
+              id="month"
+              .value="${this.month}"
+              @sl-input="${(e: Event) => {
+                const input = e.target as SlInput;
+                this.month =
+                  input.value.length > 0 ? input.value.padStart(2, "0") : "";
+              }}"
+              @keypress="${this.validateInput}"
+              @sl-blur="${this.validateForErrors}"
+              placeholder="MM"
+              ?disabled="${!this.useTimePeriod && this.useEndDate}"
+              maxlength="2"
+              valueAsString
+            ></sl-input>
+            <span class="divider">/</span>
 
-          <!-- year -->
-          <sl-input
-            class="date"
-            type="text"
-            id="year"
-            .value="${this.year}"
-            @sl-input="${(e: Event) => {
-              const input = e.target as SlInput;
-              this.year = input.value;
-            }}"
-            @keypress="${this.validateYearInput}"
-            @sl-blur="${this.validateForErrors}"
-            placeholder="* YYYY"
-            ?disabled="${!this.useTimePeriod && this.useEndDate}"
-            maxlength="5"
-            valueAsString
-            required
-          ></sl-input>
+            <!-- year -->
+            <sl-input
+              class="date"
+              type="text"
+              id="year"
+              .value="${this.year}"
+              @sl-input="${(e: Event) => {
+                const input = e.target as SlInput;
+                this.year = input.value;
+              }}"
+              @keypress="${this.validateYearInput}"
+              @sl-blur="${this.validateForErrors}"
+              placeholder="* YYYY"
+              ?disabled="${!this.useTimePeriod && this.useEndDate}"
+              maxlength="5"
+              valueAsString
+              required
+            ></sl-input>
           </div>
         </div>
       </div>
@@ -229,7 +220,6 @@ export class DialogDatePicker extends LitElement {
         return { valid: false, errorMessage: "This month has only 30 days" };
       }
     }
-
     return { valid: true, errorMessage: "" };
   }
 
@@ -238,23 +228,32 @@ export class DialogDatePicker extends LitElement {
     const month = parseInt(this.month);
 
     if (month < 1 || month > 12) {
-      return { valid: false, errorMessage: "There is no year with more than 12 months" };
+      return {
+        valid: false,
+        errorMessage: "There is no year with more than 12 months",
+      };
     }
     return { valid: true, errorMessage: "" };
   }
 
   // year is number with 4 digits and if "-" its 5 (todo: adjust maxlength in html)
   validateYear() {
-    if (this.year.length === 0 || (this.year.startsWith("-") && this.year.length === 1)) {
+    if (
+      this.year.length === 0 ||
+      (this.year.startsWith("-") && this.year.length === 1)
+    ) {
       return { valid: false, errorMessage: "Please enter a year" };
     } else if (this.year.length > 4 && !this.year.startsWith("-")) {
-      return { valid: false, errorMessage: "Please enter a year with maximum 4 digits", };
-    } 
+      return {
+        valid: false,
+        errorMessage: "Please enter a year with maximum 4 digits",
+      };
+    }
     return { valid: true, errorMessage: "" };
   }
 
-  validateFormat(){
-    if(this.day && !this.month && this.year){
+  validateFormat() {
+    if (this.day && !this.month && this.year) {
       return { valid: false, errorMessage: "Please enter a year" };
     }
     return { valid: true, errorMessage: "" };
@@ -267,16 +266,15 @@ export class DialogDatePicker extends LitElement {
     const yearValidation = this.validateYear();
     const formatValidation = this.validateFormat();
 
-    if(this.day.length >= 1){
-      this.monthInput.setAttribute("placeholder","* MM");
+    if (this.day.length >= 1) {
+      this.monthInput.setAttribute("placeholder", "* MM");
     } else {
       this.monthInput.setAttribute("placeholder", "MM");
     }
 
-
     // invalid day, dispatch error message to dialog
     if (this.day.length > 0 && !dayValidation.valid) {
-      this.dayInput.setAttribute('invalid','true');
+      this.dayInput.setAttribute("invalid", "true");
 
       this.dispatchEvent(
         new CustomEvent("show-day-validation-error", {
@@ -286,8 +284,8 @@ export class DialogDatePicker extends LitElement {
         })
       );
     } else {
-      if(this.dayInput.hasAttribute('invalid')){
-        this.dayInput.removeAttribute('invalid');
+      if (this.dayInput.hasAttribute("invalid")) {
+        this.dayInput.removeAttribute("invalid");
       }
       this.dispatchEvent(
         new CustomEvent("hide-day-validation-error", {
@@ -299,7 +297,7 @@ export class DialogDatePicker extends LitElement {
 
     // invalid month, dispatch error message to dialog
     if (this.month.length > 0 && !monthValidation.valid) {
-      this.monthInput.setAttribute('invalid', 'true');
+      this.monthInput.setAttribute("invalid", "true");
       this.dispatchEvent(
         new CustomEvent("show-month-validation-error", {
           detail: { errorMessage: monthValidation.errorMessage },
@@ -308,8 +306,8 @@ export class DialogDatePicker extends LitElement {
         })
       );
     } else {
-      if(this.monthInput.hasAttribute('invalid')){
-        this.monthInput.removeAttribute('invalid');
+      if (this.monthInput.hasAttribute("invalid")) {
+        this.monthInput.removeAttribute("invalid");
       }
       this.dispatchEvent(
         new CustomEvent("hide-month-validation-error", {
@@ -318,9 +316,9 @@ export class DialogDatePicker extends LitElement {
         })
       );
     }
-     // invalid year, dispatch error message to dialog
-     if (this.day.length > 0 && this.month.length > 0 && !yearValidation.valid) {
-      this.yearInput.setAttribute('invalid','true');
+    // invalid year, dispatch error message to dialog
+    if (this.day.length > 0 && this.month.length > 0 && !yearValidation.valid) {
+      this.yearInput.setAttribute("invalid", "true");
       this.dispatchEvent(
         new CustomEvent("show-year-validation-error", {
           detail: { errorMessage: yearValidation.errorMessage },
@@ -329,7 +327,7 @@ export class DialogDatePicker extends LitElement {
         })
       );
     } else {
-      this.yearInput.removeAttribute('invalid');
+      this.yearInput.removeAttribute("invalid");
       this.dispatchEvent(
         new CustomEvent("hide-year-validation-error", {
           bubbles: true,
@@ -338,15 +336,17 @@ export class DialogDatePicker extends LitElement {
       );
     }
     // invalid format, dispatch error message to dialog
-    if(!formatValidation.valid){
+    if (!formatValidation.valid) {
       this.dispatchEvent(
         new CustomEvent("show-format-validation-error", {
-          detail: { errorMessage: "Error: Invalid format (dd/yyyy), enter a month." },
+          detail: {
+            errorMessage: "Error: Invalid format (dd/yyyy), enter a month.",
+          },
           bubbles: true,
           composed: true,
         })
       );
-      this.monthInput.setAttribute("invalid","true");
+      this.monthInput.setAttribute("invalid", "true");
     } else {
       this.monthInput.removeAttribute("invalid");
       this.dispatchEvent(
@@ -362,17 +362,14 @@ export class DialogDatePicker extends LitElement {
   reset() {
     this.day = this.month = this.year = this.date = "";
 
-    if(this.dayInput.hasAttribute('invalid')){
-      this.dayInput.removeAttribute('invalid');
+    if (this.dayInput.hasAttribute("invalid")) {
+      this.dayInput.removeAttribute("invalid");
     }
-    if(this.monthInput.hasAttribute('invalid')){
-      this.monthInput.removeAttribute('invalid');
+    if (this.monthInput.hasAttribute("invalid")) {
+      this.monthInput.removeAttribute("invalid");
     }
-    if(this.yearInput.hasAttribute('invalid')){
-      this.yearInput.removeAttribute('invalid');
-    }
-    if(this.yearInput.hasAttribute('todo')){
-      this.yearInput.removeAttribute('todo');
+    if (this.yearInput.hasAttribute("invalid")) {
+      this.yearInput.removeAttribute("invalid");
     }
     this.monthInput.setAttribute("placeholder", "MM");
 
@@ -380,6 +377,4 @@ export class DialogDatePicker extends LitElement {
       input.value = "";
     });
   }
-
-  // optional: focus on next input field
 }

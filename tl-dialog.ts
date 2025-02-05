@@ -1,11 +1,9 @@
-import {LitElement, html, PropertyValues, css} from "lit"
+import { html, css} from "lit"
 import {LitElementWw} from "@webwriter/lit"
-import {customElement, property, query, queryAll} from "lit/decorators.js"
-import moment, { Moment } from 'moment';
+import {customElement, property, query} from "lit/decorators.js"
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import {
   SlButton,
-  SlCheckbox,
   SlDialog,
   SlInput,
 } from "@shoelace-style/shoelace";
@@ -115,7 +113,6 @@ export class TimelineDialog extends LitElementWw {
       "dialog-toggle": DialogToggle,
 
       "sl-button": SlButton,
-      "sl-checkbox": SlCheckbox,
       "sl-dialog": SlDialog,
       "webwriter-helpoverlay": HelpOverlay,
       "webwriter-helppopup": HelpPopup,
@@ -156,7 +153,8 @@ export class TimelineDialog extends LitElementWw {
 
   render() {
     return html`
-    <!-- <webwriter-helpoverlay>
+      <!-- not working helpoverlay  -->
+      <!-- <webwriter-helpoverlay>
      
       <webwriter-helppopup
         slot="popupContainer"
@@ -198,7 +196,6 @@ export class TimelineDialog extends LitElementWw {
         </div>
       </webwriter-helppopup>
     </webwriter-helpoverlay> -->
-
 
       <sl-dialog
         id="timeline-dialog"
@@ -312,7 +309,7 @@ export class TimelineDialog extends LitElementWw {
       this.monthError.textContent =
       this.yearError.textContent =
       this.formatError.textContent =
-      this.eventTitle.value = 
+      this.eventTitle.value =
         "";
 
     this.titleError.hidden =
@@ -336,7 +333,7 @@ export class TimelineDialog extends LitElementWw {
     this.endDate.reset();
   }
 
-  //check if input values are empty, if not readToFill = true and #saveButton not disabled
+  // check if input values are empty, if not readToFill = true and #saveButton not disabled
   enableSaveButton() {
     this.evaluateTitleError();
 
@@ -403,9 +400,9 @@ export class TimelineDialog extends LitElementWw {
       : this.startDate.validateDay();
 
     if (dayValidation.valid === false) {
-      this.dayError.textContent = 
-     //"Day Error: " +
-      e.detail.errorMessage;
+      this.dayError.textContent =
+        //"Day Error: " +
+        e.detail.errorMessage;
       this.dayError.hidden = false;
     }
   }
@@ -429,9 +426,9 @@ export class TimelineDialog extends LitElementWw {
       : this.startDate.validateMonth();
 
     if (monthValidation.valid === false) {
-      this.monthError.textContent = 
-      //"Month Error: " + 
-      e.detail.errorMessage;
+      this.monthError.textContent =
+        //"Month Error: " +
+        e.detail.errorMessage;
       this.monthError.hidden = false;
     }
   }
@@ -454,12 +451,12 @@ export class TimelineDialog extends LitElementWw {
       ? this.startDate.validateYear() && this.endDate.validateYear()
       : this.startDate.validateYear();
 
-      if (yearValidation.valid === false) {
-        setTimeout(() => {
-            this.yearError.textContent = e.detail.errorMessage;
-            this.yearError.hidden = false;
-        }, 4500);
-      }
+    if (yearValidation.valid === false) {
+      setTimeout(() => {
+        this.yearError.textContent = e.detail.errorMessage;
+        this.yearError.hidden = false;
+      }, 4500);
+    }
   }
 
   // hide error message for valid year
@@ -474,16 +471,16 @@ export class TimelineDialog extends LitElementWw {
     }
   }
 
-  //  check if end date is before start date and check if only dd and yyyy have been added
+  // check if end date is before start date and check if only dd and yyyy have been added
   showFormatError(e) {
     const formatValidation = this.useTimePeriod
       ? this.startDate.validateFormat() && this.endDate.validateFormat()
       : this.startDate.validateFormat();
 
     if (formatValidation.valid == false) {
-      this.formatError.textContent = 
-      //"Format Error: " + 
-      e.detail.errorMessage;
+      this.formatError.textContent =
+        //"Format Error: " +
+        e.detail.errorMessage;
       this.formatError.hidden = false;
     }
   }
@@ -503,20 +500,24 @@ export class TimelineDialog extends LitElementWw {
   // check if end date < start date and give error
   evaluateTimeError(): Boolean {
     const start = this.convertToMoment(this.startDate);
-    const end =  this.useTimePeriod
-        ? this.convertToMoment(this.endDate)
-        : undefined;
-        if (this.useTimePeriod && (start[0] > end[0] ||
-            (start[0] === end[0] && start[1] > end[1]) ||
-            (start[0] === end[0] && start[1] === end[1] && start[2] > end[2]))) {
-          this.timeError.textContent = "Time Error: Invalid format, Start date after end date";
-          this.timeError.hidden = false;
-          return false;
-        } else {
-          this.timeError.textContent = "";
-          this.timeError.hidden = true;
-          return true;
-        }
+    const end = this.useTimePeriod
+      ? this.convertToMoment(this.endDate)
+      : undefined;
+    if (
+      this.useTimePeriod &&
+      (start[0] > end[0] ||
+        (start[0] === end[0] && start[1] > end[1]) ||
+        (start[0] === end[0] && start[1] === end[1] && start[2] > end[2]))
+    ) {
+      this.timeError.textContent =
+        "Time Error: Invalid format, Start date after end date";
+      this.timeError.hidden = false;
+      return false;
+    } else {
+      this.timeError.textContent = "";
+      this.timeError.hidden = true;
+      return true;
+    }
   }
 
   // dispatch add request to timeline component
@@ -539,13 +540,20 @@ export class TimelineDialog extends LitElementWw {
     );
   }
 
-  private convertToMoment(datePicker: DialogDatePicker): TlEventData["startDate"] {
-    const date: TlEventData["startDate"] = [Number(datePicker.year), undefined, undefined]
+  // help function to convert date in interface [yyyy,mm,dd]format
+  private convertToMoment(
+    datePicker: DialogDatePicker
+  ): TlEventData["startDate"] {
+    const date: TlEventData["startDate"] = [
+      Number(datePicker.year),
+      undefined,
+      undefined,
+    ];
     if (datePicker.month) {
-      date[1] = (Number(datePicker.month))
+      date[1] = Number(datePicker.month);
     }
     if (datePicker.day) {
-      date[2] =  (Number(datePicker.day))
+      date[2] = Number(datePicker.day);
     }
     return date;
   }

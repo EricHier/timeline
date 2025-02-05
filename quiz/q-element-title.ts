@@ -1,18 +1,14 @@
-import { LitElement, html, PropertyValues, css } from "lit";
+import { html, css } from "lit";
 import { LitElementWw } from "@webwriter/lit";
 import { customElement, property, query } from "lit/decorators.js";
-
 import "@shoelace-style/shoelace/dist/themes/light.css";
-
 
 @customElement("quiz-element-title")
 export class QuizElementTitle extends LitElementWw {
   @query("date-element") accessor title_element: HTMLDivElement;
-  @property({ type: Number, attribute: true, reflect: true })
-  accessor tabIndex = -1;
+  @property({ type: Number, attribute: true, reflect: true })  accessor tabIndex = -1;
   @property({ type: String, attribute: true, reflect: true }) accessor title;
-  @property({ type: Boolean, attribute: true, reflect: true })
-  accessor dropped = true;
+  @property({ type: Boolean, attribute: true, reflect: true })  accessor dropped = true;
 
   static styles = css`
     .title-border {
@@ -37,7 +33,6 @@ export class QuizElementTitle extends LitElementWw {
       overflow-x: scroll;
       flex-direction: row;
     }
-
     .title-border.dragging {
       background: #e5f4fc;
       border: 2px solid #83b9e0;
@@ -54,10 +49,8 @@ export class QuizElementTitle extends LitElementWw {
       border: 2px solid #e58e85;
     }
   `;
-  static get scopedElements() {
-    return {};
-  }
 
+  // set attributes for dragging title + dispatch event for handling drag
   private startDrag(event: DragEvent) {
     const dragElement = this.shadowRoot?.querySelector(".title-border");
     dragElement?.classList.add("dragging");
@@ -71,6 +64,7 @@ export class QuizElementTitle extends LitElementWw {
     );
   }
 
+  // unset attributes for dragging title
   private endDrag() {
     this.shadowRoot.querySelector(".title-border").classList.remove("dragging");
   }

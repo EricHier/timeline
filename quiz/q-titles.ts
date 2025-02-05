@@ -1,21 +1,15 @@
-import { LitElement, html, PropertyValues, css } from "lit";
+import { html, css } from "lit";
 import { LitElementWw } from "@webwriter/lit";
 import { customElement, property, query } from "lit/decorators.js";
-
 import "@shoelace-style/shoelace/dist/themes/light.css";
-import IconArrowBackUp from "@tabler/icons/outline/arrow-back-up.svg";
 import { SlIcon } from "@shoelace-style/shoelace";
-import { QuizElementTitle } from "./q-element-title";
 
-
-@customElement('quiz-title')
-
+@customElement("quiz-title")
 export class QuizTitles extends LitElementWw {
-
-  @query("title-element") accessor title_element: HTMLDivElement;
   @property({ type: Array, attribute: true, reflect: true }) titles;
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   @property({ type: Boolean, attribute: true, reflect: true }) accessor titleChildren;
+  @query("title-element") accessor title_element: HTMLDivElement;
 
   static styles = css`
     .border {
@@ -26,12 +20,12 @@ export class QuizTitles extends LitElementWw {
       border: 1px solid #d6d6da;
       background: #f7f7f8;
       border-radius: 5px;
-      padding: 10px; 
+      padding: 10px;
       box-sizing: border-box;
-      min-height: 70px; 
+      min-height: 70px;
       width: 100%;
       max-height: 100%;
-      height:100%;
+      height: 100%;
       overflow-y: scroll;
     }
     .dragging {
@@ -39,19 +33,21 @@ export class QuizTitles extends LitElementWw {
       border: 2px solid #83b9e0;
     }
   `;
+
   static get scopedElements() {
     return {
-     "sl-icon": SlIcon,
+      "sl-icon": SlIcon,
     };
   }
 
-  // randomise title order 
+  // randomise title order
   randomiseTitleOrder() {
     [...this.children]
       .sort(() => Math.random() - 0.5)
-      .forEach(title => this.appendChild(title));
+      .forEach((title) => this.appendChild(title));
   }
 
+  // dispatch CE for handling title drop
   droppingTitles() {
     this.dispatchEvent(
       new CustomEvent("title-dropped-in-titles", {
@@ -63,8 +59,12 @@ export class QuizTitles extends LitElementWw {
   }
 
   render() {
-    return html`
-    <div id="title" class="border" lable="Titles" @drop=${this.droppingTitles}>
+    return html` <div
+      id="title"
+      class="border"
+      lable="Titles"
+      @drop=${this.droppingTitles}
+    >
       <slot></slot>
     </div>`;
   }
