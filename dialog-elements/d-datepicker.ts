@@ -74,6 +74,7 @@ export class DialogDatePicker extends LitElement {
       --sl-input-border-color: var(--sl-color-danger-600);
       box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-color-danger-300);
       outline: none;
+      border-radius: 3px;
     }
   `;
   static get scopedElements() {

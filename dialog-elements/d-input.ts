@@ -19,7 +19,7 @@ export class DialogInput extends LitElementWw {
   static styles = css`
     :host {
       display: block;
-      margin-bottom: 20px;
+      /* margin-bottom: 20px; */
     }
     .half-input {
       min-width: 45%;

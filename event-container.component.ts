@@ -175,6 +175,10 @@ export class EventContainer extends LitElementWw {
         margin: 0;
         padding: 1rem;
       }
+      .slotted-elements{
+        font-size: 16px;
+        color: #484848;
+      }
     `;
   }
 
@@ -263,7 +267,7 @@ export class EventContainer extends LitElementWw {
             </div>
           </sl-dialog>
           <div id="event_elements" class="event-content" hidden>
-            <slot></slot>
+            <slot class="slotted-elements"></slot>
           </div>
           <sl-dialog
             id="delete-event-dialog"

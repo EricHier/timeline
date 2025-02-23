@@ -21,7 +21,7 @@ export class DialogToggle extends LitElementWw {
       cursor: pointer;
       padding: 2px;
       box-sizing: border-box;
-      margin-bottom: 8px;
+      /* margin-bottom: 8px; */
     }
     input[type="checkbox"] {
       display: none;
@@ -81,7 +81,8 @@ export class DialogToggle extends LitElementWw {
 
   render() {
     return html`
-      <div class="toggle" @click="${this.toggleChange}">
+      <div class="toggle" 
+      @click="${this.toggleChange}">
         <input
           type="checkbox"
           id="time-period"
@@ -108,4 +109,5 @@ export class DialogToggle extends LitElementWw {
       })
     );
   }
+ 
 }

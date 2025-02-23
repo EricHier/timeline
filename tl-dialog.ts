@@ -57,6 +57,7 @@ export class TimelineDialog extends LitElementWw {
     }
     .d-input-container {
       padding-top: 10px;
+      padding-bottom: 10px;
       display: flex;
       flex-wrap: wrap;
       gap: 16px;
@@ -69,6 +70,7 @@ export class TimelineDialog extends LitElementWw {
       min-width: 270px;
       max-width: 100%;
       box-sizing: border-box;
+      /* padding-top: 15px; */
     }
     @media (max-width: 600px) {
       .inputs-container {
@@ -84,13 +86,14 @@ export class TimelineDialog extends LitElementWw {
     }
     .text-error {
       font-size: var(--sl-input-help-text-font-size-medium);
-      color: var(--sl-color-warning-700);
+      color: var(--sl-color-danger-700);
     }
     .button-container {
       display: flex;
       justify-content: space-between;
       align-items: center;
       width: 100%;
+      padding-bottom: 15px;
     }
     .button {
       padding-top: 5px;
@@ -99,10 +102,25 @@ export class TimelineDialog extends LitElementWw {
     .d-input {
       width: 100%;
       min-width: 0;
-      padding-bottom: 10px;
+      padding-bottom: 15px;
     }
+    #event-title[error] {
+      width: 100%;
+      min-width: 0;
+      margin-bottom: 10px;
+      --sl-input-border-color: var(--sl-color-danger-700);
+      box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-color-danger-300);
+      border-radius: 3px;
+      outline: none;
+      padding-bottom:0px; 
+    }
+    #title-error[active] {
+      padding-bottom: 15px;
+    }
+
     .d-input[disabled] {
       --sl-input-label-color: #888888;
+      padding-bottom: 15px;
     }
   `;
 
@@ -213,7 +231,6 @@ export class TimelineDialog extends LitElementWw {
           required
         >
         </dialog-input>
-
         <div class="text-error" id="title-error" hidden></div>
 
         <dialog-toggle
@@ -321,6 +338,8 @@ export class TimelineDialog extends LitElementWw {
       this.formatError.hidden =
         true;
 
+    this.titleError.removeAttribute("active");
+    this.eventTitle.removeAttribute("error");
     monthStartInput.removeAttribute("invalid");
     monthEndInput.removeAttribute("invalid");
 
@@ -389,9 +408,13 @@ export class TimelineDialog extends LitElementWw {
     if (this.eventTitle.value === "") {
       this.titleError.textContent = "Please enter a title";
       this.titleError.hidden = false;
+      this.titleError.setAttribute("active", "true");
+      this.eventTitle.setAttribute("error","true");
     } else {
       this.titleError.textContent = "";
       this.titleError.hidden = true;
+      this.titleError.removeAttribute("active");
+      this.eventTitle.removeAttribute("error");
     }
   }
 

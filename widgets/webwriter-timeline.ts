@@ -104,6 +104,9 @@ export class WebWriterTimeline extends LitElementWw {
         font-size: var(--sl-input-help-text-font-size-medium);
         color: var(--sl-color-danger-700);
       }
+      #timeline-toggle {
+        padding:8px;
+      }
     `;
   }
 
@@ -137,7 +140,7 @@ export class WebWriterTimeline extends LitElementWw {
     this.renderRoot
       .querySelector("webwriter-helpoverlay")
       .shadowRoot.querySelector("#helpButton")
-      .setAttribute("style", "right: 5%");
+      .setAttribute("style", "right: 2.5%");
 
     this.addEventListener("request-remove", (e) =>
       this.eventManager.removeEvent(e)
@@ -146,10 +149,17 @@ export class WebWriterTimeline extends LitElementWw {
       "show-quiz-feedback-error",
       () => (this.feedbackError.hidden = false)
     );
+    // set quizfeedback to 1 if undefined 
     if (this.isContentEditable && this.quizFeedbackOption === undefined){
       this.quizFeedbackOption = 1; 
     }
     this.quiz.findSelection(this.quizFeedbackOption)
+
+    // set quiz tab visible at first if content is not editable and timeline deactivated
+    if (!this.timelinePanelVisible && !this.isContentEditable) {
+      this.quizPanel.click();
+      this.tabGroup.setAttribute('active', 'quiz-panel');
+    }
   }
 
   render() {
