@@ -1,1 +1,46 @@
-{"name":"@nura_zm/timeline","version":"0.1.3","description":"Create/learn with a digital timeline and test your knowledge.","keywords":["webwriter-widget","timeline","history"],"license":"MIT","author":"Nura Zimmermann <nura.zimmermann@rwth-aachen.de>","scripts":{"prepublishOnly":"npx @webwriter/build"},"dependencies":{"@popperjs/core":"^2.11.8","@shoelace-style/shoelace":"^2.17.1","@tabler/icons":"^3.21.0","@webwriter/lit":"^2.0.0","@webwriter/wui":"^0.0.3","lit":"^3.2.1","moment":"^2.30.1"},"exports":{"./widgets/webwriter-timeline.*":{"source":"./widgets/webwriter-timeline.ts","default":"./dist/webwriter-timeline.*"},"./widgets/event-container.*":{"source":"./event-container.ts","default":"./dist/event-container.*"},"./snippets/v2-women-in-tech.html":"./snippets/v2-women-in-tech.html","./snippets/history-of-olympic-games.html":"./snippets/history-of-olympic-games.html","./package.json":"./package.json"},"editingConfig":{"./widgets/webwriter-timeline":{"content":"flow*"},"./widgets/event-container":{"content":"flow*","uninsertable":true}}}
+{
+  "name": "@nura_zm/timeline",
+  "version": "0.1.3",
+  "description": "Create/learn with a digital timeline and test your knowledge.",
+  "keywords": [
+    "webwriter-widget",
+    "timeline",
+    "history"
+  ],
+  "license": "MIT",
+  "author": "Nura Zimmermann <nura.zimmermann@rwth-aachen.de>",
+  "scripts": {
+    "prepublishOnly": "npx @webwriter/build"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "@shoelace-style/shoelace": "^2.17.1",
+    "@tabler/icons": "^3.21.0",
+    "@webwriter/lit": "^2.0.0",
+    "@webwriter/wui": "^0.0.3",
+    "lit": "^3.2.1",
+    "moment": "^2.30.1"
+  },
+  "exports": {
+    "./widgets/webwriter-timeline.*": {
+      "source": "./widgets/webwriter-timeline.ts",
+      "default": "./dist/webwriter-timeline.*"
+    },
+    "./widgets/event-container.*": {
+      "source": "./event-container.ts",
+      "default": "./dist/event-container.*"
+    },
+    "./snippets/v2-women-in-tech.html": "./snippets/v2-women-in-tech.html",
+    "./snippets/history-of-olympic-games.html": "./snippets/history-of-olympic-games.html",
+    "./package.json": "./package.json"
+  },
+  "editingConfig": {
+    "./widgets/webwriter-timeline": {
+      "content": "flow*"
+    },
+    "./widgets/event-container": {
+      "content": "flow*",
+      "uninsertable": true
+    }
+  }
+}
