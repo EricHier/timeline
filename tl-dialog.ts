@@ -203,6 +203,7 @@ export class TimelineDialog extends LitElementWw {
         label="Add a Timeline Event"
         style="--width: 50vw;"
       >
+      <form>
         <dialog-input
           id="event-title"
           class="d-input"
@@ -278,6 +279,7 @@ export class TimelineDialog extends LitElementWw {
             >Add Event
           </sl-button>
         </div>
+      </form>
       </sl-dialog>
     `;
   }
@@ -451,7 +453,11 @@ export class TimelineDialog extends LitElementWw {
       ? this.startDate.validateYear() && this.endDate.validateYear()
       : this.startDate.validateYear();
 
-    if (yearValidation.valid === false) {
+    
+    if (yearValidation.valid === false && e.detail.errorMessage === "Please enter a year with maximum 4 digits") {
+      this.yearError.textContent = e.detail.errorMessage;
+      this.yearError.hidden = false;
+    } else if (yearValidation.valid === false && e.detail.errorMessage === "Please enter a year") {
       setTimeout(() => {
         this.yearError.textContent = e.detail.errorMessage;
         this.yearError.hidden = false;

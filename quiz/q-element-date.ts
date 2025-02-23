@@ -151,8 +151,10 @@ export class QuizElementDate extends LitElementWw {
   `;
 
   // unset attributes for dropping title + dispatch event to handle drop
-  private droppingTitles(event: DragEvent) {
+  public droppingTitles(event: DragEvent) {
+    event.preventDefault();
     const dropSection = event.target as HTMLElement;
+  
     dropSection.removeAttribute("dragover");
     dropSection.removeAttribute("dragging");
     dropSection.setAttribute("dropped", "true");
@@ -177,10 +179,13 @@ export class QuizElementDate extends LitElementWw {
           class="drop-section"
           id="${this.date}"
           @dragover=${(e: DragEvent) => {
+            e.preventDefault(); 
             (e.target as HTMLElement).setAttribute("dragover", "true");
           }}
-          @dragleave=${(e: DragEvent) =>
-            (e.target as HTMLElement).removeAttribute("dragover")}
+          @dragleave=${(e: DragEvent) => {
+            e.preventDefault(); 
+            (e.target as HTMLElement).removeAttribute("dragover");
+          }}
           @drop=${this.droppingTitles}
         >
           <slot></slot>

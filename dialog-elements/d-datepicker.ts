@@ -243,7 +243,7 @@ export class DialogDatePicker extends LitElement {
       (this.year.startsWith("-") && this.year.length === 1)
     ) {
       return { valid: false, errorMessage: "Please enter a year" };
-    } else if (this.year.length > 4 && !this.year.startsWith("-")) {
+    } else if (this.year.length === 5 && !this.year.startsWith("-")) {
       return {
         valid: false,
         errorMessage: "Please enter a year with maximum 4 digits",
@@ -317,8 +317,16 @@ export class DialogDatePicker extends LitElement {
       );
     }
     // invalid year, dispatch error message to dialog
-    if (this.day.length > 0 && this.month.length > 0 && !yearValidation.valid) {
-      this.yearInput.setAttribute("invalid", "true");
+      if (!yearValidation.valid) {
+
+        if(yearValidation.errorMessage==="Please enter a year"){
+          setTimeout(() => {
+            this.yearInput.setAttribute("invalid", "true");
+          }, 4500);
+        } else {
+          this.yearInput.setAttribute("invalid", "true");
+        }
+        
       this.dispatchEvent(
         new CustomEvent("show-year-validation-error", {
           detail: { errorMessage: yearValidation.errorMessage },

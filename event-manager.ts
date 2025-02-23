@@ -1,7 +1,7 @@
 import { LitElementWw } from "@webwriter/lit";
 import { customElement, property } from "lit/decorators.js";
 import "@shoelace-style/shoelace/dist/themes/light.css";
-import { EventContainer } from "./event-container";
+import { EventContainer } from "./event-container.component";
 import { TimelineDialog } from "./tl-dialog";
 import { WebWriterTimeline } from "./widgets/webwriter-timeline";
 import { TlEventData } from "./tl-event-data";
@@ -22,7 +22,8 @@ export class EventManager extends LitElementWw {
   addEvent(event: CustomEvent<TlEventData>, timeline) {
     const tldialog = timeline?.shadowRoot?.querySelector( "timeline-dialog" ) as TimelineDialog;
     const { title, startDate, endDate } = event.detail;
-    const timeline_event = new EventContainer();
+    // const timeline_event = new EventContainer();
+    const timeline_event = document.createElement("event-container");
 
     timeline_event.setAttribute("event_title", title);
     timeline_event.setAttribute("event_startDate", JSON.stringify(startDate));

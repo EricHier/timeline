@@ -12,22 +12,17 @@ import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSyste
 
 @customElement("main-quiz")
 export class MainQuiz extends LitElementWw {
-  @property({ type: Number, attribute: true, reflect: true })
-  accessor tabIndex = -1;
+  @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   @property({ type: Array }) accessor event_startDate: TlEventData["startDate"];
   @property({ type: Array }) accessor event_endDate: TlEventData["endDate"];
-  @property({ type: Array, attribute: true, reflect: true })
-  accessor appendedEvents: Array<{ date: String; title: string }> = [];
-  @property({ type: Number, attribute: true, reflect: true })
-  accessor matchCount = 0;
+  @property({ type: Array, attribute: true, reflect: true }) accessor appendedEvents: Array<{ date: String; title: string }> = [];
+  @property({ type: Number, attribute: true, reflect: true }) accessor matchCount = 0;
   @property({ type: Number, attribute: true, reflect: true }) accessor score;
-  @property({ type: Number, attribute: true, reflect: true })
-  accessor selectedOption = 0;
+  @property({ type: Number, attribute: true, reflect: true }) accessor selectedOption;
   @property({ type: Object, attribute: true, reflect: false }) accessor drag;
   @property({ type: Object, attribute: true, reflect: false }) accessor source;
   @property({ type: Object, attribute: true, reflect: false }) accessor target;
-  @property({ type: Boolean, attribute: true, reflect: false })
-  accessor activateCheck;
+  @property({ type: Boolean, attribute: true, reflect: false }) accessor activateCheck;
 
   @query("#date-container") accessor date_container: QuizDateField;
   @query("#title-container") accessor title_container: QuizTitles;
@@ -35,10 +30,10 @@ export class MainQuiz extends LitElementWw {
 
   static get styles() {
     return css`
-      :host(:not([contenteditable="true"]):not([contenteditable=""]))
+      /* :host(:not([contenteditable="true"]):not([contenteditable=""]))
         .author-only {
         display: none;
-      }
+      } */
       :host {
         display: block;
         height: 100%;
@@ -66,6 +61,8 @@ export class MainQuiz extends LitElementWw {
         overflow-y: hidden;
         box-sizing: border-box;
         z-index: 2;
+        min-height: 210px;
+
       }
       .quiz-container {
         font-weight: 500;
@@ -116,6 +113,11 @@ export class MainQuiz extends LitElementWw {
         height: 100% display_ flex;
         flex-direction: column;
         overflow-y: scroll;
+      }
+      #score-feedback{
+        font-size: 18px;
+        font-weight: 500;
+        color: rgb(72, 72, 72);
       }
     `;
   }
@@ -280,7 +282,7 @@ export class MainQuiz extends LitElementWw {
   }
 
   // get selected feedback option
-  retriveSelection(selected) {
+  findSelection(selected) {
     this.selectedOption = selected;
   }
 
@@ -370,8 +372,7 @@ export class MainQuiz extends LitElementWw {
   // check for a title-date match andgive feedback
   checkMatchAndCalculate() {
     this.matchCount = 0;
-    this.score = 0;
-
+    this.score = 0; 
     if (this.selectedOption === undefined || this.selectedOption === 0) {
       this.dispatchEvent(
         new CustomEvent("show-quiz-feedback-error", {

@@ -146,6 +146,10 @@ export class WebWriterTimeline extends LitElementWw {
       "show-quiz-feedback-error",
       () => (this.feedbackError.hidden = false)
     );
+    if (this.isContentEditable && this.quizFeedbackOption === undefined){
+      this.quizFeedbackOption = 1; 
+    }
+    this.quiz.findSelection(this.quizFeedbackOption)
   }
 
   render() {
@@ -254,6 +258,7 @@ export class WebWriterTimeline extends LitElementWw {
                 label="Select Quiz Feedback"
                 help-text="Please select which feedback the students should get."
                 @sl-change=${() => this.saveQuizSelection()}
+                .value=${this.quizFeedbackOption?.toString() || ''}
               >
                 <sl-option value="1">Score and Correct Answers</sl-option>
                 <sl-option value="2">Correct Answers Only</sl-option>
@@ -332,7 +337,7 @@ export class WebWriterTimeline extends LitElementWw {
       this.quizFeedbackOption !== 0
     ) {
       this.feedbackError.hidden = true;
-      this.quiz.retriveSelection(this.quizFeedbackOption);
+      this.quiz.findSelection(this.quizFeedbackOption);
     } else {
       this.feedbackError.hidden = false;
     }
