@@ -27,7 +27,7 @@ export class QuizElementTitle extends LitElementWw {
       color: #333333;
       min-height: 35px;
       flex-wrap: wrap;
-      text-align: center;
+      text-align: left;
       padding: 5px 10px;
       box-sizing: border-box;
       overflow-x: scroll;

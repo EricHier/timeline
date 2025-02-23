@@ -146,14 +146,44 @@ export class MainQuiz extends LitElementWw {
     );
 
     this.addEventListener("drag-start-title", (e) => {
-      this.drag = (e as CustomEvent).detail.title;
-      this.source = (e as CustomEvent).detail.parent;
+      this.titleDragStart(e)
     });
+  }
+
+  // start dragging title, if match has already been tried, remove match feedback attributes
+  titleDragStart(e){
+    this.drag = (e as CustomEvent).detail.title;
+    this.source = (e as CustomEvent).detail.parent;
+
+    if(this.score !== undefined){
+      this.score = undefined;
+      this.matchCount = 0;
+      const date_elements = Array.from(this.date_container.children);
+      date_elements.forEach((element) => {
+        if (element.shadowRoot) {
+          const dropSection = element.shadowRoot.querySelector(".drop-section");
+          if (dropSection) {
+            dropSection.removeAttribute("quiz-result");
+          }
+          const titleElement = element.querySelector("quiz-element-title");
+          if (titleElement) { 
+            if (titleElement.shadowRoot) {
+              const titleDiv = titleElement.shadowRoot.querySelector("div");
+              if (titleDiv) {
+                titleDiv.removeAttribute("mismatch");
+                titleDiv.removeAttribute("match");
+              }
+            }
+          }
+        }
+      });
+    }
   }
 
   // if title dropped, look for target and source to see where its dropped to, emit css changes, enable quiz checking
   titleDropped(e) {
     this.target = (e as CustomEvent).detail.target;
+    
     if (
       (this.target as HTMLElement).tagName.toLowerCase() ===
         "quiz-element-date" &&
