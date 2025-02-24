@@ -30,7 +30,7 @@
       "source": "./event-container.ts",
       "default": "./dist/event-container.*"
     },
-    "./snippets/v2-women-in-tech.html": "./snippets/v2-women-in-tech.html",
+    "./snippets/women-in-tech.html": "./snippets/women-in-tech.html",
     "./snippets/history-of-olympic-games.html": "./snippets/history-of-olympic-games.html",
     "./package.json": "./package.json"
   },
