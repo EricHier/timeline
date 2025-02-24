@@ -328,6 +328,7 @@ export class TimelineDialog extends LitElementWw {
       this.monthError.textContent =
       this.yearError.textContent =
       this.formatError.textContent =
+      this.timeError.textContent = 
       this.eventTitle.value =
         "";
 
@@ -336,6 +337,7 @@ export class TimelineDialog extends LitElementWw {
       this.monthError.hidden =
       this.yearError.hidden =
       this.formatError.hidden =
+      this.timeError.hidden
         true;
 
     this.titleError.removeAttribute("active");
@@ -484,7 +486,8 @@ export class TimelineDialog extends LitElementWw {
       setTimeout(() => {
         this.yearError.textContent = e.detail.errorMessage;
         this.yearError.hidden = false;
-      }, 4500);
+      }, 4000);      
+    } else {this.hideYearError();
     }
   }
 
@@ -532,8 +535,8 @@ export class TimelineDialog extends LitElementWw {
     const end = this.useTimePeriod
       ? this.convertToMoment(this.endDate)
       : undefined;
-    if (
-      this.useTimePeriod &&
+    if (( this.startDate.year.length > 0 && this.endDate.year.length > 0) &&
+      this.useTimePeriod && 
       (start[0] > end[0] ||
         (start[0] === end[0] && start[1] > end[1]) ||
         (start[0] === end[0] && start[1] === end[1] && start[2] > end[2]))

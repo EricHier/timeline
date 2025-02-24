@@ -112,7 +112,6 @@ export class DialogDatePicker extends LitElement {
                   input.value.length > 0 ? input.value.padStart(2, "0") : "";
               }}"
               @keypress="${this.validateInput}"
-              @sl-blur="${this.validateForErrors}"
               placeholder="DD"
               ?disabled="${!this.useTimePeriod && this.useEndDate}"
               maxlength="2"
@@ -131,7 +130,6 @@ export class DialogDatePicker extends LitElement {
                   input.value.length > 0 ? input.value.padStart(2, "0") : "";
               }}"
               @keypress="${this.validateInput}"
-              @sl-blur="${this.validateForErrors}"
               placeholder="MM"
               ?disabled="${!this.useTimePeriod && this.useEndDate}"
               maxlength="2"
@@ -150,7 +148,7 @@ export class DialogDatePicker extends LitElement {
                 this.year = input.value;
               }}"
               @keypress="${this.validateYearInput}"
-              @sl-blur="${this.validateForErrors}"
+              @sl-change="${this.validateForErrors}"
               placeholder="* YYYY"
               ?disabled="${!this.useTimePeriod && this.useEndDate}"
               maxlength="5"
@@ -239,10 +237,7 @@ export class DialogDatePicker extends LitElement {
 
   // year is number with 4 digits and if "-" its 5 (todo: adjust maxlength in html)
   validateYear() {
-    if (
-      this.year.length === 0 ||
-      (this.year.startsWith("-") && this.year.length === 1)
-    ) {
+    if ( this.year.length === 0 || (this.year.startsWith("-") && this.year.length === 1) ) {
       return { valid: false, errorMessage: "Please enter a year" };
     } else if (this.year.length === 5 && !this.year.startsWith("-")) {
       return {
@@ -320,11 +315,11 @@ export class DialogDatePicker extends LitElement {
     // invalid year, dispatch error message to dialog
       if (!yearValidation.valid) {
 
-        if(yearValidation.errorMessage==="Please enter a year"){
+        if(yearValidation.errorMessage==="Please enter a year" && this.day.length > 0 &&  this.month.length > 0){
           setTimeout(() => {
             this.yearInput.setAttribute("invalid", "true");
           }, 4500);
-        } else {
+        } else if(yearValidation.errorMessage==="Please enter a year with maximum 4 digits") {
           this.yearInput.setAttribute("invalid", "true");
         }
         
