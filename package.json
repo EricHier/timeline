@@ -1,6 +1,6 @@
 {
-  "name": "@nura_zm/timeline",
-  "version": "0.1.4",
+  "name": "@webwriter/timeline",
+  "version": "1.0.0",
   "description": "Create/learn with a digital timeline and test your knowledge.",
   "keywords": [
     "webwriter-widget",
