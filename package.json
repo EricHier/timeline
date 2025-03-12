@@ -1,6 +1,6 @@
 {
     "name": "@webwriter/timeline",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Create/learn with a digital timeline and test your knowledge.",
     "keywords": [
         "webwriter-widget",
@@ -42,6 +42,11 @@
         "./icon": "./icon.svg"
     },
     "editingConfig": {
+        ".": {
+            "description": {
+                "de": "Erstellen/Lernen Sie mit einer digitalen Zeitleiste und testen Sie Ihr Wissen."
+            }
+        },
         "./widgets/webwriter-timeline": {
             "content": "flow*"
         },
