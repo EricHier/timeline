@@ -64,7 +64,7 @@
             }
         },
         "./widgets/webwriter-timeline": {
-            "content": "flow*"
+            "content": "event-container*"
         },
         "./widgets/event-container": {
             "content": "flow*",
