@@ -1,9 +1,8 @@
-import { LitElement, html, css } from "lit";
-import { customElement, property, query, queryAll } from "lit/decorators.js";
-import IconCalendarMonth from "@tabler/icons/outline/calendar-month.svg";
+import { SlIcon, SlInput } from "@shoelace-style/shoelace";
 import "@shoelace-style/shoelace/dist/themes/light.css";
-import { SlInput } from "@shoelace-style/shoelace";
-import { SlIcon } from "@shoelace-style/shoelace";
+import IconCalendarMonth from "@tabler/icons/outline/calendar-month.svg";
+import { LitElement, css, html } from "lit";
+import { customElement, property, query, queryAll } from "lit/decorators.js";
 
 @customElement("dialog-date-picker")
 export class DialogDatePicker extends LitElement {
@@ -112,6 +111,7 @@ export class DialogDatePicker extends LitElement {
                   input.value.length > 0 ? input.value.padStart(2, "0") : "";
               }}"
               @keypress="${this.validateInput}"
+              @sl-change="${this.validateForErrors}"
               placeholder="DD"
               ?disabled="${!this.useTimePeriod && this.useEndDate}"
               maxlength="2"
@@ -130,6 +130,7 @@ export class DialogDatePicker extends LitElement {
                   input.value.length > 0 ? input.value.padStart(2, "0") : "";
               }}"
               @keypress="${this.validateInput}"
+              @sl-change="${this.validateForErrors}"
               placeholder="MM"
               ?disabled="${!this.useTimePeriod && this.useEndDate}"
               maxlength="2"
