@@ -32,7 +32,8 @@
     "license": "MIT",
     "author": "Nura Zimmermann <nura.zimmermann@rwth-aachen.de>",
     "scripts": {
-        "prepublishOnly": "npx @webwriter/build"
+        "prepublishOnly": "npx @webwriter/build",
+        "dev": "npx @webwriter/build dev"
     },
     "dependencies": {
         "@popperjs/core": "^2.11.8",
