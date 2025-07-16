@@ -249,7 +249,7 @@ export class TimelineDialog extends LitElementWw {
         <div class="d-input-container">
           <dialog-date-picker
             .useTimePeriod="${this.useTimePeriod}"
-            label=${this.useTimePeriod ? "Start date" : "Date"}
+            label=${this.useTimePeriod ? "Start Date" : "Date"}
             id="event-start-date"
             @sl-change=${this.enableSaveButton}
           >
