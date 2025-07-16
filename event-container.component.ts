@@ -1,13 +1,13 @@
-import { html, PropertyValues, css } from "lit";
-import { LitElementWw } from "@webwriter/lit";
-import { customElement, property, query } from "lit/decorators.js";
-import IconArrowsDiagonal from "@tabler/icons/outline/arrows-diagonal.svg";
-import IconArrowsDiagonalMinimize2 from "@tabler/icons/outline/arrows-diagonal-minimize-2.svg";
-import IconTrash from "@tabler/icons/outline/trash.svg";
+import { SlButton, SlDialog, SlIcon } from "@shoelace-style/shoelace";
 import "@shoelace-style/shoelace/dist/themes/light.css";
-import { SlButton, SlIcon, SlDialog  } from "@shoelace-style/shoelace";
-import { TlEventData , TlEventHelper } from "./tl-event-data";
+import IconArrowsDiagonalMinimize2 from "@tabler/icons/outline/arrows-diagonal-minimize-2.svg";
+import IconArrowsDiagonal from "@tabler/icons/outline/arrows-diagonal.svg";
+import IconTrash from "@tabler/icons/outline/trash.svg";
+import { LitElementWw } from "@webwriter/lit";
+import { css, html, PropertyValues } from "lit";
+import { property, query } from "lit/decorators.js";
 import { Moment } from "moment";
+import { TlEventData, TlEventHelper } from "./tl-event-data";
 
 export class EventContainer extends LitElementWw {
   @property({ type: String }) accessor event_title;
@@ -124,9 +124,11 @@ export class EventContainer extends LitElementWw {
         max-width: 100%;
         max-height: 400px;
         overflow-wrap: break-word;
-        overflow-y: auto;
         flex-direction: column;
         transform: translateX(-3.5px);
+      }
+      ::slotted(iframe) {
+        box-sizing: border-box;
       }
       .event-content {
         max-height: 400px;
