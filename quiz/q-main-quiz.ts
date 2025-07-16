@@ -1,14 +1,15 @@
-import { html, PropertyValues, css } from "lit";
-import { LitElementWw } from "@webwriter/lit";
-import { customElement, property, query } from "lit/decorators.js";
-import "@shoelace-style/shoelace/dist/themes/light.css";
 import { SlButton } from "@shoelace-style/shoelace";
-import { TlEventData, TlEventHelper} from "../tl-event-data";
-import { QuizElementDate } from "./q-element-date"
-import { QuizTitles } from "./q-titles";
-import { QuizDateField } from "./q-date-field";
-import { QuizElementTitle } from "./q-element-title";
+import "@shoelace-style/shoelace/dist/themes/light.css";
+import { LitElementWw } from "@webwriter/lit";
 import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSystem.js";
+import { css, html, PropertyValues } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
+import { EventContainer } from "../event-container.component";
+import { TlEventData, TlEventHelper } from "../tl-event-data";
+import { QuizDateField } from "./q-date-field";
+import { QuizElementDate } from "./q-element-date";
+import { QuizElementTitle } from "./q-element-title";
+import { QuizTitles } from "./q-titles";
 
 @customElement("main-quiz")
 export class MainQuiz extends LitElementWw {
@@ -317,12 +318,59 @@ export class MainQuiz extends LitElementWw {
   }
 
   // append new events to quiz, save appended events to array
-  startQuiz(events) {
+  startQuiz(events: EventContainer[]) {
     const existingEvents = this.appendedEvents;
     const formatDate = (startDate, endDate) => {
       return endDate ? `${startDate} - ${endDate}` : startDate;
     };
 
+    // Create a set of current event identifiers for quick lookup
+    const currentEventIdentifiers = new Set();
+    events.forEach((event) => {
+      const title = event.getAttribute("event_title");
+      const startdate = event.getAttribute("event_startdate");
+      const enddate = event.getAttribute("event_enddate");
+      const date = formatDate(startdate, enddate);
+      currentEventIdentifiers.add(`${title}|${date}`);
+    });
+
+    // Remove events that are no longer present
+    const eventsToRemove = existingEvents.filter((existingEvent) => {
+      const identifier = `${existingEvent.title}|${existingEvent.date}`;
+      return !currentEventIdentifiers.has(identifier);
+    });
+
+    // Remove specific events from the UI and appendedEvents array
+    eventsToRemove.forEach((eventToRemove) => {
+      // Remove from appendedEvents array
+      const index = this.appendedEvents.findIndex(
+        (event) => event.title === eventToRemove.title && event.date === eventToRemove.date
+      );
+      if (index !== -1) {
+        this.appendedEvents.splice(index, 1);
+      }
+
+      // Remove date element from UI
+      const dateElements = Array.from(this.date_container.children);
+      const dateElementToRemove = dateElements.find((element) => {
+        const dateText = element.shadowRoot?.querySelector(".event-date")?.textContent;
+        return dateText === eventToRemove.date;
+      });
+      if (dateElementToRemove) {
+        dateElementToRemove.remove();
+      }
+
+      // Remove title element from UI
+      const titleElements = Array.from(this.title_container.children);
+      const titleElementToRemove = titleElements.find((element) => {
+        return (element as QuizElementTitle).title === eventToRemove.title;
+      });
+      if (titleElementToRemove) {
+        titleElementToRemove.remove();
+      }
+    });
+
+    // Add new events
     const eventsToAppend = events.filter((event) => {
       const title = event.getAttribute("event_title");
       const startdate = event.getAttribute("event_startdate");
