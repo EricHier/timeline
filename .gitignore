@@ -2,3 +2,5 @@
 node_modules/
 #ignore all dist files 
 dist/
+#ignore vscode settings
+.vscode/

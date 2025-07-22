@@ -1,18 +1,18 @@
-import { html, css} from "lit"
-import {LitElementWw} from "@webwriter/lit"
-import {customElement, property, query} from "lit/decorators.js"
-import "@shoelace-style/shoelace/dist/themes/light.css";
 import {
-  SlButton,
-  SlDialog,
-  SlInput,
+	SlButton,
+	SlDialog,
+	SlInput,
 } from "@shoelace-style/shoelace";
+import "@shoelace-style/shoelace/dist/themes/light.css";
+import { LitElementWw } from "@webwriter/lit";
+import { css, html } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
 
+import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSystem.js";
+import { DialogDatePicker } from "./dialog-elements/d-datepicker";
 import { DialogInput } from "./dialog-elements/d-input";
 import { DialogToggle } from "./dialog-elements/d-toggle";
-import { DialogDatePicker } from "./dialog-elements/d-datepicker";
 import { TlEventData } from "./tl-event-data";
-import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSystem.js";
 
 @customElement("timeline-dialog")
 export class TimelineDialog extends LitElementWw {
@@ -27,17 +27,18 @@ export class TimelineDialog extends LitElementWw {
   @property({ type: Boolean }) accessor readyToFill = false;
   @property({ type: Boolean }) accessor useTimePeriod = false;
 
+  // Error message properties
+  @property({ type: String }) accessor titleErrorMessage = "";
+  @property({ type: String }) accessor dayErrorMessage = "";
+  @property({ type: String }) accessor monthErrorMessage = "";
+  @property({ type: String }) accessor yearErrorMessage = "";
+  @property({ type: String }) accessor formatErrorMessage = "";
+  @property({ type: String }) accessor timeErrorMessage = "";
+
   @query("#timeline-dialog") accessor dialog: SlDialog;
   @query("#event-title") accessor eventTitle: DialogInput;
   @query("#event-start-date") accessor startDate: DialogDatePicker;
   @query("#event-end-date") accessor endDate: DialogDatePicker;
-
-  @query("#title-error") accessor titleError: HTMLDivElement;
-  @query("#day-error") accessor dayError: HTMLDivElement;
-  @query("#month-error") accessor monthError: HTMLDivElement;
-  @query("#year-error") accessor yearError: HTMLDivElement;
-  @query("#format-error") accessor formatError: HTMLDivElement;
-  @query("#time-error") accessor timeError: HTMLDivElement;
 
   static styles = css`
     sl-dialog::part(base) {
@@ -114,7 +115,7 @@ export class TimelineDialog extends LitElementWw {
       outline: none;
       padding-bottom:0px; 
     }
-    #title-error[active] {
+    .text-error:not([hidden]) {
       padding-bottom: 15px;
     }
 
@@ -231,7 +232,7 @@ export class TimelineDialog extends LitElementWw {
           required
         >
         </dialog-input>
-        <div class="text-error" id="title-error" hidden></div>
+        <div class="text-error" ?hidden="${!this.titleErrorMessage}">${this.titleErrorMessage}</div>
 
         <dialog-toggle
           id="time-period"
@@ -249,7 +250,7 @@ export class TimelineDialog extends LitElementWw {
         <div class="d-input-container">
           <dialog-date-picker
             .useTimePeriod="${this.useTimePeriod}"
-            label=${this.useTimePeriod ? "Start date" : "Date"}
+            label=${this.useTimePeriod ? "Start Date" : "Date"}
             id="event-start-date"
             @sl-change=${this.enableSaveButton}
           >
@@ -266,15 +267,15 @@ export class TimelineDialog extends LitElementWw {
           </dialog-date-picker>
         </div>
 
-        <div class="text-error" id="day-error" hidden></div>
+        <div class="text-error" ?hidden="${!this.dayErrorMessage}">${this.dayErrorMessage}</div>
 
-        <div class="text-error" id="month-error" hidden></div>
+        <div class="text-error" ?hidden="${!this.monthErrorMessage}">${this.monthErrorMessage}</div>
 
-        <div class="text-error" id="year-error" hidden></div>
+        <div class="text-error" ?hidden="${!this.yearErrorMessage}">${this.yearErrorMessage}</div>
 
-        <div class="text-error" id="format-error" hidden></div>
+        <div class="text-error" ?hidden="${!this.formatErrorMessage}">${this.formatErrorMessage}</div>
 
-        <div class="text-error" id="time-error" hidden></div>
+        <div class="text-error" ?hidden="${!this.timeErrorMessage}">${this.timeErrorMessage}</div>
 
         <div class="button-container">
           <sl-button
@@ -323,24 +324,15 @@ export class TimelineDialog extends LitElementWw {
 
     this.useTimePeriod = false;
 
-    this.titleError.textContent =
-      this.dayError.textContent =
-      this.monthError.textContent =
-      this.yearError.textContent =
-      this.formatError.textContent =
-      this.timeError.textContent = 
-      this.eventTitle.value =
-        "";
+    // Reset error messages using reactive properties
+    this.titleErrorMessage = "";
+    this.dayErrorMessage = "";
+    this.monthErrorMessage = "";
+    this.yearErrorMessage = "";
+    this.formatErrorMessage = "";
+    this.timeErrorMessage = "";
+    this.eventTitle.value = "";
 
-    this.titleError.hidden =
-      this.dayError.hidden =
-      this.monthError.hidden =
-      this.yearError.hidden =
-      this.formatError.hidden =
-      this.timeError.hidden
-        true;
-
-    this.titleError.removeAttribute("active");
     this.eventTitle.removeAttribute("error");
     monthStartInput.removeAttribute("invalid");
     monthEndInput.removeAttribute("invalid");
@@ -351,8 +343,7 @@ export class TimelineDialog extends LitElementWw {
 
   // seperate reset function to call if on toggle change
   resetEndDate() {
-    this.formatError.textContent = "";
-    this.formatError.hidden = true;
+    this.formatErrorMessage = "";
     this.endDate.reset();
   }
 
@@ -360,36 +351,35 @@ export class TimelineDialog extends LitElementWw {
   enableSaveButton() {
     this.evaluateTitleError();
 
-    let dayValidation;
-    let monthValidation;
-    let yearValidation;
-    let formatValidation;
+    // Validate each input separately
+    const startDayValidation = this.startDate.validateDay();
+    const startMonthValidation = this.startDate.validateMonth();
+    const startYearValidation = this.startDate.validateYear();
+    const startFormatValidation = this.startDate.validateFormat();
 
-    this.useTimePeriod
-      ? (dayValidation =
-          this.startDate.validateDay() && this.endDate.validateDay())
-      : (dayValidation = this.startDate.validateDay());
-    this.useTimePeriod
-      ? (monthValidation =
-          this.startDate.validateMonth() && this.endDate.validateMonth())
-      : (monthValidation = this.startDate.validateMonth());
-    this.useTimePeriod
-      ? (yearValidation =
-          this.startDate.validateYear() && this.endDate.validateYear())
-      : (yearValidation = this.startDate.validateYear());
-    this.useTimePeriod
-      ? (formatValidation =
-          this.startDate.validateFormat() && this.endDate.validateFormat())
-      : (formatValidation = this.startDate.validateFormat());
+    const endDayValidation = this.useTimePeriod ? this.endDate.validateDay() : { valid: true };
+    const endMonthValidation = this.useTimePeriod ? this.endDate.validateMonth() : { valid: true };
+    const endYearValidation = this.useTimePeriod ? this.endDate.validateYear() : { valid: true };
+    const endFormatValidation = this.useTimePeriod ? this.endDate.validateFormat() : { valid: true };
+
+    // Update error display based on individual validations
+    this.updateValidationErrors(startDayValidation, endDayValidation, startMonthValidation, endMonthValidation, 
+                               startYearValidation, endYearValidation, startFormatValidation, endFormatValidation);
+
+    // Check overall validity
+    const dayValidation = startDayValidation.valid && endDayValidation.valid;
+    const monthValidation = startMonthValidation.valid && endMonthValidation.valid;
+    const yearValidation = startYearValidation.valid && endYearValidation.valid;
+    const formatValidation = startFormatValidation.valid && endFormatValidation.valid;
 
     const titleValid = this.eventTitle.value !== "";
     const startDateValid = this.startDate.year !== "";
 
     const isValid =
-      dayValidation.valid &&
-      monthValidation.valid &&
-      yearValidation.valid &&
-      formatValidation.valid &&
+      dayValidation &&
+      monthValidation &&
+      yearValidation &&
+      formatValidation &&
       this.eventTitle.value !== "" &&
       this.startDate.year !== "";
 
@@ -397,6 +387,50 @@ export class TimelineDialog extends LitElementWw {
       this.readyToFill = isValid;
     } else {
       this.readyToFill = false;
+    }
+  }
+
+  // Update error display based on individual validations
+  private updateValidationErrors(startDayValidation: any, endDayValidation: any, startMonthValidation: any, endMonthValidation: any,
+                                startYearValidation: any, endYearValidation: any, startFormatValidation: any, endFormatValidation: any) {
+    // Day validation errors
+    if (!startDayValidation.valid || !endDayValidation.valid) {
+      const errorMessage = !startDayValidation.valid ? 
+        (startDayValidation.errorMessage || "Invalid day") : 
+        (endDayValidation.errorMessage || "Invalid day");
+      this.dayErrorMessage = errorMessage;
+    } else {
+      this.dayErrorMessage = "";
+    }
+
+    // Month validation errors
+    if (!startMonthValidation.valid || !endMonthValidation.valid) {
+      const errorMessage = !startMonthValidation.valid ? 
+        (startMonthValidation.errorMessage || "Invalid month") : 
+        (endMonthValidation.errorMessage || "Invalid month");
+      this.monthErrorMessage = errorMessage;
+    } else {
+      this.monthErrorMessage = "";
+    }
+
+    // Year validation errors
+    if (!startYearValidation.valid || !endYearValidation.valid) {
+      const errorMessage = !startYearValidation.valid ? 
+        (startYearValidation.errorMessage || "Invalid year") : 
+        (endYearValidation.errorMessage || "Invalid year");
+      this.yearErrorMessage = errorMessage;
+    } else {
+      this.yearErrorMessage = "";
+    }
+
+    // Format validation errors
+    if (!startFormatValidation.valid || !endFormatValidation.valid) {
+      const errorMessage = !startFormatValidation.valid ? 
+        (startFormatValidation.errorMessage || "Invalid format") : 
+        (endFormatValidation.errorMessage || "Invalid format");
+      this.formatErrorMessage = errorMessage;
+    } else {
+      this.formatErrorMessage = "";
     }
   }
 
@@ -408,124 +442,107 @@ export class TimelineDialog extends LitElementWw {
   // check if title is empty, give errer message if so
   evaluateTitleError() {
     if (this.eventTitle.value === "") {
-      this.titleError.textContent = "Please enter a title";
-      this.titleError.hidden = false;
-      this.titleError.setAttribute("active", "true");
+      this.titleErrorMessage = "Please enter a title";
       this.eventTitle.setAttribute("error","true");
     } else {
-      this.titleError.textContent = "";
-      this.titleError.hidden = true;
-      this.titleError.removeAttribute("active");
+      this.titleErrorMessage = "";
       this.eventTitle.removeAttribute("error");
     }
   }
 
   // show error message for invalid day
   showDayError(e) {
-    const dayValidation = this.useTimePeriod
-      ? this.startDate.validateDay() && this.endDate.validateDay()
-      : this.startDate.validateDay();
+    // Check individual validations instead of combined
+    const startDayValidation = this.startDate.validateDay();
+    const endDayValidation = this.useTimePeriod ? this.endDate.validateDay() : { valid: true };
 
-    if (dayValidation.valid === false) {
-      this.dayError.textContent =
-        //"Day Error: " +
-        e.detail.errorMessage;
-      this.dayError.hidden = false;
+    if (!startDayValidation.valid || !endDayValidation.valid) {
+      this.dayErrorMessage = e.detail.errorMessage;
     }
   }
 
   // hide error message for valid day
   hideDayError() {
-    const dayValidation = this.useTimePeriod
-      ? this.startDate.validateDay() && this.endDate.validateDay()
-      : this.startDate.validateDay();
+    // Check individual validations instead of combined
+    const startDayValidation = this.startDate.validateDay();
+    const endDayValidation = this.useTimePeriod ? this.endDate.validateDay() : { valid: true };
 
-    if (dayValidation.valid === true) {
-      this.dayError.textContent = "";
-      this.dayError.hidden = true;
+    if (startDayValidation.valid && endDayValidation.valid) {
+      this.dayErrorMessage = "";
     }
   }
 
   // show error message for invalid month
   showMonthError(e) {
-    const monthValidation = this.useTimePeriod
-      ? this.startDate.validateMonth() && this.endDate.validateMonth()
-      : this.startDate.validateMonth();
+    // Check individual validations instead of combined
+    const startMonthValidation = this.startDate.validateMonth();
+    const endMonthValidation = this.useTimePeriod ? this.endDate.validateMonth() : { valid: true };
 
-    if (monthValidation.valid === false) {
-      this.monthError.textContent =
-        //"Month Error: " +
-        e.detail.errorMessage;
-      this.monthError.hidden = false;
+    if (!startMonthValidation.valid || !endMonthValidation.valid) {
+      this.monthErrorMessage = e.detail.errorMessage;
     }
   }
 
   // hide error message for valid month
   hideMonthError() {
-    const monthValidation = this.useTimePeriod
-      ? this.startDate.validateMonth() && this.endDate.validateMonth()
-      : this.startDate.validateMonth();
+    // Check individual validations instead of combined
+    const startMonthValidation = this.startDate.validateMonth();
+    const endMonthValidation = this.useTimePeriod ? this.endDate.validateMonth() : { valid: true };
 
-    if (monthValidation.valid === true) {
-      this.monthError.textContent = "";
-      this.monthError.hidden = true;
+    if (startMonthValidation.valid && endMonthValidation.valid) {
+      this.monthErrorMessage = "";
     }
   }
 
   // show error message for invalid year
   showYearError(e) {
-    const yearValidation = this.useTimePeriod
-      ? this.startDate.validateYear() && this.endDate.validateYear()
-      : this.startDate.validateYear();
+    // Check individual validations instead of combined
+    const startYearValidation = this.startDate.validateYear();
+    const endYearValidation = this.useTimePeriod ? this.endDate.validateYear() : { valid: true };
 
-    
-    if (yearValidation.valid === false && e.detail.errorMessage === "Please enter a year with maximum 4 digits") {
-      this.yearError.textContent = e.detail.errorMessage;
-      this.yearError.hidden = false;
-    } else if (yearValidation.valid === false && e.detail.errorMessage === "Please enter a year") {
-      setTimeout(() => {
-        this.yearError.textContent = e.detail.errorMessage;
-        this.yearError.hidden = false;
-      }, 4000);      
-    } else {this.hideYearError();
+    if (!startYearValidation.valid || !endYearValidation.valid) {
+      if (e.detail.errorMessage === "Please enter a year with maximum 4 digits") {
+        this.yearErrorMessage = e.detail.errorMessage;
+      } else if (e.detail.errorMessage === "Please enter a year") {
+        setTimeout(() => {
+          this.yearErrorMessage = e.detail.errorMessage;
+        }, 4000);      
+      }
+    } else {
+      this.hideYearError();
     }
   }
 
   // hide error message for valid year
   hideYearError() {
-    const yearValidation = this.useTimePeriod
-      ? this.startDate.validateYear() && this.endDate.validateYear()
-      : this.startDate.validateYear();
+    // Check individual validations instead of combined
+    const startYearValidation = this.startDate.validateYear();
+    const endYearValidation = this.useTimePeriod ? this.endDate.validateYear() : { valid: true };
 
-    if (yearValidation.valid === true) {
-      this.yearError.textContent = "";
-      this.yearError.hidden = true;
+    if (startYearValidation.valid && endYearValidation.valid) {
+      this.yearErrorMessage = "";
     }
   }
 
   // check if end date is before start date and check if only dd and yyyy have been added
   showFormatError(e) {
-    const formatValidation = this.useTimePeriod
-      ? this.startDate.validateFormat() && this.endDate.validateFormat()
-      : this.startDate.validateFormat();
+    // Check individual validations instead of combined
+    const startFormatValidation = this.startDate.validateFormat();
+    const endFormatValidation = this.useTimePeriod ? this.endDate.validateFormat() : { valid: true };
 
-    if (formatValidation.valid == false) {
-      this.formatError.textContent =
-        //"Format Error: " +
-        e.detail.errorMessage;
-      this.formatError.hidden = false;
+    if (!startFormatValidation.valid || !endFormatValidation.valid) {
+      this.formatErrorMessage = e.detail.errorMessage;
     }
   }
 
   // hide error message if no format error
   hideFormatError() {
-    const formatValidation = this.useTimePeriod
-      ? this.startDate.validateFormat() && this.endDate.validateFormat()
-      : this.startDate.validateFormat();
+    // Check individual validations instead of combined
+    const startFormatValidation = this.startDate.validateFormat();
+    const endFormatValidation = this.useTimePeriod ? this.endDate.validateFormat() : { valid: true };
 
-    if (formatValidation.valid === true) {
-      this.formatError.textContent = "";
-      this.formatError.hidden = true;
+    if (startFormatValidation.valid && endFormatValidation.valid) {
+      this.formatErrorMessage = "";
     }
   }
 
@@ -541,13 +558,10 @@ export class TimelineDialog extends LitElementWw {
         (start[0] === end[0] && start[1] > end[1]) ||
         (start[0] === end[0] && start[1] === end[1] && start[2] > end[2]))
     ) {
-      this.timeError.textContent =
-        "Time Error: Invalid format, Start date after end date";
-      this.timeError.hidden = false;
+      this.timeErrorMessage = "Invalid format, Start date after end date";
       return false;
     } else {
-      this.timeError.textContent = "";
-      this.timeError.hidden = true;
+      this.timeErrorMessage = "";
       return true;
     }
   }

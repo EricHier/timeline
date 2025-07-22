@@ -1,35 +1,39 @@
-import { html, PropertyValues, css } from "lit";
-import { LitElementWw } from "@webwriter/lit";
-import { customElement, property, query } from "lit/decorators.js";
-import "@shoelace-style/shoelace/dist/themes/light.css";
 import {
-  SlTab,
-  SlTabGroup,
-  SlTabPanel,
-  SlSelect,
-  SlOption,
-  SlTabShowEvent,
-  SlSwitch,
-  SlIcon,
-  SlTooltip,
+	SlIcon,
+	SlOption,
+	SlRadio,
+	SlRadioGroup,
+	SlSelect,
+	SlSwitch,
+	SlTab,
+	SlTabGroup,
+	SlTabPanel,
+	SlTabShowEvent,
+	SlTooltip
 } from "@shoelace-style/shoelace";
-import { TimelineDialog } from "../tl-dialog";
+import "@shoelace-style/shoelace/dist/themes/light.css";
+import IconCirclePlusFilled from "@tabler/icons/outline/circle-plus.svg";
+import { LitElementWw } from "@webwriter/lit";
+import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSystem.js";
+import { css, html, PropertyValues } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
 import { EventManager } from "../event-manager";
 import { MainQuiz } from "../quiz/q-main-quiz";
-import IconCirclePlusFilled from "@tabler/icons/outline/circle-plus.svg";
-import { HelpOverlay, HelpPopup } from "@webwriter/wui/dist/helpSystem/helpSystem.js";
+import { TimelineDialog } from "../tl-dialog";
 
 @customElement("webwriter-timeline")
 export class WebWriterTimeline extends LitElementWw {
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
-  @property({ type: Boolean, attribute: true, reflect: true }) accessor quizTabOpen;
-  @property({ type: Boolean, attribute: true, reflect: true }) accessor quizPanelVisible;
-  @property({ type: Boolean, attribute: true, reflect: true }) accessor timelinePanelVisible;
+  @property({ type: String, attribute: true, reflect: true }) accessor currentPanel: string;
+  @property({ type: String, attribute: "panelvisibility", reflect: true }) accessor _panelVisibility: string;
+	private get panelVisibility(): string { return this._panelVisibility || "timeline"; }
+	private set panelVisibility(value: string) { this._panelVisibility = value; }
   @property({ type: Number, attribute: true, reflect: true }) accessor quizFeedbackOption;
 
   @query("#quiz-selection") accessor quizFeedbackSelecter: SlSelect;
   @query("#quiz-component") accessor quiz: MainQuiz;
   @query("#tl-component") accessor dialog: TimelineDialog;
+  @query("#timeline-panel") accessor timelinePanel: SlTab;
   @query("#quiz-panel") accessor quizPanel: SlTab;
   @query("#quiz-toggle") accessor quizToggle: SlSwitch;
   @query("#feedback-error") accessor feedbackError: HTMLDivElement;
@@ -86,7 +90,6 @@ export class WebWriterTimeline extends LitElementWw {
         border-top: 10px solid #484848;
       }
       .quiz-selection {
-        padding-left: 10px;
         width: 100%;
       }
       .add-event-icon {
@@ -120,7 +123,8 @@ export class WebWriterTimeline extends LitElementWw {
       "sl-tab-panel": SlTabPanel,
       "sl-select": SlSelect,
       "sl-option": SlOption,
-      "sl-switch": SlSwitch,
+			"sl-radio-group": SlRadioGroup,
+			"sl-radio": SlRadio,
       "sl-icon": SlIcon,
       "webwriter-helpoverlay": HelpOverlay,
       "webwriter-helppopup": HelpPopup,
@@ -130,10 +134,7 @@ export class WebWriterTimeline extends LitElementWw {
   private eventManager = new EventManager();
 
   protected async firstUpdated(_changedProperties: PropertyValues) {
-    // set timelinePanel as visble for initial use
-    if (this.isContentEditable && this.timelinePanelVisible === undefined) {
-      this.timelinePanelVisible = true;
-    }
+		setTimeout(() => this.tabGroup.show(this.currentPanel), 0);
 
     // button position after shaddow dom created  https://lit.dev/docs/components/events/#async-events
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -156,11 +157,16 @@ export class WebWriterTimeline extends LitElementWw {
     this.quiz.findSelection(this.quizFeedbackOption)
 
     // set quiz tab visible at first if content is not editable and timeline deactivated
-    if (!this.timelinePanelVisible && !this.isContentEditable) {
+    if (this.panelVisibility !== "timeline" && this.panelVisibility !== "timeline+quiz" && !this.isContentEditable) {
       this.quizPanel.click();
-      this.tabGroup.setAttribute('active', 'quiz-panel');
     }
   }
+
+	updated(_changedProperties: PropertyValues): void {
+		if (_changedProperties.has("currentPanel")) {
+			this.tabGroup.show(this.currentPanel);
+		}
+	}
 
   render() {
     return html`
@@ -183,19 +189,13 @@ export class WebWriterTimeline extends LitElementWw {
           </div>
         </webwriter-helppopup>
 
-        <webwriter-helppopup slot="popupContainer" target="quiz-toggle">
+        <webwriter-helppopup slot="popupContainer" target="panel-visibility-selector">
           <div slot="content">
-            <h4>Quiz Toggle</h4>
-            <p>Toggle me to use the timeline quiz-mode in the second tab.</p>
+            <h4>Visibility Selector</h4>
+            <p>Change me to change the visibility of the timeline and quiz panels.</p>
           </div>
         </webwriter-helppopup>
 
-        <webwriter-helppopup slot="popupContainer" target="timeline-toggle">
-          <div slot="content">
-            <h4>Timeline Toggle</h4>
-            <p>Toggle me to use the timeline in the first tab.</p>
-          </div>
-        </webwriter-helppopup>
         <webwriter-helppopup slot="popupContainer" target="addButton">
           <div slot="content">
             <h4>Add Event Button</h4>
@@ -214,22 +214,22 @@ export class WebWriterTimeline extends LitElementWw {
       >
         <sl-tab
           slot="nav"
-          panel="timeline-panel"
+          panel="timeline"
           id="timeline-panel"
-          ?disabled=${!this.timelinePanelVisible}
+          ?disabled=${this.panelVisibility === "quiz"}
         >
           Timeline
         </sl-tab>
         <sl-tab
           slot="nav"
-          panel="quiz-panel"
+          panel="quiz"
           id="quiz-panel"
-          ?disabled=${!this.quizPanelVisible}
+          ?disabled=${this.panelVisibility === "timeline"}
         >
           Quiz
         </sl-tab>
 
-        <sl-tab-panel name="timeline-panel">
+        <sl-tab-panel name="timeline">
           <div class="border">
             <div class="timeline-container">
               <div class="timeline">
@@ -254,13 +254,13 @@ export class WebWriterTimeline extends LitElementWw {
           </div>
         </sl-tab-panel>
 
-        <sl-tab-panel name="quiz-panel">
+        <sl-tab-panel name="quiz">
           <main-quiz id="quiz-component"> </main-quiz>
         </sl-tab-panel>
       </sl-tab-group>
 
       <div part="options" class="author-only">
-        ${this.quizTabOpen
+        ${this.currentPanel === "quiz"
           ? html`<div class="quiz-options" id="quiz-options">
               <sl-select
                 id="quiz-selection"
@@ -278,54 +278,28 @@ export class WebWriterTimeline extends LitElementWw {
               <div class="text-error" id="feedback-error" hidden>
                 Please select a feedback option.
               </div>
-              <sl-switch
-                id="timeline-toggle"
-                class="quiz-selection"
-                @sl-change=${(e) =>
-                  (this.timelinePanelVisible = e.target.checked)}
-                .checked=${this.timelinePanelVisible}
-              >
-                Show Timeline
-              </sl-switch>
-              <sl-switch
-                id="quiz-toggle"
-                class="quiz-selection"
-                @sl-change=${(e) => (this.quizPanelVisible = e.target.checked)}
-                .checked=${this.quizPanelVisible}
-              >
-                Show Quiz
-              </sl-switch>
             </div>`
-          : html`
-              <sl-switch
-                id="timeline-toggle"
-                class="quiz-selection"
-                @sl-change=${(e) =>
-                  (this.timelinePanelVisible = e.target.checked)}
-                .checked=${this.timelinePanelVisible}
-              >
-                Show Timeline
-              </sl-switch>
-              <sl-switch
-                id="quiz-toggle"
-                class="quiz-selection"
-                @sl-change=${(e) => (this.quizPanelVisible = e.target.checked)}
-                .checked=${this.quizPanelVisible}
-              >
-                Show Quiz
-              </sl-switch>
-            `}
+          : ""}
+				<sl-radio-group id="panel-visibility-selector" value=${this.panelVisibility} @sl-change=${(e) => {
+					this.panelVisibility = e.target.value;
+					if (this.panelVisibility === "quiz") this.currentPanel = "quiz";
+					else if (this.panelVisibility === "timeline") this.currentPanel = "timeline";
+				}}>
+					<sl-radio value="timeline">Show only Timeline</sl-radio>
+					<sl-radio value="quiz">Show only Quiz</sl-radio>
+					<sl-radio value="timeline+quiz">Show Timeline and Quiz</sl-radio>
+				</sl-radio-group>
       </div>
     `;
   }
 
   // if quiz panel is selected start quiz + manage options window
   checkSelectedTab(selectedTab) {
-    if (selectedTab === "quiz-panel" && this.quizPanelVisible) {
+    if (selectedTab === "quiz" && this.panelVisibility !== "timeline") {
       this.startQuiz();
-      this.quizTabOpen = true;
+      this.currentPanel = "quiz";
     } else {
-      this.quizTabOpen = false;
+      this.currentPanel = "timeline";
     }
   }
 

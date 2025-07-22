@@ -1,6 +1,6 @@
 {
     "name": "@webwriter/timeline",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Create/learn with a digital timeline and test your knowledge.",
     "keywords": [
         "webwriter-widget",
@@ -32,7 +32,8 @@
     "license": "MIT",
     "author": "Nura Zimmermann <nura.zimmermann@rwth-aachen.de>",
     "scripts": {
-        "prepublishOnly": "npx @webwriter/build"
+        "prepublishOnly": "npx @webwriter/build",
+        "dev": "npx @webwriter/build dev"
     },
     "dependencies": {
         "@popperjs/core": "^2.11.8",
