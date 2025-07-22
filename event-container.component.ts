@@ -246,7 +246,7 @@ export class EventContainer extends LitElementWw {
           <sl-dialog
             id="delete-event-dialog"
             label='Do you want to delete the timeline event "${this
-              .event_title}" ?'
+              .event_title}"?'
           >
             <div class="button-container">
               <sl-button
@@ -255,7 +255,7 @@ export class EventContainer extends LitElementWw {
                 slot="footer"
                 variant="default"
                 @click="${() => this.dialog.hide()}"
-                >Exit
+                >Cancel
               </sl-button>
 
               <sl-button
@@ -263,6 +263,7 @@ export class EventContainer extends LitElementWw {
                 id="deleteButton"
                 slot="footer"
                 variant="danger"
+                autofocus
                 @click="${() => this.removeEvent()}"
                 >Delete
               </sl-button>
@@ -271,31 +272,6 @@ export class EventContainer extends LitElementWw {
           <div id="event_elements" class="event-content" hidden>
             <slot class="slotted-elements"></slot>
           </div>
-          <sl-dialog
-            id="delete-event-dialog"
-            label='Do you want to delete the timeline event "${this
-              .event_title}" ?'
-          >
-            <div class="button-container">
-              <sl-button
-                class="button"
-                id="closeButton"
-                slot="footer"
-                variant="default"
-                @click="${() => this.dialog.hide()}"
-                >Exit
-              </sl-button>
-
-              <sl-button
-                class="button"
-                id="deleteButton"
-                slot="footer"
-                variant="danger"
-                @click="${() => this.removeEvent()}"
-                >Delete
-              </sl-button>
-            </div>
-          </sl-dialog>
         </div>
       </div>
     `;
