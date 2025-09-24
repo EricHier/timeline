@@ -1,80 +1,80 @@
 {
-  "name": "@webwriter/timeline",
-  "version": "1.0.5",
-  "description": "Create/learn with a digital timeline and test your knowledge.",
-  "keywords": [
-    "webwriter-widget",
-    "widget-contextual",
-    "widget-practical",
-    "widget-informational",
-    "widget-lang-en",
-    "iscedf2013-01",
-    "iscedf2013-02",
-    "iscedf2013-03",
-    "iscedf2013-04",
-    "iscedf2013-05",
-    "iscedf2013-06",
-    "iscedf2013-07",
-    "iscedf2013-08",
-    "iscedf2013-09",
-    "iscedf2013-10",
-    "isced2011-1",
-    "isced2011-2",
-    "isced2011-3",
-    "isced2011-4",
-    "isced2011-5",
-    "isced2011-6",
-    "isced2011-7",
-    "isced2011-8",
-    "timeline",
-    "history"
-  ],
-  "license": "MIT",
-  "author": "Nura Zimmermann <nura.zimmermann@rwth-aachen.de>",
-  "scripts": {
-    "prepublishOnly": "npx @webwriter/build",
-    "dev": "npx @webwriter/build dev",
-    "analyze": "npx @custom-elements-manifest/analyzer analyze --globs \"**/*.ts\" --exclude \"node_modules/**\" --outdir ."
-  },
-  "dependencies": {
-    "@popperjs/core": "^2.11.8",
-    "@shoelace-style/shoelace": "^2.17.1",
-    "@tabler/icons": "^3.21.0",
-    "@webwriter/lit": "^2.0.0",
-    "@webwriter/wui": "^0.0.3",
-    "lit": "^3.2.1",
-    "moment": "^2.30.1"
-  },
-  "exports": {
-    "./widgets/webwriter-timeline.*": {
-      "source": "./widgets/webwriter-timeline.ts",
-      "default": "./dist/webwriter-timeline.*"
+    "name": "@webwriter/timeline",
+    "version": "1.0.5",
+    "description": "Create/learn with a digital timeline and test your knowledge.",
+    "keywords": [
+        "webwriter-widget",
+        "widget-contextual",
+        "widget-practical",
+        "widget-informational",
+        "widget-lang-en",
+        "iscedf2013-01",
+        "iscedf2013-02",
+        "iscedf2013-03",
+        "iscedf2013-04",
+        "iscedf2013-05",
+        "iscedf2013-06",
+        "iscedf2013-07",
+        "iscedf2013-08",
+        "iscedf2013-09",
+        "iscedf2013-10",
+        "isced2011-1",
+        "isced2011-2",
+        "isced2011-3",
+        "isced2011-4",
+        "isced2011-5",
+        "isced2011-6",
+        "isced2011-7",
+        "isced2011-8",
+        "timeline",
+        "history"
+    ],
+    "license": "MIT",
+    "author": "Nura Zimmermann <nura.zimmermann@rwth-aachen.de>",
+    "scripts": {
+        "prepublishOnly": "npx @webwriter/build",
+        "dev": "npx @webwriter/build dev",
+        "analyze": "npx @custom-elements-manifest/analyzer analyze --globs \"**/*.ts\" --exclude \"node_modules/**\" --outdir ."
     },
-    "./widgets/event-container.*": {
-      "source": "./event-container.ts",
-      "default": "./dist/event-container.*"
+    "dependencies": {
+        "@popperjs/core": "^2.11.8",
+        "@shoelace-style/shoelace": "^2.17.1",
+        "@tabler/icons": "^3.21.0",
+        "@webwriter/lit": "^2.0.0",
+        "@webwriter/wui": "^0.0.3",
+        "lit": "^3.2.1",
+        "moment": "^2.30.1"
     },
-    "./snippets/women-in-tech.html": "./snippets/women-in-tech.html",
-    "./snippets/history-of-olympic-games.html": "./snippets/history-of-olympic-games.html",
-    "./package.json": "./package.json",
-    "./icon": "./icon.svg"
-  },
-  "editingConfig": {
-    ".": {
-      "description": {
-        "de": "Erstellen/Lernen Sie mit einer digitalen Zeitleiste und testen Sie Ihr Wissen."
-      }
+    "devDependencies": {
+        "@custom-elements-manifest/analyzer": "^0.10.6"
     },
-    "./widgets/webwriter-timeline": {
-      "content": "event-container*"
+    "exports": {
+        "./widgets/webwriter-timeline.*": {
+            "source": "./widgets/webwriter-timeline.ts",
+            "default": "./dist/webwriter-timeline.*"
+        },
+        "./widgets/event-container.*": {
+            "source": "./event-container.ts",
+            "default": "./dist/event-container.*"
+        },
+        "./snippets/women-in-tech.html": "./snippets/women-in-tech.html",
+        "./snippets/history-of-olympic-games.html": "./snippets/history-of-olympic-games.html",
+        "./package.json": "./package.json",
+        "./icon": "./icon.svg",
+        "./custom-elements.json": "./custom-elements.json"
     },
-    "./widgets/event-container": {
-      "content": "flow*",
-      "uninsertable": true
+    "editingConfig": {
+        ".": {
+            "description": {
+                "de": "Erstellen/Lernen Sie mit einer digitalen Zeitleiste und testen Sie Ihr Wissen."
+            }
+        },
+        "./widgets/webwriter-timeline": {
+            "content": "event-container*"
+        },
+        "./widgets/event-container": {
+            "content": "flow*",
+            "uninsertable": true
+        }
     }
-  },
-  "devDependencies": {
-    "@custom-elements-manifest/analyzer": "^0.10.6"
-  },
-  "customElements": "custom-elements.json"
 }
