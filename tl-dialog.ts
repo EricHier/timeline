@@ -14,30 +14,153 @@ import { DialogInput } from "./dialog-elements/d-input";
 import { DialogToggle } from "./dialog-elements/d-toggle";
 import { TlEventData } from "./tl-event-data";
 
+/**
+ * Dialog component for creating and editing timeline events.
+ * 
+ * This component provides a modal dialog interface for users to create new timeline events
+ * or edit existing ones. It includes comprehensive form validation and supports both
+ * single dates and date ranges (time periods).
+ * 
+ * Features:
+ * - Event title input with validation
+ * - Start and end date pickers with format validation
+ * - Toggle for single date vs. time period events
+ * - Real-time form validation with error messages
+ * - Responsive layout for different screen sizes
+ * - Accessibility support with proper labeling
+ * 
+ * The dialog automatically validates date formats, ensures logical date ordering,
+ * and provides user-friendly error messages for validation failures.
+ * 
+ * @example
+ * ```html
+ * <!-- Basic timeline dialog -->
+ * <timeline-dialog></timeline-dialog>
+ * 
+ * <!-- Pre-configured dialog -->
+ * <timeline-dialog 
+ *   value="World War II"
+ *   useTimePeriod="true">
+ * </timeline-dialog>
+ * ```
+ * 
+ * @fires request-add - Fired when a valid event should be added to the timeline
+ * @fires show-day-validation-error - Fired when day validation fails
+ * @fires hide-day-validation-error - Fired when day validation passes
+ * @fires show-month-validation-error - Fired when month validation fails
+ * @fires hide-month-validation-error - Fired when month validation passes
+ * @fires show-year-validation-error - Fired when year validation fails
+ * @fires hide-year-validation-error - Fired when year validation passes
+ * @fires show-format-validation-error - Fired when date format validation fails
+ * @fires hide-format-validation-error - Fired when date format validation passes
+ * 
+ * @cssproperty --dialog-background - Background color of the dialog
+ * @cssproperty --input-border-color - Border color for input fields
+ * @cssproperty --error-text-color - Color for validation error messages
+ * @cssproperty --disabled-background - Background color for disabled inputs
+ */
 @customElement("timeline-dialog")
 export class TimelineDialog extends LitElementWw {
+  /**
+   * Tab index for keyboard navigation accessibility.
+   * @attr tab-index
+   */
   @property({ type: Number, attribute: true, reflect: true })
   accessor tabIndex = -1;
+
+  /**
+   * Label text for input fields (currently unused).
+   * @attr label
+   */
   @property({ type: String }) accessor label = "";
+
+  /**
+   * ID attribute for form elements (currently unused).
+   * @attr id
+   */
   @property({ type: String }) accessor id = "";
+
+  /**
+   * Current value of the main input field.
+   * @attr value
+   */
   @property({ type: String }) accessor value = "";
+
+  /**
+   * Placeholder text for input fields.
+   * @attr placeholder
+   */
   @property({ type: String }) accessor placeholder = "";
+
+  /**
+   * Whether form fields are required for validation.
+   * @attr required
+   */
   @property({ type: Boolean, reflect: true }) accessor required = false;
+
+  /**
+   * Type of input component to use ('input' or 'textarea').
+   * @attr type
+   */
   @property({ type: String }) accessor type: "input" | "textarea";
+
+  /**
+   * Whether the dialog form is ready to be submitted.
+   * @attr ready-to-fill
+   */
   @property({ type: Boolean }) accessor readyToFill = false;
+
+  /**
+   * Whether to use time period mode (start and end dates) vs single date.
+   * When true, both start and end date inputs are enabled.
+   * @attr use-time-period
+   */
   @property({ type: Boolean }) accessor useTimePeriod = false;
 
   // Error message properties
+  /**
+   * Error message for event title validation.
+   * @attr title-error-message
+   */
   @property({ type: String }) accessor titleErrorMessage = "";
+
+  /**
+   * Error message for day field validation.
+   * @attr day-error-message
+   */
   @property({ type: String }) accessor dayErrorMessage = "";
+
+  /**
+   * Error message for month field validation.
+   * @attr month-error-message
+   */
   @property({ type: String }) accessor monthErrorMessage = "";
+
+  /**
+   * Error message for year field validation.
+   * @attr year-error-message
+   */
   @property({ type: String }) accessor yearErrorMessage = "";
+
+  /**
+   * Error message for date format validation.
+   * @attr format-error-message
+   */
   @property({ type: String }) accessor formatErrorMessage = "";
+
+  /**
+   * Error message for time period validation.
+   * @attr time-error-message
+   */
   @property({ type: String }) accessor timeErrorMessage = "";
 
+  /** Main dialog element */
   @query("#timeline-dialog") accessor dialog: SlDialog;
+  /** Event title input component */
   @query("#event-title") accessor eventTitle: DialogInput;
+  /** Start date picker component */
   @query("#event-start-date") accessor startDate: DialogDatePicker;
+  /** End date picker component */
   @query("#event-end-date") accessor endDate: DialogDatePicker;
 
   static styles = css`
