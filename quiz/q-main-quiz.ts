@@ -11,22 +11,134 @@ import { QuizElementDate } from "./q-element-date";
 import { QuizElementTitle } from "./q-element-title";
 import { QuizTitles } from "./q-titles";
 
+/**
+ * Interactive quiz component for timeline knowledge testing.
+ * 
+ * This component transforms timeline events into an interactive drag-and-drop quiz
+ * where users match event titles to their corresponding dates. It provides:
+ * 
+ * - **Drag-and-Drop Interface**: Users drag event titles to timeline date positions
+ * - **Real-time Feedback**: Visual indicators show correct/incorrect matches
+ * - **Scoring System**: Configurable feedback options (1-4 levels of detail)
+ * - **Reset Functionality**: Users can reset and retry the quiz
+ * - **Randomized Order**: Event titles are randomly shuffled each time
+ * - **Responsive Design**: Works on different screen sizes with scrollable areas
+ * 
+ * The quiz automatically generates questions from timeline events and provides
+ * immediate visual feedback when users submit their answers.
+ * 
+ * @example
+ * ```html
+ * <!-- Basic quiz setup -->
+ * <main-quiz selectedOption="2">
+ * </main-quiz>
+ * 
+ * <!-- Quiz with pre-loaded events -->
+ * <main-quiz 
+ *   selectedOption="3"
+ *   matchCount="0"
+ *   score="0">
+ *   <quiz-element-date slot="quiz-element-date" date="1969-07-20">
+ *   </quiz-element-date>
+ *   <quiz-element-title title="Moon Landing">
+ *   </quiz-element-title>
+ * </main-quiz>
+ * ```
+ * 
+ * @slot quiz-element-date - Container for quiz date elements
+ * @slot quiz-element-title - Container for quiz title elements
+ * 
+ * @fires show-quiz-feedback-error - Fired when quiz feedback validation fails
+ * @fires title-dropped-in-section - Fired when a title is dropped in a date section
+ * @fires title-dropped-in-titles - Fired when a title is dropped back in title area
+ * @fires drag-start-title - Fired when a title drag operation begins
+ * 
+ * @cssproperty --quiz-background - Background color of the quiz area
+ * @cssproperty --quiz-border - Border style for quiz containers
+ * @cssproperty --match-color - Color for correct matches
+ * @cssproperty --mismatch-color - Color for incorrect matches
+ * @cssproperty --dragging-color - Color during drag operations
+ */
 @customElement("main-quiz")
 export class MainQuiz extends LitElementWw {
+  /**
+   * Tab index for keyboard navigation accessibility.
+   * @attr tab-index
+   */
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
+
+  /**
+   * Start date array for event timing (inherited from timeline events).
+   * @attr event_startDate
+   */
   @property({ type: Array }) accessor event_startDate: TlEventData["startDate"];
+
+  /**
+   * End date array for event timing (inherited from timeline events).
+   * @attr event_endDate  
+   */
   @property({ type: Array }) accessor event_endDate: TlEventData["endDate"];
+
+  /**
+   * Array of events that have been added to the quiz.
+   * Each item contains date and title information for quiz generation.
+   * @attr appended-events
+   */
   @property({ type: Array, attribute: true, reflect: true }) accessor appendedEvents: Array<{ date: String; title: string }> = [];
+
+  /**
+   * Number of correct matches achieved by the user.
+   * Updated automatically as quiz progresses.
+   * @attr match-count
+   */
   @property({ type: Number, attribute: true, reflect: true }) accessor matchCount = 0;
+
+  /**
+   * Final quiz score (percentage or points).
+   * Calculated based on correct matches vs total questions.
+   * @attr score
+   */
   @property({ type: Number, attribute: true, reflect: true }) accessor score;
+
+  /**
+   * Selected feedback option (1-4) determining result display detail.
+   * - 1: Basic results only
+   * - 2: Score with correct answers
+   * - 3: Detailed explanations
+   * - 4: Progress tracking
+   * @attr selected-option
+   */
   @property({ type: Number, attribute: true, reflect: true }) accessor selectedOption;
+
+  /**
+   * Current drag operation data (internal use).
+   * @attr drag
+   */
   @property({ type: Object, attribute: true, reflect: false }) accessor drag;
+
+  /**
+   * Drag source element (internal use).
+   * @attr source
+   */
   @property({ type: Object, attribute: true, reflect: false }) accessor source;
+
+  /**
+   * Drag target element (internal use).
+   * @attr target
+   */
   @property({ type: Object, attribute: true, reflect: false }) accessor target;
+
+  /**
+   * Whether the check/submit button is activated.
+   * @attr activate-check
+   */
   @property({ type: Boolean, attribute: true, reflect: false }) accessor activateCheck;
 
+  /** Date container component for quiz timeline display */
   @query("#date-container") accessor date_container: QuizDateField;
+  /** Title container component for draggable quiz elements */
   @query("#title-container") accessor title_container: QuizTitles;
+  /** Score feedback display element */
   @query("#score-feedback") accessor score_feedback: HTMLParagraphElement;
 
   static get styles() {

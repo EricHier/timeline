@@ -2,10 +2,48 @@ import { html, css } from "lit";
 import { LitElementWw } from "@webwriter/lit";
 import { customElement, property, query } from "lit/decorators.js";
 
+/**
+ * Individual date element with drop zone for quiz interface.
+ * 
+ * Represents a single date point on the quiz timeline with an interactive drop zone
+ * where users can drop event titles. Provides visual feedback during drag operations
+ * and displays results after quiz submission.
+ * 
+ * Features:
+ * - **Interactive Drop Zone**: Accepts dragged title elements
+ * - **Visual Feedback**: Shows drag states and quiz results
+ * - **Date Display**: Shows formatted date information
+ * - **Result Indication**: Color-coded feedback for correct/incorrect matches
+ * 
+ * @example
+ * ```html
+ * <quiz-element-date date="1969-07-20">
+ * </quiz-element-date>
+ * ```
+ * 
+ * @fires title-dropped-in-section - Fired when a title is dropped in this date's zone
+ * 
+ * @cssproperty --drop-zone-background - Background color of drop zone
+ * @cssproperty --drop-zone-border - Border style for drop zone
+ * @cssproperty --dragover-border - Border style during drag hover
+ * @cssproperty --match-colors - Colors for correct match display
+ * @cssproperty --mismatch-colors - Colors for incorrect match display
+ */
 @customElement("quiz-element-date")
 export class QuizElementDate extends LitElementWw {
+  /** Date element container (unused) */
   @query("date-element") accessor title_element: HTMLDivElement;
+
+  /**
+   * Tab index for keyboard navigation accessibility.
+   * @attr tab-index
+   */
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
+
+  /**
+   * Date value for this quiz element.
+   * @attr date
+   */
   @property({ type: Number, attribute: true, reflect: true }) accessor date;
 
   static styles = css`

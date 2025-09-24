@@ -8,26 +8,56 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Individual timeline event container component.\n\nRepresents a single event in a timeline with the following features:\n- Displays event title and date(s)\n- Supports both single dates and date ranges (time periods)\n- Expandable/collapsible content area for event descriptions\n- Delete functionality for timeline editing\n- Drag and drop support for timeline quiz functionality\n- Automatic date formatting and display utilities\n\nThis component is designed to be used within webwriter-timeline components\nand supports both creation and quiz modes.",
           "name": "EventContainer",
+          "cssProperties": [
+            {
+              "description": "Border style for the event container",
+              "name": "--event-border"
+            },
+            {
+              "description": "Background color of the event",
+              "name": "--event-background"
+            },
+            {
+              "description": "Text color for date display",
+              "name": "--date-color"
+            },
+            {
+              "description": "Color of the timeline line",
+              "name": "--timeline-line-color"
+            }
+          ],
+          "slots": [
+            {
+              "description": "Content area for event descriptions, images, lists, etc.",
+              "name": ""
+            }
+          ],
           "members": [
             {
               "kind": "field",
-              "name": "event_title"
+              "name": "event_title",
+              "description": "Title/name of the timeline event.",
+              "attribute": "event_title"
             },
             {
               "kind": "field",
               "name": "event_startDate",
               "type": {
                 "text": "TlEventData[\"startDate\"]"
-              }
+              },
+              "description": "Start date of the event as an array [year, month, day].\nMonth is 1-indexed (January = 1, December = 12).\nSupports BCE dates with negative years.",
+              "attribute": "event_startDate"
             },
             {
               "kind": "field",
               "name": "event_endDate",
               "type": {
                 "text": "TlEventData[\"endDate\"]"
-              }
+              },
+              "description": "End date of the event as an array [year, month, day].\nOptional - when provided, displays the event as a time period.\nMust be after the start date.",
+              "attribute": "event_endDate"
             },
             {
               "kind": "field",
@@ -35,18 +65,22 @@
               "type": {
                 "text": "boolean"
               },
-              "default": "true"
+              "default": "true",
+              "description": "Controls visibility of the event content area.\nWhen true, content is collapsed; when false, content is expanded.",
+              "attribute": "hidden-div"
             },
             {
               "kind": "field",
-              "name": "event_element"
+              "name": "event_element",
+              "description": "Container element for event content/description"
             },
             {
               "kind": "field",
               "name": "dialog",
               "type": {
                 "text": "SlDialog"
-              }
+              },
+              "description": "Delete confirmation dialog element"
             },
             {
               "kind": "field",
@@ -74,9 +108,11 @@
                   "name": "_changedProperties",
                   "type": {
                     "text": "PropertyValues"
-                  }
+                  },
+                  "description": "Map of changed properties"
                 }
-              ]
+              ],
+              "description": "Lifecycle method called after the element's DOM has been updated for the first time.\nAutomatically adds a default paragraph if the event has no content."
             },
             {
               "kind": "method",
@@ -84,24 +120,28 @@
             },
             {
               "kind": "method",
-              "name": "showEventContent"
+              "name": "showEventContent",
+              "description": "Toggles the visibility of event content area.\nExpands or collapses the event description and controls the visibility\nof edit/delete buttons. Automatically adds default content if none exists."
             },
             {
               "kind": "method",
-              "name": "addParagraph"
+              "name": "addParagraph",
+              "description": "Adds a default paragraph element to the event content area.\nCalled automatically when an event has no content and is expanded.\nCreates an editable paragraph with placeholder text."
             },
             {
               "kind": "method",
-              "name": "removeEvent"
+              "name": "removeEvent",
+              "description": "Dispatches a request to remove this event from the timeline.\nTriggers the 'request-remove' event which is handled by the parent timeline."
             },
             {
               "kind": "method",
               "name": "getStartDate",
               "return": {
                 "type": {
-                  "text": "Moment"
+                  "text": ""
                 }
-              }
+              },
+              "description": "Converts the event's start date to a Moment object for date operations.\nUsed internally for timeline sorting and date comparisons."
             }
           ],
           "events": [
@@ -109,7 +149,40 @@
               "name": "request-remove",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when the delete button is clicked"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "event_title",
+              "description": "Title/name of the timeline event.",
+              "fieldName": "event_title"
+            },
+            {
+              "name": "event_startDate",
+              "type": {
+                "text": "TlEventData[\"startDate\"]"
+              },
+              "description": "Start date of the event as an array [year, month, day].\nMonth is 1-indexed (January = 1, December = 12).\nSupports BCE dates with negative years.",
+              "fieldName": "event_startDate"
+            },
+            {
+              "name": "event_endDate",
+              "type": {
+                "text": "TlEventData[\"endDate\"]"
+              },
+              "description": "End date of the event as an array [year, month, day].\nOptional - when provided, displays the event as a time period.\nMust be after the start date.",
+              "fieldName": "event_endDate"
+            },
+            {
+              "name": "hidden-div",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true",
+              "description": "Controls visibility of the event content area.\nWhen true, content is collapsed; when false, content is expanded.",
+              "fieldName": "hiddenDiv"
             }
           ],
           "superclass": {
@@ -168,7 +241,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Event management system for timeline operations.\n\nThis component handles all timeline event operations including adding, removing,\nand sorting events within the timeline. It serves as a controller that coordinates\nbetween the timeline dialog, event containers, and the main timeline component.\n\nKey responsibilities:\n- **Event Creation**: Creates new event-container elements from dialog data\n- **Event Removal**: Handles deletion of timeline events\n- **Automatic Sorting**: Maintains chronological order of events\n- **Dialog Management**: Coordinates with timeline dialog for event creation\n- **State Management**: Manages timeline state during event operations\n\nThe event manager automatically sorts events by date whenever new events are added,\nensuring the timeline maintains proper chronological order.",
           "name": "EventManager",
           "members": [
             {
@@ -177,7 +250,9 @@
               "type": {
                 "text": "number"
               },
-              "default": "-1"
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "attribute": "tab-index"
             },
             {
               "kind": "field",
@@ -193,30 +268,58 @@
                   "name": "event",
                   "type": {
                     "text": "CustomEvent<TlEventData>"
-                  }
+                  },
+                  "description": "Custom event containing the event data (title, dates)"
                 },
                 {
-                  "name": "timeline"
+                  "name": "timeline",
+                  "description": "The timeline element to add the event to"
                 }
-              ]
+              ],
+              "description": "Creates and adds a new event to the timeline from dialog data.\n\nThis method processes event data from the timeline dialog, creates a new\nevent-container element, configures it with the provided data, and adds it\nto the timeline. After adding, it automatically sorts all timeline events\nby date and closes the dialog."
             },
             {
               "kind": "method",
               "name": "removeEvent",
               "parameters": [
                 {
-                  "name": "event"
+                  "name": "event",
+                  "description": "Custom event containing the ID of the event to remove"
                 }
-              ]
+              ],
+              "description": "Removes an event from the timeline.\n\nHandles the removal of a specific event container from the timeline\nwhen requested through the event removal system."
             },
             {
               "kind": "method",
               "name": "sortEvents",
               "parameters": [
                 {
-                  "name": "timeline"
+                  "name": "timeline",
+                  "description": "The timeline element containing events to sort"
                 }
-              ]
+              ],
+              "description": "Sorts all timeline events in chronological order.\n\nAutomatically reorders all event-container elements within the timeline\nbased on their start dates, ensuring proper chronological sequence.\nUses the event container's getStartDate() method for date comparison."
+            }
+          ],
+          "events": [
+            {
+              "description": "Relayed from event containers for event deletion",
+              "name": "request-remove"
+            },
+            {
+              "description": "Processed from timeline dialog for event creation",
+              "name": "request-add"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "tab-index",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "fieldName": "tabIndex"
             }
           ],
           "superclass": {
@@ -242,8 +345,26 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Dialog component for creating and editing timeline events.\n\nThis component provides a modal dialog interface for users to create new timeline events\nor edit existing ones. It includes comprehensive form validation and supports both\nsingle dates and date ranges (time periods).\n\nFeatures:\n- Event title input with validation\n- Start and end date pickers with format validation\n- Toggle for single date vs. time period events\n- Real-time form validation with error messages\n- Responsive layout for different screen sizes\n- Accessibility support with proper labeling\n\nThe dialog automatically validates date formats, ensures logical date ordering,\nand provides user-friendly error messages for validation failures.",
           "name": "TimelineDialog",
+          "cssProperties": [
+            {
+              "description": "Background color of the dialog",
+              "name": "--dialog-background"
+            },
+            {
+              "description": "Border color for input fields",
+              "name": "--input-border-color"
+            },
+            {
+              "description": "Color for validation error messages",
+              "name": "--error-text-color"
+            },
+            {
+              "description": "Background color for disabled inputs",
+              "name": "--disabled-background"
+            }
+          ],
           "members": [
             {
               "kind": "field",
@@ -251,7 +372,9 @@
               "type": {
                 "text": "number"
               },
-              "default": "-1"
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "attribute": "tab-index"
             },
             {
               "kind": "field",
@@ -259,7 +382,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Label text for input fields (currently unused).",
+              "attribute": "label"
             },
             {
               "kind": "field",
@@ -267,7 +392,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "ID attribute for form elements (currently unused).",
+              "attribute": "id"
             },
             {
               "kind": "field",
@@ -275,7 +402,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Current value of the main input field.",
+              "attribute": "value"
             },
             {
               "kind": "field",
@@ -283,7 +412,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Placeholder text for input fields.",
+              "attribute": "placeholder"
             },
             {
               "kind": "field",
@@ -291,14 +422,18 @@
               "type": {
                 "text": "boolean"
               },
-              "default": "false"
+              "default": "false",
+              "description": "Whether form fields are required for validation.",
+              "attribute": "required"
             },
             {
               "kind": "field",
               "name": "type",
               "type": {
                 "text": "\"input\" | \"textarea\""
-              }
+              },
+              "description": "Type of input component to use ('input' or 'textarea').",
+              "attribute": "type"
             },
             {
               "kind": "field",
@@ -306,7 +441,9 @@
               "type": {
                 "text": "boolean"
               },
-              "default": "false"
+              "default": "false",
+              "description": "Whether the dialog form is ready to be submitted.",
+              "attribute": "ready-to-fill"
             },
             {
               "kind": "field",
@@ -314,7 +451,9 @@
               "type": {
                 "text": "boolean"
               },
-              "default": "false"
+              "default": "false",
+              "description": "Whether to use time period mode (start and end dates) vs single date.\nWhen true, both start and end date inputs are enabled.",
+              "attribute": "use-time-period"
             },
             {
               "kind": "field",
@@ -322,7 +461,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Error message for event title validation.",
+              "attribute": "title-error-message"
             },
             {
               "kind": "field",
@@ -330,7 +471,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Error message for day field validation.",
+              "attribute": "day-error-message"
             },
             {
               "kind": "field",
@@ -338,7 +481,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Error message for month field validation.",
+              "attribute": "month-error-message"
             },
             {
               "kind": "field",
@@ -346,7 +491,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Error message for year field validation.",
+              "attribute": "year-error-message"
             },
             {
               "kind": "field",
@@ -354,7 +501,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Error message for date format validation.",
+              "attribute": "format-error-message"
             },
             {
               "kind": "field",
@@ -362,35 +511,41 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Error message for time period validation.",
+              "attribute": "time-error-message"
             },
             {
               "kind": "field",
               "name": "dialog",
               "type": {
                 "text": "SlDialog"
-              }
+              },
+              "description": "Main dialog element"
             },
             {
               "kind": "field",
               "name": "eventTitle",
               "type": {
                 "text": "DialogInput"
-              }
+              },
+              "description": "Event title input component"
             },
             {
               "kind": "field",
               "name": "startDate",
               "type": {
                 "text": "DialogDatePicker"
-              }
+              },
+              "description": "Start date picker component"
             },
             {
               "kind": "field",
               "name": "endDate",
               "type": {
                 "text": "DialogDatePicker"
-              }
+              },
+              "description": "End date picker component"
             },
             {
               "kind": "field",
@@ -588,7 +743,176 @@
               "name": "request-add",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when a valid event should be added to the timeline"
+            },
+            {
+              "description": "Fired when day validation fails",
+              "name": "show-day-validation-error"
+            },
+            {
+              "description": "Fired when day validation passes",
+              "name": "hide-day-validation-error"
+            },
+            {
+              "description": "Fired when month validation fails",
+              "name": "show-month-validation-error"
+            },
+            {
+              "description": "Fired when month validation passes",
+              "name": "hide-month-validation-error"
+            },
+            {
+              "description": "Fired when year validation fails",
+              "name": "show-year-validation-error"
+            },
+            {
+              "description": "Fired when year validation passes",
+              "name": "hide-year-validation-error"
+            },
+            {
+              "description": "Fired when date format validation fails",
+              "name": "show-format-validation-error"
+            },
+            {
+              "description": "Fired when date format validation passes",
+              "name": "hide-format-validation-error"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "tab-index",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "fieldName": "tabIndex"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Label text for input fields (currently unused).",
+              "fieldName": "label"
+            },
+            {
+              "name": "id",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "ID attribute for form elements (currently unused).",
+              "fieldName": "id"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Current value of the main input field.",
+              "fieldName": "value"
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Placeholder text for input fields.",
+              "fieldName": "placeholder"
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether form fields are required for validation.",
+              "fieldName": "required"
+            },
+            {
+              "name": "type",
+              "type": {
+                "text": "\"input\" | \"textarea\""
+              },
+              "description": "Type of input component to use ('input' or 'textarea').",
+              "fieldName": "type"
+            },
+            {
+              "name": "ready-to-fill",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether the dialog form is ready to be submitted.",
+              "fieldName": "readyToFill"
+            },
+            {
+              "name": "use-time-period",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether to use time period mode (start and end dates) vs single date.\nWhen true, both start and end date inputs are enabled.",
+              "fieldName": "useTimePeriod"
+            },
+            {
+              "name": "title-error-message",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Error message for event title validation.",
+              "fieldName": "titleErrorMessage"
+            },
+            {
+              "name": "day-error-message",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Error message for day field validation.",
+              "fieldName": "dayErrorMessage"
+            },
+            {
+              "name": "month-error-message",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Error message for month field validation.",
+              "fieldName": "monthErrorMessage"
+            },
+            {
+              "name": "year-error-message",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Error message for year field validation.",
+              "fieldName": "yearErrorMessage"
+            },
+            {
+              "name": "format-error-message",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Error message for date format validation.",
+              "fieldName": "formatErrorMessage"
+            },
+            {
+              "name": "time-error-message",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Error message for time period validation.",
+              "fieldName": "timeErrorMessage"
             }
           ],
           "superclass": {
@@ -689,8 +1013,26 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Date picker component for timeline event dates.\n\nA specialized date input component that provides separate fields for day, month, and year\nwith comprehensive validation. Designed specifically for timeline events which may include\nhistorical dates including BCE (negative years).\n\nFeatures:\n- **Separate Input Fields**: Day, month, year inputs for precise control\n- **Historical Date Support**: Handles BCE dates with negative years\n- **Real-time Validation**: Validates day/month ranges and date logic\n- **Format Validation**: Ensures proper date formatting\n- **Visual Feedback**: Error states and validation messages\n- **Disabled State Support**: Can be disabled for end dates in single-date mode\n- **Accessibility**: Proper labeling and keyboard navigation\n\nThe component automatically validates input as users type and provides\nimmediate feedback for invalid entries.",
           "name": "DialogDatePicker",
+          "cssProperties": [
+            {
+              "description": "Background color of date inputs",
+              "name": "--date-input-background"
+            },
+            {
+              "description": "Border style for date inputs",
+              "name": "--date-input-border"
+            },
+            {
+              "description": "Border style for validation errors",
+              "name": "--date-input-error-border"
+            },
+            {
+              "description": "Background color when disabled",
+              "name": "--disabled-background"
+            }
+          ],
           "members": [
             {
               "kind": "field",
@@ -698,7 +1040,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Day component of the date (1-31).\nAutomatically zero-padded to 2 digits on input.",
+              "attribute": "day"
             },
             {
               "kind": "field",
@@ -706,7 +1050,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Month component of the date (1-12).\nJanuary = 1, December = 12.",
+              "attribute": "month"
             },
             {
               "kind": "field",
@@ -714,7 +1060,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Year component of the date.\nSupports negative values for BCE dates.",
+              "attribute": "year"
             },
             {
               "kind": "field",
@@ -722,7 +1070,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Complete date string (currently unused).",
+              "attribute": "date"
             },
             {
               "kind": "field",
@@ -730,11 +1080,15 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Label text displayed above the date picker.",
+              "attribute": "label"
             },
             {
               "kind": "field",
-              "name": "useEndDate"
+              "name": "useEndDate",
+              "description": "Whether this is an end date picker in time period mode.",
+              "attribute": "use-end-date"
             },
             {
               "kind": "field",
@@ -742,7 +1096,9 @@
               "type": {
                 "text": "boolean"
               },
-              "default": "false"
+              "default": "false",
+              "description": "Whether the parent dialog is in time period mode.\nWhen false and useEndDate is true, this picker is disabled.",
+              "attribute": "use-time-period"
             },
             {
               "kind": "field",
@@ -750,32 +1106,38 @@
               "type": {
                 "text": "boolean"
               },
-              "default": "false"
+              "default": "false",
+              "description": "Whether the date picker has validation errors.",
+              "attribute": "invalid"
             },
             {
               "kind": "field",
-              "name": "dates"
+              "name": "dates",
+              "description": "All date input elements"
             },
             {
               "kind": "field",
               "name": "dayInput",
               "type": {
                 "text": "SlInput"
-              }
+              },
+              "description": "Day input element"
             },
             {
               "kind": "field",
               "name": "monthInput",
               "type": {
                 "text": "SlInput"
-              }
+              },
+              "description": "Month input element"
             },
             {
               "kind": "field",
               "name": "yearInput",
               "type": {
                 "text": "SlInput"
-              }
+              },
+              "description": "Year input element"
             },
             {
               "kind": "field",
@@ -847,49 +1209,127 @@
               "name": "show-day-validation-error",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when day validation fails"
             },
             {
               "name": "hide-day-validation-error",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when day validation passes"
             },
             {
               "name": "show-month-validation-error",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when month validation fails"
             },
             {
               "name": "hide-month-validation-error",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when month validation passes"
             },
             {
               "name": "show-year-validation-error",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when year validation fails"
             },
             {
               "name": "hide-year-validation-error",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when year validation passes"
             },
             {
               "name": "show-format-validation-error",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when date format validation fails"
             },
             {
               "name": "hide-format-validation-error",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when date format validation passes"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "day",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Day component of the date (1-31).\nAutomatically zero-padded to 2 digits on input.",
+              "fieldName": "day"
+            },
+            {
+              "name": "month",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Month component of the date (1-12).\nJanuary = 1, December = 12.",
+              "fieldName": "month"
+            },
+            {
+              "name": "year",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Year component of the date.\nSupports negative values for BCE dates.",
+              "fieldName": "year"
+            },
+            {
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Complete date string (currently unused).",
+              "fieldName": "date"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Label text displayed above the date picker.",
+              "fieldName": "label"
+            },
+            {
+              "name": "use-end-date",
+              "description": "Whether this is an end date picker in time period mode.",
+              "fieldName": "useEndDate"
+            },
+            {
+              "name": "use-time-period",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether the parent dialog is in time period mode.\nWhen false and useEndDate is true, this picker is disabled.",
+              "fieldName": "useTimePeriod"
+            },
+            {
+              "name": "invalid",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether the date picker has validation errors.",
+              "fieldName": "invalid"
             }
           ],
           "superclass": {
@@ -916,8 +1356,22 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Input component for timeline dialog forms.\n\nA specialized input wrapper that provides consistent styling and behavior\nfor use within timeline dialogs. Supports both single-line input and textarea\nmodes with validation states and accessibility features.\n\nFeatures:\n- Consistent styling with dialog theme\n- Support for required field validation\n- Clearable input functionality\n- Responsive width handling\n- Integration with Shoelace design system",
           "name": "DialogInput",
+          "cssProperties": [
+            {
+              "description": "Background color of the input",
+              "name": "--input-background"
+            },
+            {
+              "description": "Border style for the input",
+              "name": "--input-border"
+            },
+            {
+              "description": "Border style when focused",
+              "name": "--input-focus-border"
+            }
+          ],
           "members": [
             {
               "kind": "field",
@@ -925,7 +1379,9 @@
               "type": {
                 "text": "number"
               },
-              "default": "-1"
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "attribute": "tab-index"
             },
             {
               "kind": "field",
@@ -933,7 +1389,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Label text displayed above the input field.",
+              "attribute": "label"
             },
             {
               "kind": "field",
@@ -941,7 +1399,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Unique identifier for the input element.",
+              "attribute": "id"
             },
             {
               "kind": "field",
@@ -949,7 +1409,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Current value of the input field.",
+              "attribute": "value"
             },
             {
               "kind": "field",
@@ -957,7 +1419,9 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"\""
+              "default": "\"\"",
+              "description": "Placeholder text shown when input is empty.",
+              "attribute": "placeholder"
             },
             {
               "kind": "field",
@@ -965,18 +1429,24 @@
               "type": {
                 "text": "boolean"
               },
-              "default": "false"
+              "default": "false",
+              "description": "Whether the input field is required for form validation.",
+              "attribute": "required"
             },
             {
               "kind": "field",
-              "name": "disabled"
+              "name": "disabled",
+              "description": "Whether the input field is disabled.",
+              "attribute": "disabled"
             },
             {
               "kind": "field",
               "name": "type",
               "type": {
                 "text": "\"input\" | \"textarea\""
-              }
+              },
+              "description": "Type of input component - 'input' for single line, 'textarea' for multi-line.",
+              "attribute": "type"
             },
             {
               "kind": "field",
@@ -999,9 +1469,90 @@
               "name": "setTnput",
               "parameters": [
                 {
-                  "name": "event"
+                  "name": "event",
+                  "description": "The change event from the input element"
                 }
-              ]
+              ],
+              "description": "Updates the component's value when the input changes.\nCalled automatically by the sl-change event from the Shoelace input."
+            }
+          ],
+          "events": [
+            {
+              "description": "Fired when the input value changes",
+              "name": "sl-change"
+            },
+            {
+              "description": "Fired on each keystroke",
+              "name": "sl-input"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "tab-index",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "fieldName": "tabIndex"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Label text displayed above the input field.",
+              "fieldName": "label"
+            },
+            {
+              "name": "id",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Unique identifier for the input element.",
+              "fieldName": "id"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Current value of the input field.",
+              "fieldName": "value"
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Placeholder text shown when input is empty.",
+              "fieldName": "placeholder"
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether the input field is required for form validation.",
+              "fieldName": "required"
+            },
+            {
+              "name": "disabled",
+              "description": "Whether the input field is disabled.",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "type",
+              "type": {
+                "text": "\"input\" | \"textarea\""
+              },
+              "description": "Type of input component - 'input' for single line, 'textarea' for multi-line.",
+              "fieldName": "type"
             }
           ],
           "superclass": {
@@ -1027,8 +1578,26 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Toggle switch component for timeline dialog forms.\n\nA custom toggle switch specifically designed for switching between single date\nand time period modes in timeline event creation. Features smooth animations\nand responsive design.\n\nFeatures:\n- **Smooth Animation**: CSS transitions for toggle movement\n- **Dual Labels**: Shows \"Single Date\" and \"Time Period\" options\n- **Responsive Design**: Adapts to different screen sizes\n- **Custom Styling**: Matches timeline dialog theme\n- **Accessibility**: Proper keyboard navigation support\n\nThe toggle automatically updates the parent dialog's time period mode\nand enables/disables the end date picker accordingly.",
           "name": "DialogToggle",
+          "cssProperties": [
+            {
+              "description": "Background color of the toggle",
+              "name": "--toggle-background"
+            },
+            {
+              "description": "Border style for the toggle",
+              "name": "--toggle-border"
+            },
+            {
+              "description": "Background color of active state",
+              "name": "--toggle-active-background"
+            },
+            {
+              "description": "Border color of active state",
+              "name": "--toggle-active-border"
+            }
+          ],
           "members": [
             {
               "kind": "field",
@@ -1036,7 +1605,9 @@
               "type": {
                 "text": "boolean"
               },
-              "default": "false"
+              "default": "false",
+              "description": "Whether the toggle is in time period mode.\nWhen true, shows \"Time Period\" as selected; when false, shows \"Single Date\".",
+              "attribute": "use-time-period"
             },
             {
               "kind": "field",
@@ -1044,7 +1615,9 @@
               "type": {
                 "text": "number"
               },
-              "default": "-1"
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "attribute": "tab-index"
             },
             {
               "kind": "field",
@@ -1058,7 +1631,8 @@
             },
             {
               "kind": "method",
-              "name": "toggleChange"
+              "name": "toggleChange",
+              "description": "Handles toggle state changes and dispatches custom event.\nCalled when the user clicks the toggle to switch between single date\nand time period modes."
             }
           ],
           "events": [
@@ -1066,7 +1640,28 @@
               "name": "toggle-change",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when the toggle state changes"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "use-time-period",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether the toggle is in time period mode.\nWhen true, shows \"Time Period\" as selected; when false, shows \"Single Date\".",
+              "fieldName": "useTimePeriod"
+            },
+            {
+              "name": "tab-index",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "fieldName": "tabIndex"
             }
           ],
           "superclass": {
@@ -1092,12 +1687,38 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Timeline date display component for quiz interface.\n\nThis component renders the timeline portion of the quiz, displaying chronological\ndates with drop zones where users can place event titles. It provides visual\nfeedback for drag and drop operations and displays quiz results.\n\nFeatures:\n- **Timeline Visualization**: Shows dates in chronological order with connecting lines\n- **Drop Zones**: Interactive areas for dropping event titles\n- **Visual Feedback**: Color-coded results (green for correct, red for incorrect)\n- **Drag Management**: Handles title removal during drag operations\n- **Responsive Design**: Scrollable container for long timelines",
           "name": "QuizDateField",
+          "cssProperties": [
+            {
+              "description": "Color of the timeline line",
+              "name": "--timeline-color"
+            },
+            {
+              "description": "Border style for drop zones",
+              "name": "--drop-zone-border"
+            },
+            {
+              "description": "Background color for correct matches",
+              "name": "--match-background"
+            },
+            {
+              "description": "Background color for incorrect matches",
+              "name": "--mismatch-background"
+            }
+          ],
+          "slots": [
+            {
+              "description": "Container for individual date elements with drop zones",
+              "name": "quiz-element-date"
+            }
+          ],
           "members": [
             {
               "kind": "field",
-              "name": "dates"
+              "name": "dates",
+              "description": "Array of date strings for the quiz timeline.",
+              "attribute": "dates"
             },
             {
               "kind": "field",
@@ -1105,7 +1726,9 @@
               "type": {
                 "text": "number"
               },
-              "default": "-1"
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "attribute": "tab-index"
             },
             {
               "kind": "field",
@@ -1118,13 +1741,31 @@
               "name": "removeTitleForDragging",
               "parameters": [
                 {
-                  "name": "title"
+                  "name": "title",
+                  "description": "The title text to remove from this container"
                 }
-              ]
+              ],
+              "description": "Removes title elements during drag operations.\nCalled when a title is being dragged to another location to prevent duplicates."
             },
             {
               "kind": "method",
               "name": "render"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "dates",
+              "description": "Array of date strings for the quiz timeline.",
+              "fieldName": "dates"
+            },
+            {
+              "name": "tab-index",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "fieldName": "tabIndex"
             }
           ],
           "superclass": {
@@ -1150,15 +1791,38 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Individual date element with drop zone for quiz interface.\n\nRepresents a single date point on the quiz timeline with an interactive drop zone\nwhere users can drop event titles. Provides visual feedback during drag operations\nand displays results after quiz submission.\n\nFeatures:\n- **Interactive Drop Zone**: Accepts dragged title elements\n- **Visual Feedback**: Shows drag states and quiz results\n- **Date Display**: Shows formatted date information\n- **Result Indication**: Color-coded feedback for correct/incorrect matches",
           "name": "QuizElementDate",
+          "cssProperties": [
+            {
+              "description": "Background color of drop zone",
+              "name": "--drop-zone-background"
+            },
+            {
+              "description": "Border style for drop zone",
+              "name": "--drop-zone-border"
+            },
+            {
+              "description": "Border style during drag hover",
+              "name": "--dragover-border"
+            },
+            {
+              "description": "Colors for correct match display",
+              "name": "--match-colors"
+            },
+            {
+              "description": "Colors for incorrect match display",
+              "name": "--mismatch-colors"
+            }
+          ],
           "members": [
             {
               "kind": "field",
               "name": "title_element",
               "type": {
                 "text": "HTMLDivElement"
-              }
+              },
+              "description": "Date element container (unused)"
             },
             {
               "kind": "field",
@@ -1166,11 +1830,15 @@
               "type": {
                 "text": "number"
               },
-              "default": "-1"
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "attribute": "tab-index"
             },
             {
               "kind": "field",
-              "name": "date"
+              "name": "date",
+              "description": "Date value for this quiz element.",
+              "attribute": "date"
             },
             {
               "kind": "field",
@@ -1201,7 +1869,24 @@
               "name": "title-dropped-in-section",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when a title is dropped in this date's zone"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "tab-index",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "fieldName": "tabIndex"
+            },
+            {
+              "name": "date",
+              "description": "Date value for this quiz element.",
+              "fieldName": "date"
             }
           ],
           "superclass": {
@@ -1227,15 +1912,38 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Draggable title element for quiz interface.\n\nRepresents an individual event title that users can drag and drop onto\ncorresponding dates in the quiz timeline. Provides visual feedback during\ndrag operations and displays quiz results.\n\nFeatures:\n- **Draggable Interface**: Can be dragged to date drop zones\n- **Visual States**: Shows dragging, correct/incorrect match states\n- **Touch Support**: Works with both mouse and touch interactions\n- **Result Display**: Color-coded feedback after quiz submission",
           "name": "QuizElementTitle",
+          "cssProperties": [
+            {
+              "description": "Background color of title element",
+              "name": "--title-background"
+            },
+            {
+              "description": "Border style for title element",
+              "name": "--title-border"
+            },
+            {
+              "description": "Background during drag operations",
+              "name": "--dragging-background"
+            },
+            {
+              "description": "Colors for correct match indication",
+              "name": "--match-colors"
+            },
+            {
+              "description": "Colors for incorrect match indication",
+              "name": "--mismatch-colors"
+            }
+          ],
           "members": [
             {
               "kind": "field",
               "name": "title_element",
               "type": {
                 "text": "HTMLDivElement"
-              }
+              },
+              "description": "Title element container (unused)"
             },
             {
               "kind": "field",
@@ -1243,11 +1951,15 @@
               "type": {
                 "text": "number"
               },
-              "default": "-1"
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "attribute": "tab-index"
             },
             {
               "kind": "field",
-              "name": "title"
+              "name": "title",
+              "description": "Text content of the title element.",
+              "attribute": "title"
             },
             {
               "kind": "field",
@@ -1255,7 +1967,9 @@
               "type": {
                 "text": "boolean"
               },
-              "default": "true"
+              "default": "true",
+              "description": "Whether the title has been dropped in a date zone.",
+              "attribute": "dropped"
             },
             {
               "kind": "field",
@@ -1291,7 +2005,33 @@
               "name": "drag-start-title",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when a drag operation begins"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "tab-index",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "fieldName": "tabIndex"
+            },
+            {
+              "name": "title",
+              "description": "Text content of the title element.",
+              "fieldName": "title"
+            },
+            {
+              "name": "dropped",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true",
+              "description": "Whether the title has been dropped in a date zone.",
+              "fieldName": "dropped"
             }
           ],
           "superclass": {
@@ -1317,8 +2057,40 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Interactive quiz component for timeline knowledge testing.\n\nThis component transforms timeline events into an interactive drag-and-drop quiz\nwhere users match event titles to their corresponding dates. It provides:\n\n- **Drag-and-Drop Interface**: Users drag event titles to timeline date positions\n- **Real-time Feedback**: Visual indicators show correct/incorrect matches\n- **Scoring System**: Configurable feedback options (1-4 levels of detail)\n- **Reset Functionality**: Users can reset and retry the quiz\n- **Randomized Order**: Event titles are randomly shuffled each time\n- **Responsive Design**: Works on different screen sizes with scrollable areas\n\nThe quiz automatically generates questions from timeline events and provides\nimmediate visual feedback when users submit their answers.",
           "name": "MainQuiz",
+          "cssProperties": [
+            {
+              "description": "Background color of the quiz area",
+              "name": "--quiz-background"
+            },
+            {
+              "description": "Border style for quiz containers",
+              "name": "--quiz-border"
+            },
+            {
+              "description": "Color for correct matches",
+              "name": "--match-color"
+            },
+            {
+              "description": "Color for incorrect matches",
+              "name": "--mismatch-color"
+            },
+            {
+              "description": "Color during drag operations",
+              "name": "--dragging-color"
+            }
+          ],
+          "slots": [
+            {
+              "description": "Container for quiz date elements",
+              "name": "quiz-element-date"
+            },
+            {
+              "description": "Container for quiz title elements",
+              "name": "quiz-element-title"
+            }
+          ],
           "members": [
             {
               "kind": "field",
@@ -1326,21 +2098,27 @@
               "type": {
                 "text": "number"
               },
-              "default": "-1"
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "attribute": "tab-index"
             },
             {
               "kind": "field",
               "name": "event_startDate",
               "type": {
                 "text": "TlEventData[\"startDate\"]"
-              }
+              },
+              "description": "Start date array for event timing (inherited from timeline events).",
+              "attribute": "event_startDate"
             },
             {
               "kind": "field",
               "name": "event_endDate",
               "type": {
                 "text": "TlEventData[\"endDate\"]"
-              }
+              },
+              "description": "End date array for event timing (inherited from timeline events).",
+              "attribute": "event_endDate"
             },
             {
               "kind": "field",
@@ -1348,7 +2126,9 @@
               "type": {
                 "text": "Array<{ date: String; title: string }>"
               },
-              "default": "[]"
+              "default": "[]",
+              "description": "Array of events that have been added to the quiz.\nEach item contains date and title information for quiz generation.",
+              "attribute": "appended-events"
             },
             {
               "kind": "field",
@@ -1356,52 +2136,69 @@
               "type": {
                 "text": "number"
               },
-              "default": "0"
+              "default": "0",
+              "description": "Number of correct matches achieved by the user.\nUpdated automatically as quiz progresses.",
+              "attribute": "match-count"
             },
             {
               "kind": "field",
-              "name": "score"
+              "name": "score",
+              "description": "Final quiz score (percentage or points).\nCalculated based on correct matches vs total questions.",
+              "attribute": "score"
             },
             {
               "kind": "field",
-              "name": "selectedOption"
+              "name": "selectedOption",
+              "description": "Selected feedback option (1-4) determining result display detail.\n- 1: Basic results only\n- 2: Score with correct answers\n- 3: Detailed explanations\n- 4: Progress tracking",
+              "attribute": "selected-option"
             },
             {
               "kind": "field",
-              "name": "drag"
+              "name": "drag",
+              "description": "Current drag operation data (internal use).",
+              "attribute": "drag"
             },
             {
               "kind": "field",
-              "name": "source"
+              "name": "source",
+              "description": "Drag source element (internal use).",
+              "attribute": "source"
             },
             {
               "kind": "field",
-              "name": "target"
+              "name": "target",
+              "description": "Drag target element (internal use).",
+              "attribute": "target"
             },
             {
               "kind": "field",
-              "name": "activateCheck"
+              "name": "activateCheck",
+              "description": "Whether the check/submit button is activated.",
+              "attribute": "activate-check"
             },
             {
               "kind": "field",
               "name": "date_container",
               "type": {
                 "text": "QuizDateField"
-              }
+              },
+              "description": "Date container component for quiz timeline display"
             },
             {
               "kind": "field",
               "name": "title_container",
               "type": {
                 "text": "QuizTitles"
-              }
+              },
+              "description": "Title container component for draggable quiz elements"
             },
             {
               "kind": "field",
               "name": "score_feedback",
               "type": {
                 "text": "HTMLParagraphElement"
-              }
+              },
+              "description": "Score feedback display element"
             },
             {
               "kind": "field",
@@ -1508,7 +2305,95 @@
               "name": "show-quiz-feedback-error",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when quiz feedback validation fails"
+            },
+            {
+              "description": "Fired when a title is dropped in a date section",
+              "name": "title-dropped-in-section"
+            },
+            {
+              "description": "Fired when a title is dropped back in title area",
+              "name": "title-dropped-in-titles"
+            },
+            {
+              "description": "Fired when a title drag operation begins",
+              "name": "drag-start-title"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "tab-index",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "fieldName": "tabIndex"
+            },
+            {
+              "name": "event_startDate",
+              "type": {
+                "text": "TlEventData[\"startDate\"]"
+              },
+              "description": "Start date array for event timing (inherited from timeline events).",
+              "fieldName": "event_startDate"
+            },
+            {
+              "name": "event_endDate",
+              "type": {
+                "text": "TlEventData[\"endDate\"]"
+              },
+              "description": "End date array for event timing (inherited from timeline events).",
+              "fieldName": "event_endDate"
+            },
+            {
+              "name": "appended-events",
+              "type": {
+                "text": "Array<{ date: String; title: string }>"
+              },
+              "default": "[]",
+              "description": "Array of events that have been added to the quiz.\nEach item contains date and title information for quiz generation.",
+              "fieldName": "appendedEvents"
+            },
+            {
+              "name": "match-count",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "description": "Number of correct matches achieved by the user.\nUpdated automatically as quiz progresses.",
+              "fieldName": "matchCount"
+            },
+            {
+              "name": "score",
+              "description": "Final quiz score (percentage or points).\nCalculated based on correct matches vs total questions.",
+              "fieldName": "score"
+            },
+            {
+              "name": "selected-option",
+              "description": "Selected feedback option (1-4) determining result display detail.\n- 1: Basic results only\n- 2: Score with correct answers\n- 3: Detailed explanations\n- 4: Progress tracking",
+              "fieldName": "selectedOption"
+            },
+            {
+              "name": "drag",
+              "description": "Current drag operation data (internal use).",
+              "fieldName": "drag"
+            },
+            {
+              "name": "source",
+              "description": "Drag source element (internal use).",
+              "fieldName": "source"
+            },
+            {
+              "name": "target",
+              "description": "Drag target element (internal use).",
+              "fieldName": "target"
+            },
+            {
+              "name": "activate-check",
+              "description": "Whether the check/submit button is activated.",
+              "fieldName": "activateCheck"
             }
           ],
           "superclass": {
@@ -1534,12 +2419,38 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Container component for quiz title elements.\n\nThis component serves as the source container for draggable title elements in the\nquiz interface. It displays all available event titles that users can drag to\nmatch with corresponding dates on the timeline.\n\nFeatures:\n- **Drag Source Container**: Holds draggable title elements\n- **Drop Target**: Accepts titles being dropped back from date sections\n- **Randomization**: Can shuffle title order for quiz variety\n- **Scrollable Area**: Handles overflow with scrolling\n- **Visual Feedback**: Shows drag states and drop zones\n\nThe component automatically handles drag and drop events and communicates\nwith the parent quiz component about title movements.",
           "name": "QuizTitles",
+          "cssProperties": [
+            {
+              "description": "Background color of the titles container",
+              "name": "--titles-background"
+            },
+            {
+              "description": "Border style for the container",
+              "name": "--titles-border"
+            },
+            {
+              "description": "Background color during drag operations",
+              "name": "--dragging-background"
+            },
+            {
+              "description": "Border color during drag operations",
+              "name": "--dragging-border"
+            }
+          ],
+          "slots": [
+            {
+              "description": "Container for quiz-element-title components",
+              "name": ""
+            }
+          ],
           "members": [
             {
               "kind": "field",
-              "name": "titles"
+              "name": "titles",
+              "description": "Array of title strings for the quiz.",
+              "attribute": "titles"
             },
             {
               "kind": "field",
@@ -1547,18 +2458,23 @@
               "type": {
                 "text": "number"
               },
-              "default": "-1"
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "attribute": "tab-index"
             },
             {
               "kind": "field",
-              "name": "titleChildren"
+              "name": "titleChildren",
+              "description": "Whether this container has title child elements.",
+              "attribute": "title-children"
             },
             {
               "kind": "field",
               "name": "title_element",
               "type": {
                 "text": "HTMLDivElement"
-              }
+              },
+              "description": "Title element container (unused)"
             },
             {
               "kind": "field",
@@ -1574,11 +2490,13 @@
             },
             {
               "kind": "method",
-              "name": "randomiseTitleOrder"
+              "name": "randomiseTitleOrder",
+              "description": "Randomizes the order of title elements within the container.\nCalled to shuffle quiz titles for variety between quiz attempts."
             },
             {
               "kind": "method",
-              "name": "droppingTitles"
+              "name": "droppingTitles",
+              "description": "Handles drop events when titles are dropped back into this container.\nDispatches a custom event to notify the parent quiz component about the drop."
             },
             {
               "kind": "method",
@@ -1590,7 +2508,29 @@
               "name": "title-dropped-in-titles",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fired when a title is dropped back in this container"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "titles",
+              "description": "Array of title strings for the quiz.",
+              "fieldName": "titles"
+            },
+            {
+              "name": "tab-index",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "fieldName": "tabIndex"
+            },
+            {
+              "name": "title-children",
+              "description": "Whether this container has title child elements.",
+              "fieldName": "titleChildren"
             }
           ],
           "superclass": {
@@ -1616,8 +2556,32 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Interactive timeline widget for WebWriter applications.\n\nThis web component creates an interactive timeline that allows users to:\n- Create and manage timeline events with dates and descriptions\n- Switch between timeline creation and quiz modes\n- Test knowledge with drag-and-drop quiz functionality\n- Customize panel visibility (timeline only, quiz only, or both)\n- Configure quiz feedback options\n\nThe component consists of two main panels:\n1. **Timeline Panel**: For creating and editing timeline events\n2. **Quiz Panel**: For testing knowledge with interactive quiz features",
           "name": "WebWriterTimeline",
+          "cssProperties": [
+            {
+              "description": "Background color of the timeline area",
+              "name": "--timeline-background"
+            },
+            {
+              "description": "Border style for timeline elements",
+              "name": "--timeline-border"
+            },
+            {
+              "description": "Background color of the quiz area",
+              "name": "--quiz-background"
+            },
+            {
+              "description": "Border style for panel separators",
+              "name": "--panel-border"
+            }
+          ],
+          "slots": [
+            {
+              "description": "Container for timeline events (event-container elements)",
+              "name": "event-slot"
+            }
+          ],
           "members": [
             {
               "kind": "field",
@@ -1625,21 +2589,27 @@
               "type": {
                 "text": "number"
               },
-              "default": "-1"
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "attribute": "tab-index"
             },
             {
               "kind": "field",
               "name": "currentPanel",
               "type": {
                 "text": "string"
-              }
+              },
+              "description": "Currently active panel ('timeline' or 'quiz').",
+              "attribute": "current-panel"
             },
             {
               "kind": "field",
               "name": "_panelVisibility",
               "type": {
                 "text": "string"
-              }
+              },
+              "description": "Controls which panels are visible in the interface.",
+              "attribute": "panelvisibility"
             },
             {
               "kind": "field",
@@ -1651,70 +2621,81 @@
             },
             {
               "kind": "field",
-              "name": "quizFeedbackOption"
+              "name": "quizFeedbackOption",
+              "description": "Selected quiz feedback option (1-4).\nDetermines what feedback is shown after quiz completion:\n- 1: Show correct answers only\n- 2: Show score and correct answers\n- 3: Show detailed explanations\n- 4: Show progress tracking",
+              "attribute": "quiz-feedback-option"
             },
             {
               "kind": "field",
               "name": "quizFeedbackSelecter",
               "type": {
                 "text": "SlSelect"
-              }
+              },
+              "description": "Quiz feedback selection dropdown element"
             },
             {
               "kind": "field",
               "name": "quiz",
               "type": {
                 "text": "MainQuiz"
-              }
+              },
+              "description": "Main quiz component instance"
             },
             {
               "kind": "field",
               "name": "dialog",
               "type": {
                 "text": "TimelineDialog"
-              }
+              },
+              "description": "Timeline dialog component for creating/editing events"
             },
             {
               "kind": "field",
               "name": "timelinePanel",
               "type": {
                 "text": "SlTab"
-              }
+              },
+              "description": "Timeline panel tab element"
             },
             {
               "kind": "field",
               "name": "quizPanel",
               "type": {
                 "text": "SlTab"
-              }
+              },
+              "description": "Quiz panel tab element"
             },
             {
               "kind": "field",
               "name": "quizToggle",
               "type": {
                 "text": "SlSwitch"
-              }
+              },
+              "description": "Toggle switch for enabling/disabling quiz functionality"
             },
             {
               "kind": "field",
               "name": "feedbackError",
               "type": {
                 "text": "HTMLDivElement"
-              }
+              },
+              "description": "Error message container for quiz feedback validation"
             },
             {
               "kind": "field",
               "name": "addToolTip",
               "type": {
                 "text": "SlTooltip"
-              }
+              },
+              "description": "Tooltip for the add event button"
             },
             {
               "kind": "field",
               "name": "tabGroup",
               "type": {
                 "text": "SlTabGroup"
-              }
+              },
+              "description": "Tab group container for switching between panels"
             },
             {
               "kind": "field",
@@ -1732,7 +2713,8 @@
               "kind": "field",
               "name": "eventManager",
               "privacy": "private",
-              "default": "new EventManager()"
+              "default": "new EventManager()",
+              "description": "Event manager instance for handling timeline event operations"
             },
             {
               "kind": "method",
@@ -1743,9 +2725,11 @@
                   "name": "_changedProperties",
                   "type": {
                     "text": "PropertyValues"
-                  }
+                  },
+                  "description": "Map of changed properties"
                 }
-              ]
+              ],
+              "description": "Lifecycle method called after the element's DOM has been updated for the first time.\nInitializes component state, sets up event listeners, configures help system positioning,\nand handles initial panel visibility based on configuration."
             },
             {
               "kind": "method",
@@ -1760,9 +2744,11 @@
                   "name": "_changedProperties",
                   "type": {
                     "text": "PropertyValues"
-                  }
+                  },
+                  "description": "Map of changed properties"
                 }
-              ]
+              ],
+              "description": "Lifecycle method called when component properties change.\nHandles panel switching when currentPanel property changes."
             },
             {
               "kind": "method",
@@ -1773,21 +2759,72 @@
               "name": "checkSelectedTab",
               "parameters": [
                 {
-                  "name": "selectedTab"
+                  "name": "selectedTab",
+                  "description": "The name of the selected tab ('quiz' or 'timeline')"
                 }
-              ]
+              ],
+              "description": "Handles tab selection changes between timeline and quiz panels.\nAutomatically starts quiz mode when quiz panel is selected and initializes \nthe current panel state."
             },
             {
               "kind": "method",
-              "name": "openingTLDialog"
+              "name": "openingTLDialog",
+              "description": "Opens the timeline dialog for creating or editing events.\nThis method triggers the timeline dialog to become visible,\nallowing users to add new events to the timeline."
             },
             {
               "kind": "method",
-              "name": "startQuiz"
+              "name": "startQuiz",
+              "description": "Initializes and starts the quiz with current timeline events.\nCollects all child event elements and passes them to the quiz component\nfor creating quiz questions."
             },
             {
               "kind": "method",
-              "name": "saveQuizSelection"
+              "name": "saveQuizSelection",
+              "description": "Saves the selected quiz feedback option and validates the selection.\nUpdates the quiz feedback display based on user selection and shows/hides\nvalidation errors as appropriate."
+            }
+          ],
+          "events": [
+            {
+              "description": "Fired when a new event should be added to the timeline",
+              "name": "request-add"
+            },
+            {
+              "description": "Fired when an event should be removed from the timeline",
+              "name": "request-remove"
+            },
+            {
+              "description": "Fired when quiz feedback validation fails",
+              "name": "show-quiz-feedback-error"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "tab-index",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "fieldName": "tabIndex"
+            },
+            {
+              "name": "current-panel",
+              "type": {
+                "text": "string"
+              },
+              "description": "Currently active panel ('timeline' or 'quiz').",
+              "fieldName": "currentPanel"
+            },
+            {
+              "name": "panelvisibility",
+              "type": {
+                "text": "string"
+              },
+              "description": "Controls which panels are visible in the interface.",
+              "fieldName": "_panelVisibility"
+            },
+            {
+              "name": "quiz-feedback-option",
+              "description": "Selected quiz feedback option (1-4).\nDetermines what feedback is shown after quiz completion:\n- 1: Show correct answers only\n- 2: Show score and correct answers\n- 3: Show detailed explanations\n- 4: Show progress tracking",
+              "fieldName": "quizFeedbackOption"
             }
           ],
           "superclass": {

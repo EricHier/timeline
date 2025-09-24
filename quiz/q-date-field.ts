@@ -4,9 +4,47 @@ import { customElement, property } from "lit/decorators.js";
 import { QuizElementDate } from "./q-element-date"
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
+/**
+ * Timeline date display component for quiz interface.
+ * 
+ * This component renders the timeline portion of the quiz, displaying chronological
+ * dates with drop zones where users can place event titles. It provides visual
+ * feedback for drag and drop operations and displays quiz results.
+ * 
+ * Features:
+ * - **Timeline Visualization**: Shows dates in chronological order with connecting lines
+ * - **Drop Zones**: Interactive areas for dropping event titles
+ * - **Visual Feedback**: Color-coded results (green for correct, red for incorrect)
+ * - **Drag Management**: Handles title removal during drag operations
+ * - **Responsive Design**: Scrollable container for long timelines
+ * 
+ * @example
+ * ```html
+ * <quiz-date-field dates='["1969-07-20", "1989-11-09"]'>
+ *   <quiz-element-date slot="quiz-element-date" date="1969-07-20">
+ *   </quiz-element-date>
+ * </quiz-date-field>
+ * ```
+ * 
+ * @slot quiz-element-date - Container for individual date elements with drop zones
+ * 
+ * @cssproperty --timeline-color - Color of the timeline line
+ * @cssproperty --drop-zone-border - Border style for drop zones
+ * @cssproperty --match-background - Background color for correct matches
+ * @cssproperty --mismatch-background - Background color for incorrect matches
+ */
 @customElement('quiz-date-field')
 export class QuizDateField extends LitElementWw {
+  /**
+   * Array of date strings for the quiz timeline.
+   * @attr dates
+   */
   @property({ type: Array, attribute: true, reflect: true }) dates;
+
+  /**
+   * Tab index for keyboard navigation accessibility.
+   * @attr tab-index
+   */
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
   
   static styles = css`
@@ -88,7 +126,12 @@ export class QuizDateField extends LitElementWw {
     }
   `;
 
-// remove inner title if dropped somewhere else 
+/**
+ * Removes title elements during drag operations.
+ * Called when a title is being dragged to another location to prevent duplicates.
+ * 
+ * @param title - The title text to remove from this container
+ */
 removeTitleForDragging(title) {
   const titleElements = this.querySelectorAll('quiz-element-title') as NodeListOf<QuizElementDate>;
     titleElements.forEach(element => {
