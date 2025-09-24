@@ -1,0 +1,1811 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "event-container.component.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "EventContainer",
+          "members": [
+            {
+              "kind": "field",
+              "name": "event_title"
+            },
+            {
+              "kind": "field",
+              "name": "event_startDate",
+              "type": {
+                "text": "TlEventData[\"startDate\"]"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "event_endDate",
+              "type": {
+                "text": "TlEventData[\"endDate\"]"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hiddenDiv",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true"
+            },
+            {
+              "kind": "field",
+              "name": "event_element"
+            },
+            {
+              "kind": "field",
+              "name": "dialog",
+              "type": {
+                "text": "SlDialog"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "firstUpdated",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "_changedProperties",
+                  "type": {
+                    "text": "PropertyValues"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            },
+            {
+              "kind": "method",
+              "name": "showEventContent"
+            },
+            {
+              "kind": "method",
+              "name": "addParagraph"
+            },
+            {
+              "kind": "method",
+              "name": "removeEvent"
+            },
+            {
+              "kind": "method",
+              "name": "getStartDate",
+              "return": {
+                "type": {
+                  "text": "Moment"
+                }
+              }
+            }
+          ],
+          "events": [
+            {
+              "name": "request-remove",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElementWw",
+            "package": "@webwriter/lit"
+          },
+          "tagName": "event-container",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "EventContainer",
+          "declaration": {
+            "name": "EventContainer",
+            "module": "event-container.component.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "event-container.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./event-container.component"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "EventContainer",
+            "module": "event-container.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "event-container",
+          "declaration": {
+            "name": "EventContainer",
+            "module": "/event-container.component"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "event-manager.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "EventManager",
+          "members": [
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "addEvent",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "CustomEvent<TlEventData>"
+                  }
+                },
+                {
+                  "name": "timeline"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "removeEvent",
+              "parameters": [
+                {
+                  "name": "event"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "sortEvents",
+              "parameters": [
+                {
+                  "name": "timeline"
+                }
+              ]
+            }
+          ],
+          "superclass": {
+            "name": "LitElementWw",
+            "package": "@webwriter/lit"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "EventManager",
+          "declaration": {
+            "name": "EventManager",
+            "module": "event-manager.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "tl-dialog.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TimelineDialog",
+          "members": [
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "id",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "type",
+              "type": {
+                "text": "\"input\" | \"textarea\""
+              }
+            },
+            {
+              "kind": "field",
+              "name": "readyToFill",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "useTimePeriod",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "titleErrorMessage",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "dayErrorMessage",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "monthErrorMessage",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "yearErrorMessage",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "formatErrorMessage",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "timeErrorMessage",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "dialog",
+              "type": {
+                "text": "SlDialog"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "eventTitle",
+              "type": {
+                "text": "DialogInput"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "startDate",
+              "type": {
+                "text": "DialogDatePicker"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "endDate",
+              "type": {
+                "text": "DialogDatePicker"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` sl-dialog::part(base) { position: absolute; height: 100%; width: 100%; } sl-dialog::part(overlay) { position: absolute; width: 100%; } sl-dialog::part(panel) { min-width: 350px; } .d-width { width: 100%; } .d-input-container { padding-top: 10px; padding-bottom: 10px; display: flex; flex-wrap: wrap; gap: 16px; width: 100%; box-sizing: border-box; } dialog-date-picker { flex: 1 1 45%; min-width: 270px; max-width: 100%; box-sizing: border-box; /* padding-top: 15px; */ } @media (max-width: 600px) { .inputs-container { grid-template-columns: 1fr; gap: 8px; } } dialog-date-picker[disabled] { --sl-input-label-color: #888888; } .endDate-disabled { color: grey; } .text-error { font-size: var(--sl-input-help-text-font-size-medium); color: var(--sl-color-danger-700); } .button-container { display: flex; justify-content: space-between; align-items: center; width: 100%; padding-bottom: 15px; } .button { padding-top: 5px; width: 100px; } .d-input { width: 100%; min-width: 0; padding-bottom: 15px; } #event-title[error] { width: 100%; min-width: 0; margin-bottom: 10px; --sl-input-border-color: var(--sl-color-danger-700); box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-color-danger-300); border-radius: 3px; outline: none; padding-bottom:0px; } .text-error:not([hidden]) { padding-bottom: 15px; } .d-input[disabled] { --sl-input-label-color: #888888; padding-bottom: 15px; } `"
+            },
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "datePicker",
+              "privacy": "private",
+              "default": "new DialogDatePicker()"
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            },
+            {
+              "kind": "method",
+              "name": "showDialog",
+              "privacy": "public"
+            },
+            {
+              "kind": "method",
+              "name": "hideDialog",
+              "privacy": "public"
+            },
+            {
+              "kind": "method",
+              "name": "resetDialog"
+            },
+            {
+              "kind": "method",
+              "name": "resetEndDate"
+            },
+            {
+              "kind": "method",
+              "name": "enableSaveButton"
+            },
+            {
+              "kind": "method",
+              "name": "updateValidationErrors",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "startDayValidation",
+                  "type": {
+                    "text": "any"
+                  }
+                },
+                {
+                  "name": "endDayValidation",
+                  "type": {
+                    "text": "any"
+                  }
+                },
+                {
+                  "name": "startMonthValidation",
+                  "type": {
+                    "text": "any"
+                  }
+                },
+                {
+                  "name": "endMonthValidation",
+                  "type": {
+                    "text": "any"
+                  }
+                },
+                {
+                  "name": "startYearValidation",
+                  "type": {
+                    "text": "any"
+                  }
+                },
+                {
+                  "name": "endYearValidation",
+                  "type": {
+                    "text": "any"
+                  }
+                },
+                {
+                  "name": "startFormatValidation",
+                  "type": {
+                    "text": "any"
+                  }
+                },
+                {
+                  "name": "endFormatValidation",
+                  "type": {
+                    "text": "any"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "disableSaveButton"
+            },
+            {
+              "kind": "method",
+              "name": "evaluateTitleError"
+            },
+            {
+              "kind": "method",
+              "name": "showDayError",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "hideDayError"
+            },
+            {
+              "kind": "method",
+              "name": "showMonthError",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "hideMonthError"
+            },
+            {
+              "kind": "method",
+              "name": "showYearError",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "hideYearError"
+            },
+            {
+              "kind": "method",
+              "name": "showFormatError",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "hideFormatError"
+            },
+            {
+              "kind": "method",
+              "name": "evaluateTimeError",
+              "return": {
+                "type": {
+                  "text": "Boolean"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "dispatchAddEvent"
+            },
+            {
+              "kind": "method",
+              "name": "convertToMoment",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "TlEventData[\"startDate\"]"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "datePicker",
+                  "type": {
+                    "text": "DialogDatePicker"
+                  }
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "name": "request-add",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElementWw",
+            "package": "@webwriter/lit"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "TimelineDialog",
+          "declaration": {
+            "name": "TimelineDialog",
+            "module": "tl-dialog.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "tl-event-data.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "TlEventHelper",
+          "members": [
+            {
+              "kind": "method",
+              "name": "convertToDisplayDate",
+              "static": true,
+              "parameters": [
+                {
+                  "name": "date",
+                  "type": {
+                    "text": "TlEventData[\"startDate\"]"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "convertToDisplayDateFormat",
+              "static": true,
+              "parameters": [
+                {
+                  "name": "date",
+                  "type": {
+                    "text": "TlEventData[\"startDate\"]"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "displayDate",
+              "static": true,
+              "parameters": [
+                {
+                  "name": "date",
+                  "type": {
+                    "text": "TlEventData[\"startDate\"]"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "checkForYearBC",
+              "static": true,
+              "parameters": [
+                {
+                  "name": "date",
+                  "type": {
+                    "text": "TlEventData[\"startDate\"]"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "TlEventHelper",
+          "declaration": {
+            "name": "TlEventHelper",
+            "module": "tl-event-data.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "dialog-elements/d-datepicker.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "DialogDatePicker",
+          "members": [
+            {
+              "kind": "field",
+              "name": "day",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "month",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "year",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "useEndDate"
+            },
+            {
+              "kind": "field",
+              "name": "useTimePeriod",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "invalid",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "dates"
+            },
+            {
+              "kind": "field",
+              "name": "dayInput",
+              "type": {
+                "text": "SlInput"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "monthInput",
+              "type": {
+                "text": "SlInput"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "yearInput",
+              "type": {
+                "text": "SlInput"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` .date-div-disabled { background: #f7f7f8; } .date-div, .date-div-disabled { display: flex; flex-direction: row; width: 89%; min-width: 245px; } .date-container, .date-container-disabled { overflow: hidden; display: flex; flex-direction: row; align-items: center; border: 1px solid #d6d6da; border-radius: 5px; background: white; box-sizing: border-box; width: 100%; min-width: 0; } .date-container-disabled { background: #f7f7f8; } .divider { color: lightgray; width: 10px; align-self: center; } label { font-size: 1rem; font-weight: 400; margin-bottom: 0.5rem; } .date { --sl-input-border-color: transparent; --sl-input-border-width: 0; --sl-input-padding-vertical: 0; --sl-input-padding-horizontal: 1rem; text-align: center; min-width: 3%; } .date[disabled] { --sl-input-color: gray; } .date[invalid] { --sl-input-border-color: var(--sl-color-danger-600); box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-color-danger-300); outline: none; border-radius: 3px; } `"
+            },
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            },
+            {
+              "kind": "method",
+              "name": "validateInput",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "validateYearInput",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "validateDay"
+            },
+            {
+              "kind": "method",
+              "name": "validateMonth"
+            },
+            {
+              "kind": "method",
+              "name": "validateYear"
+            },
+            {
+              "kind": "method",
+              "name": "validateFormat"
+            },
+            {
+              "kind": "method",
+              "name": "validateForErrors"
+            },
+            {
+              "kind": "method",
+              "name": "reset"
+            }
+          ],
+          "events": [
+            {
+              "name": "show-day-validation-error",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "hide-day-validation-error",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "show-month-validation-error",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "hide-month-validation-error",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "show-year-validation-error",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "hide-year-validation-error",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "show-format-validation-error",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "hide-format-validation-error",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "DialogDatePicker",
+          "declaration": {
+            "name": "DialogDatePicker",
+            "module": "dialog-elements/d-datepicker.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "dialog-elements/d-input.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "DialogInput",
+          "members": [
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "id",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "type",
+              "type": {
+                "text": "\"input\" | \"textarea\""
+              }
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` :host { display: block; /* margin-bottom: 20px; */ } .half-input { min-width: 45%; } `"
+            },
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            },
+            {
+              "kind": "method",
+              "name": "setTnput",
+              "parameters": [
+                {
+                  "name": "event"
+                }
+              ]
+            }
+          ],
+          "superclass": {
+            "name": "LitElementWw",
+            "package": "@webwriter/lit"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "DialogInput",
+          "declaration": {
+            "name": "DialogInput",
+            "module": "dialog-elements/d-input.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "dialog-elements/d-toggle.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "DialogToggle",
+          "members": [
+            {
+              "kind": "field",
+              "name": "useTimePeriod",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` .toggle { min-height: 15px; width: 100%; background-color: #ffffff; border-radius: 40px; border: 1px solid #d6d6da; position: relative; display: flex; align-items: center; cursor: pointer; padding: 2px; box-sizing: border-box; /* margin-bottom: 8px; */ } input[type=\"checkbox\"] { display: none; } .toggle label { width: 50%; height: 100%; border-radius: 40px; position: absolute; background-color: #e5f4fc; border: 1px solid #83b9e0; transition: transform 0.5s ease; z-index: 1; cursor: pointer; left: 0; margin: 0; box-sizing: border-box; } input[type=\"checkbox\"]:checked + label { transform: translateX(100%); } .labels-container { display: flex; justify-content: space-between; width: 100%; position: relative; z-index: 2; } .label { flex: 1; font-size: 0.75em; color: black; text-align: center; padding: 8px; word-wrap: break-word; hyphens: auto; display: flex; align-items: center; justify-content: center; min-height: 15px; } .label-left { margin-right: auto; } .label-right { margin-left: auto; } @media (max-width: 300px) { .toggle { min-height: 50px; } .label { font-size: 0.7em; } } `"
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            },
+            {
+              "kind": "method",
+              "name": "toggleChange"
+            }
+          ],
+          "events": [
+            {
+              "name": "toggle-change",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElementWw",
+            "package": "@webwriter/lit"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "DialogToggle",
+          "declaration": {
+            "name": "DialogToggle",
+            "module": "dialog-elements/d-toggle.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "quiz/q-date-field.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "QuizDateField",
+          "members": [
+            {
+              "kind": "field",
+              "name": "dates"
+            },
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` .timeline-parent { display: flex; justify-content: start; flex-direction: row; position: relative; vertical-align: center; max-height: 100%; } .timeline { min-height: 15px; height: auto; width: 100%; border-left: 2px solid #484848; position: relative; } .timeline::after { content: \"\"; position: absolute; bottom: -10px; transform: translateX(-58%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 10px solid #484848; z-index: 4; } .drop-section[dropped] { border: 3px solid #E0E0E0; border-radius: 5px; font-weight: 500; font-size: 16px; color: #333333; flex-direction: column; } .drop-section[quiz-result=\"match\"] { background: #cdefcf; color: #4aad4d; border: 2px solid #4aad4d; } .drop-section[quiz-result=\"mismatch\"] { background: #f5d1ce; color: #c92c1b; border: 2px solid #e58e85; } .drop-section > * { max-width: 100%; } .date-line { min-width:150px; flex-grow: 1; height: 2px; width: 100%; background: #484848; display: flex; justify-content: space-between; align-items: center; grid-column: 1; grid-row: 2; transform: translateX(-3.5px); } .date-line::before { content: \"\\ \"; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #484848; } .new-date-container { display: grid; align-items: center; position: relative; padding-left: 0px; width: 100%; } `"
+            },
+            {
+              "kind": "method",
+              "name": "removeTitleForDragging",
+              "parameters": [
+                {
+                  "name": "title"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            }
+          ],
+          "superclass": {
+            "name": "LitElementWw",
+            "package": "@webwriter/lit"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "QuizDateField",
+          "declaration": {
+            "name": "QuizDateField",
+            "module": "quiz/q-date-field.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "quiz/q-element-date.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "QuizElementDate",
+          "members": [
+            {
+              "kind": "field",
+              "name": "title_element",
+              "type": {
+                "text": "HTMLDivElement"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "date"
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` .event:first-child { display: flex; align-items: flex-start; padding: 16px; padding-top: 5px; padding-left: 0px; position: relative; width: 100%; } .date-container { display: grid; align-items: center; position: relative; } .event-date { font-size: 14px; font-weight: 700; color: #484848; grid-column: 1; grid-row: 1; padding-left: 7px; padding-right: 5px; width: 100%; } .event-title-container { border: 3px solid #e0e0e0; border-radius: 5px; padding: 8px; display: flex; align-items: left; justify-content: space-between; width: 100%; max-width: max-content; max-height: 400px; overflow-wrap: break-word; overflow-y: auto; flex-direction: column; transform: translateX(-3.5px); } .drop-section { display: flex; align-items: center; background: white; border: 2px dashed #d6d6da; border-radius: 7px; margin-right: 5px; min-height: 45px; min-width: 50px; width: max-content; max-width: 100%; overflow-wrap: break-word; overflow-y: auto; flex-direction: column; padding: 8px; flex-direction: column; flex-wrap: wrap; overflow-wrap: break-word; overflow-y: auto; box-sizing: border-box; transform: translateX(-3.5px); padding-top: 8px; padding-bottom: 8px; } .drop-section[dragover] { border: 2px dashed #83b9e0; } .drop-section[dropped] { border: 3px solid #e0e0e0; border-radius: 5px; font-weight: 500; font-size: 16px; color: #333333; flex-direction: column; } .drop-section[quiz-result=\"match\"] { background: #cdefcf; color: #4aad4d; border: 2px solid #4aad4d; } .drop-section[quiz-result=\"mismatch\"] { background: #f5d1ce; color: #c92c1b; border: 2px solid #e58e85; } .drop-section > * { max-width: 100%; } .date-line { min-width: 150px; flex-grow: 1; height: 2px; width: 100%; background: #484848; display: flex; justify-content: space-between; align-items: center; grid-column: 1; grid-row: 2; transform: translateX(-3.5px); } .date-line::before { content: \"\\ \"; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #484848; } .event { display: flex; align-items: flex-start; padding: 15px; padding-left: 0px; position: relative; width: 100%; } .dropped-title { padding: 8px; margin: 4px; background: white; border: 1px solid #d6d6da; border-radius: 5px; cursor: grab; font-weight: 500; font-size: 16px; color: #333333; width: fit-content; user-select: none; } .dropped-title.dragging { opacity: 0.5; border: 2px solid #83b9e0; background: #e5f4fc; } .drop-section { min-height: 45px; min-width: 50px; width: max-content; } `"
+            },
+            {
+              "kind": "method",
+              "name": "droppingTitles",
+              "privacy": "public",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "DragEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            }
+          ],
+          "events": [
+            {
+              "name": "title-dropped-in-section",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElementWw",
+            "package": "@webwriter/lit"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "QuizElementDate",
+          "declaration": {
+            "name": "QuizElementDate",
+            "module": "quiz/q-element-date.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "quiz/q-element-title.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "QuizElementTitle",
+          "members": [
+            {
+              "kind": "field",
+              "name": "title_element",
+              "type": {
+                "text": "HTMLDivElement"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "title"
+            },
+            {
+              "kind": "field",
+              "name": "dropped",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true"
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` .title-border { display: flex; justify-content: center; align-items: center; background: white; border: 1px solid #d6d6da; border-radius: 7px; margin: 5px; width: auto; max-width: calc(100% - 10px); cursor: grab; font-weight: 500; font-size: 1.15rem; color: #333333; min-height: 35px; flex-wrap: wrap; text-align: left; padding: 5px 10px; box-sizing: border-box; overflow-x: scroll; flex-direction: row; } .title-border.dragging { background: #e5f4fc; border: 2px solid #83b9e0; cursor: grabbing; } .title-border[match] { background: #cdefcf; color: #4aad4d; border: 2px solid #4aad4d; } .title-border[mismatch] { background: #f5d1ce; color: #c92c1b; border: 2px solid #e58e85; } `"
+            },
+            {
+              "kind": "method",
+              "name": "startDrag",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "DragEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "endDrag",
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            }
+          ],
+          "events": [
+            {
+              "name": "drag-start-title",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElementWw",
+            "package": "@webwriter/lit"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "QuizElementTitle",
+          "declaration": {
+            "name": "QuizElementTitle",
+            "module": "quiz/q-element-title.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "quiz/q-main-quiz.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "MainQuiz",
+          "members": [
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "event_startDate",
+              "type": {
+                "text": "TlEventData[\"startDate\"]"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "event_endDate",
+              "type": {
+                "text": "TlEventData[\"endDate\"]"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "appendedEvents",
+              "type": {
+                "text": "Array<{ date: String; title: string }>"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "matchCount",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "score"
+            },
+            {
+              "kind": "field",
+              "name": "selectedOption"
+            },
+            {
+              "kind": "field",
+              "name": "drag"
+            },
+            {
+              "kind": "field",
+              "name": "source"
+            },
+            {
+              "kind": "field",
+              "name": "target"
+            },
+            {
+              "kind": "field",
+              "name": "activateCheck"
+            },
+            {
+              "kind": "field",
+              "name": "date_container",
+              "type": {
+                "text": "QuizDateField"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "title_container",
+              "type": {
+                "text": "QuizTitles"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "score_feedback",
+              "type": {
+                "text": "HTMLParagraphElement"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "firstUpdated",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "_changedProperties",
+                  "type": {
+                    "text": "PropertyValues"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "titleDragStart",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "titleDropped",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            },
+            {
+              "kind": "method",
+              "name": "findSelection",
+              "parameters": [
+                {
+                  "name": "selected"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "startQuiz",
+              "parameters": [
+                {
+                  "name": "events",
+                  "type": {
+                    "text": "EventContainer[]"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "resetQuiz"
+            },
+            {
+              "kind": "method",
+              "name": "initializeDate",
+              "parameters": [
+                {
+                  "name": "date"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "initializeTitle",
+              "parameters": [
+                {
+                  "name": "title"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "checkMatchAndCalculate"
+            }
+          ],
+          "events": [
+            {
+              "name": "show-quiz-feedback-error",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElementWw",
+            "package": "@webwriter/lit"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "MainQuiz",
+          "declaration": {
+            "name": "MainQuiz",
+            "module": "quiz/q-main-quiz.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "quiz/q-titles.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "QuizTitles",
+          "members": [
+            {
+              "kind": "field",
+              "name": "titles"
+            },
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "titleChildren"
+            },
+            {
+              "kind": "field",
+              "name": "title_element",
+              "type": {
+                "text": "HTMLDivElement"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` .border { display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start; border: 1px solid #d6d6da; background: #f7f7f8; border-radius: 5px; padding: 10px; box-sizing: border-box; min-height: 70px; width: 100%; max-height: 100%; height: 100%; overflow-y: scroll; } .dragging { background: #e5f4fc; border: 2px solid #83b9e0; } `"
+            },
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "randomiseTitleOrder"
+            },
+            {
+              "kind": "method",
+              "name": "droppingTitles"
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            }
+          ],
+          "events": [
+            {
+              "name": "title-dropped-in-titles",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElementWw",
+            "package": "@webwriter/lit"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "QuizTitles",
+          "declaration": {
+            "name": "QuizTitles",
+            "module": "quiz/q-titles.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "widgets/webwriter-timeline.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "WebWriterTimeline",
+          "members": [
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "currentPanel",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "_panelVisibility",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "panelVisibility",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "quizFeedbackOption"
+            },
+            {
+              "kind": "field",
+              "name": "quizFeedbackSelecter",
+              "type": {
+                "text": "SlSelect"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "quiz",
+              "type": {
+                "text": "MainQuiz"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "dialog",
+              "type": {
+                "text": "TimelineDialog"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "timelinePanel",
+              "type": {
+                "text": "SlTab"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "quizPanel",
+              "type": {
+                "text": "SlTab"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "quizToggle",
+              "type": {
+                "text": "SlSwitch"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "feedbackError",
+              "type": {
+                "text": "HTMLDivElement"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "addToolTip",
+              "type": {
+                "text": "SlTooltip"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "tabGroup",
+              "type": {
+                "text": "SlTabGroup"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "eventManager",
+              "privacy": "private",
+              "default": "new EventManager()"
+            },
+            {
+              "kind": "method",
+              "name": "firstUpdated",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "_changedProperties",
+                  "type": {
+                    "text": "PropertyValues"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "updated",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "_changedProperties",
+                  "type": {
+                    "text": "PropertyValues"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            },
+            {
+              "kind": "method",
+              "name": "checkSelectedTab",
+              "parameters": [
+                {
+                  "name": "selectedTab"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "openingTLDialog"
+            },
+            {
+              "kind": "method",
+              "name": "startQuiz"
+            },
+            {
+              "kind": "method",
+              "name": "saveQuizSelection"
+            }
+          ],
+          "superclass": {
+            "name": "LitElementWw",
+            "package": "@webwriter/lit"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "WebWriterTimeline",
+          "declaration": {
+            "name": "WebWriterTimeline",
+            "module": "widgets/webwriter-timeline.ts"
+          }
+        }
+      ]
+    }
+  ]
+}
