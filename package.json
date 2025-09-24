@@ -33,7 +33,8 @@
     "author": "Nura Zimmermann <nura.zimmermann@rwth-aachen.de>",
     "scripts": {
         "prepublishOnly": "npx @webwriter/build",
-        "dev": "npx @webwriter/build dev"
+        "dev": "npx @webwriter/build dev",
+        "analyze": "npx @custom-elements-manifest/analyzer analyze --globs \"**/*.ts\" --exclude \"node_modules/**\" --outdir ."
     },
     "dependencies": {
         "@popperjs/core": "^2.11.8",
@@ -43,6 +44,9 @@
         "@webwriter/wui": "^0.0.3",
         "lit": "^3.2.1",
         "moment": "^2.30.1"
+    },
+    "devDependencies": {
+        "@custom-elements-manifest/analyzer": "^0.10.6"
     },
     "exports": {
         "./widgets/webwriter-timeline.*": {
@@ -56,7 +60,8 @@
         "./snippets/women-in-tech.html": "./snippets/women-in-tech.html",
         "./snippets/history-of-olympic-games.html": "./snippets/history-of-olympic-games.html",
         "./package.json": "./package.json",
-        "./icon": "./icon.svg"
+        "./icon": "./icon.svg",
+        "./custom-elements.json": "./custom-elements.json"
     },
     "editingConfig": {
         ".": {

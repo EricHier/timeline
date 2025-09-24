@@ -21,23 +21,106 @@ import { EventManager } from "../event-manager";
 import { MainQuiz } from "../quiz/q-main-quiz";
 import { TimelineDialog } from "../tl-dialog";
 
+/**
+ * Interactive timeline widget for WebWriter applications.
+ * 
+ * This web component creates an interactive timeline that allows users to:
+ * - Create and manage timeline events with dates and descriptions
+ * - Switch between timeline creation and quiz modes
+ * - Test knowledge with drag-and-drop quiz functionality
+ * - Customize panel visibility (timeline only, quiz only, or both)
+ * - Configure quiz feedback options
+ * 
+ * The component consists of two main panels:
+ * 1. **Timeline Panel**: For creating and editing timeline events
+ * 2. **Quiz Panel**: For testing knowledge with interactive quiz features
+ * 
+ * @example
+ * ```html
+ * <!-- Basic timeline widget -->
+ * <webwriter-timeline></webwriter-timeline>
+ * 
+ * <!-- Timeline with quiz panel visible -->
+ * <webwriter-timeline panelvisibility="both">
+ *   <event-container 
+ *     slot="event-slot" 
+ *     event_title="World War II Begins" 
+ *     event_startDate='[1939, 9, 1]'>
+ *     <p>Germany invades Poland, starting World War II.</p>
+ *   </event-container>
+ * </webwriter-timeline>
+ * 
+ * <!-- Quiz-focused configuration -->
+ * <webwriter-timeline 
+ *   panelvisibility="quiz" 
+ *   quizFeedbackOption="2">
+ * </webwriter-timeline>
+ * ```
+ * 
+ * @slot event-slot - Container for timeline events (event-container elements)
+ * 
+ * @fires request-add - Fired when a new event should be added to the timeline
+ * @fires request-remove - Fired when an event should be removed from the timeline
+ * @fires show-quiz-feedback-error - Fired when quiz feedback validation fails
+ * 
+ * @cssproperty --timeline-background - Background color of the timeline area
+ * @cssproperty --timeline-border - Border style for timeline elements
+ * @cssproperty --quiz-background - Background color of the quiz area
+ * @cssproperty --panel-border - Border style for panel separators
+ */
 @customElement("webwriter-timeline")
 export class WebWriterTimeline extends LitElementWw {
+  /**
+   * Tab index for keyboard navigation accessibility.
+   * @attr tab-index
+   */
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
+
+  /**
+   * Currently active panel ('timeline' or 'quiz').
+   * @attr current-panel
+   */
   @property({ type: String, attribute: true, reflect: true }) accessor currentPanel: string;
+
+  /**
+   * Controls which panels are visible in the interface.
+   * @attr panelvisibility
+   * @example "timeline" - Shows only timeline panel
+   * @example "quiz" - Shows only quiz panel  
+   * @example "both" - Shows both panels with tabs
+   */
   @property({ type: String, attribute: "panelvisibility", reflect: true }) accessor _panelVisibility: string;
 	private get panelVisibility(): string { return this._panelVisibility || "timeline"; }
 	private set panelVisibility(value: string) { this._panelVisibility = value; }
+
+  /**
+   * Selected quiz feedback option (1-4).
+   * Determines what feedback is shown after quiz completion:
+   * - 1: Show correct answers only
+   * - 2: Show score and correct answers
+   * - 3: Show detailed explanations
+   * - 4: Show progress tracking
+   * @attr quiz-feedback-option
+   */
   @property({ type: Number, attribute: true, reflect: true }) accessor quizFeedbackOption;
 
+  /** Quiz feedback selection dropdown element */
   @query("#quiz-selection") accessor quizFeedbackSelecter: SlSelect;
+  /** Main quiz component instance */
   @query("#quiz-component") accessor quiz: MainQuiz;
+  /** Timeline dialog component for creating/editing events */
   @query("#tl-component") accessor dialog: TimelineDialog;
+  /** Timeline panel tab element */
   @query("#timeline-panel") accessor timelinePanel: SlTab;
+  /** Quiz panel tab element */
   @query("#quiz-panel") accessor quizPanel: SlTab;
+  /** Toggle switch for enabling/disabling quiz functionality */
   @query("#quiz-toggle") accessor quizToggle: SlSwitch;
+  /** Error message container for quiz feedback validation */
   @query("#feedback-error") accessor feedbackError: HTMLDivElement;
+  /** Tooltip for the add event button */
   @query("#add-event-tooltip") accessor addToolTip: SlTooltip;
+  /** Tab group container for switching between panels */
   @query("#tab-group") accessor tabGroup: SlTabGroup;
 
   static get styles() {
@@ -131,8 +214,16 @@ export class WebWriterTimeline extends LitElementWw {
     };
   }
 
+  /** Event manager instance for handling timeline event operations */
   private eventManager = new EventManager();
 
+  /**
+   * Lifecycle method called after the element's DOM has been updated for the first time.
+   * Initializes component state, sets up event listeners, configures help system positioning,
+   * and handles initial panel visibility based on configuration.
+   * 
+   * @param _changedProperties - Map of changed properties
+   */
   protected async firstUpdated(_changedProperties: PropertyValues) {
 		setTimeout(() => this.tabGroup.show(this.currentPanel), 0);
 
@@ -162,6 +253,12 @@ export class WebWriterTimeline extends LitElementWw {
     }
   }
 
+  /**
+   * Lifecycle method called when component properties change.
+   * Handles panel switching when currentPanel property changes.
+   * 
+   * @param _changedProperties - Map of changed properties
+   */
 	updated(_changedProperties: PropertyValues): void {
 		if (_changedProperties.has("currentPanel")) {
 			this.tabGroup.show(this.currentPanel);
@@ -293,7 +390,13 @@ export class WebWriterTimeline extends LitElementWw {
     `;
   }
 
-  // if quiz panel is selected start quiz + manage options window
+  /**
+   * Handles tab selection changes between timeline and quiz panels.
+   * Automatically starts quiz mode when quiz panel is selected and initializes 
+   * the current panel state.
+   * 
+   * @param selectedTab - The name of the selected tab ('quiz' or 'timeline')
+   */
   checkSelectedTab(selectedTab) {
     if (selectedTab === "quiz" && this.panelVisibility !== "timeline") {
       this.startQuiz();
@@ -303,17 +406,31 @@ export class WebWriterTimeline extends LitElementWw {
     }
   }
 
-  // open dialog
+  /**
+   * Opens the timeline dialog for creating or editing events.
+   * This method triggers the timeline dialog to become visible,
+   * allowing users to add new events to the timeline.
+   */
   openingTLDialog() {
     this.dialog.showDialog();
   }
 
-  // show quiz and add events to it
+  /**
+   * Initializes and starts the quiz with current timeline events.
+   * Collects all child event elements and passes them to the quiz component
+   * for creating quiz questions.
+   */
   startQuiz() {
     this.quiz.startQuiz([...this.children]);
   }
 
-  // transmit selected option for quiz feedback
+  /**
+   * Saves the selected quiz feedback option and validates the selection.
+   * Updates the quiz feedback display based on user selection and shows/hides
+   * validation errors as appropriate.
+   * 
+   * @fires show-quiz-feedback-error - When validation fails
+   */
   saveQuizSelection() {
     this.quizFeedbackOption = Number(this.quizFeedbackSelecter.value);
     if (

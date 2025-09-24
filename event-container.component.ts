@@ -9,13 +9,87 @@ import { property, query } from "lit/decorators.js";
 import { Moment } from "moment";
 import { TlEventData, TlEventHelper } from "./tl-event-data";
 
+/**
+ * Individual timeline event container component.
+ * 
+ * Represents a single event in a timeline with the following features:
+ * - Displays event title and date(s)
+ * - Supports both single dates and date ranges (time periods)
+ * - Expandable/collapsible content area for event descriptions
+ * - Delete functionality for timeline editing
+ * - Drag and drop support for timeline quiz functionality
+ * - Automatic date formatting and display utilities
+ * 
+ * This component is designed to be used within webwriter-timeline components
+ * and supports both creation and quiz modes.
+ * 
+ * @example
+ * ```html
+ * <!-- Single date event -->
+ * <event-container 
+ *   event_title="Moon Landing" 
+ *   event_startDate="[1969, 7, 20]">
+ *   <p>Neil Armstrong becomes the first human to step on the Moon.</p>
+ * </event-container>
+ * 
+ * <!-- Date range event -->
+ * <event-container 
+ *   event_title="World War II" 
+ *   event_startDate="[1939, 9, 1]"
+ *   event_endDate="[1945, 9, 2]">
+ *   <p>Global war involving most of the world's nations.</p>
+ *   <ul>
+ *     <li>Europe and Pacific theaters</li>
+ *     <li>Over 70 million casualties</li>
+ *   </ul>
+ * </event-container>
+ * ```
+ * 
+ * @slot - Content area for event descriptions, images, lists, etc.
+ * 
+ * @fires request-remove - Fired when the delete button is clicked
+ * 
+ * @cssproperty --event-border - Border style for the event container
+ * @cssproperty --event-background - Background color of the event
+ * @cssproperty --date-color - Text color for date display
+ * @cssproperty --timeline-line-color - Color of the timeline line
+ */
 export class EventContainer extends LitElementWw {
+  /**
+   * Title/name of the timeline event.
+   * @attr event_title
+   */
   @property({ type: String }) accessor event_title;
+
+  /**
+   * Start date of the event as an array [year, month, day].
+   * Month is 1-indexed (January = 1, December = 12).
+   * Supports BCE dates with negative years.
+   * @attr event_startDate
+   * @example [2024, 12, 25] - December 25, 2024
+   * @example [-55, 7, 10] - July 10, 55 BCE
+   */
   @property({ type: Array }) accessor event_startDate: TlEventData["startDate"];
+
+  /**
+   * End date of the event as an array [year, month, day].
+   * Optional - when provided, displays the event as a time period.
+   * Must be after the start date.
+   * @attr event_endDate
+   * @example [2024, 12, 31] - December 31, 2024
+   */
   @property({ type: Array }) accessor event_endDate: TlEventData["endDate"];
+
+  /**
+   * Controls visibility of the event content area.
+   * When true, content is collapsed; when false, content is expanded.
+   * @attr hidden-div
+   */
   @property({ type: Boolean }) accessor hiddenDiv = true;
 
+  /** Container element for event content/description */
   @query("#event_elements") accessor event_element;
+  /** Delete confirmation dialog element */
   @query("#delete-event-dialog") accessor dialog: SlDialog;
 
   static get styles() {
@@ -192,6 +266,12 @@ export class EventContainer extends LitElementWw {
     };
   }
 
+  /**
+   * Lifecycle method called after the element's DOM has been updated for the first time.
+   * Automatically adds a default paragraph if the event has no content.
+   * 
+   * @param _changedProperties - Map of changed properties
+   */
   protected firstUpdated(_changedProperties: PropertyValues): void {
     if (this.childElementCount == 0) {
       this.addParagraph();
@@ -277,7 +357,11 @@ export class EventContainer extends LitElementWw {
     `;
   }
 
-  // on icon click show expanded event content
+  /**
+   * Toggles the visibility of event content area.
+   * Expands or collapses the event description and controls the visibility
+   * of edit/delete buttons. Automatically adds default content if none exists.
+   */
   showEventContent() {
     if (this.event_element.hidden) {
       this.event_element.hidden = false;
@@ -292,14 +376,23 @@ export class EventContainer extends LitElementWw {
     }
   }
 
-  // on button press a paragraph with "add description" is added to slot
+  /**
+   * Adds a default paragraph element to the event content area.
+   * Called automatically when an event has no content and is expanded.
+   * Creates an editable paragraph with placeholder text.
+   */
   addParagraph() {
     const parDescription = document.createElement("p");
     parDescription.textContent = "Modify event details";
     this.appendChild(parDescription);
   }
 
-  // on button press event will be removed form slot
+  /**
+   * Dispatches a request to remove this event from the timeline.
+   * Triggers the 'request-remove' event which is handled by the parent timeline.
+   * 
+   * @fires request-remove - Custom event with event ID for removal
+   */
   removeEvent() {
     this.dispatchEvent(
       new CustomEvent("request-remove", {
@@ -310,7 +403,12 @@ export class EventContainer extends LitElementWw {
     );
   }
 
-  // convert array into date for sorting dates
+  /**
+   * Converts the event's start date to a Moment object for date operations.
+   * Used internally for timeline sorting and date comparisons.
+   * 
+   * @returns Moment object representing the event's start date
+   */
   getStartDate(): Moment {
     return TlEventHelper.convertToDisplayDate(this.event_startDate);
   }

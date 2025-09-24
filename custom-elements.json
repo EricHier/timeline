@@ -1,0 +1,327 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "widgets/webwriter-timeline.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Interactive timeline widget for WebWriter applications.\r\n\r\nThis web component creates an interactive timeline that allows users to:\r\n- Create and manage timeline events with dates and descriptions\r\n- Switch between timeline creation and quiz modes\r\n- Test knowledge with drag-and-drop quiz functionality\r\n- Customize panel visibility (timeline only, quiz only, or both)\r\n- Configure quiz feedback options\r\n\r\nThe component consists of two main panels:\r\n1. **Timeline Panel**: For creating and editing timeline events\r\n2. **Quiz Panel**: For testing knowledge with interactive quiz features",
+          "name": "WebWriterTimeline",
+          "cssProperties": [
+            {
+              "description": "Background color of the timeline area",
+              "name": "--timeline-background"
+            },
+            {
+              "description": "Border style for timeline elements",
+              "name": "--timeline-border"
+            },
+            {
+              "description": "Background color of the quiz area",
+              "name": "--quiz-background"
+            },
+            {
+              "description": "Border style for panel separators",
+              "name": "--panel-border"
+            }
+          ],
+          "slots": [
+            {
+              "description": "Container for timeline events (event-container elements)",
+              "name": "event-slot"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "attribute": "tabIndex",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "currentPanel",
+              "type": {
+                "text": "string"
+              },
+              "description": "Currently active panel ('timeline' or 'quiz').",
+              "attribute": "currentPanel",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "_panelVisibility",
+              "type": {
+                "text": "string"
+              },
+              "description": "Controls which panels are visible in the interface.",
+              "attribute": "panelvisibility",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "panelVisibility",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "quizFeedbackOption",
+              "description": "Selected quiz feedback option (1-4).\r\nDetermines what feedback is shown after quiz completion:\r\n- 1: Show correct answers only\r\n- 2: Show score and correct answers\r\n- 3: Show detailed explanations\r\n- 4: Show progress tracking",
+              "attribute": "quizFeedbackOption",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "quizFeedbackSelecter",
+              "type": {
+                "text": "SlSelect"
+              },
+              "description": "Quiz feedback selection dropdown element"
+            },
+            {
+              "kind": "field",
+              "name": "quiz",
+              "type": {
+                "text": "MainQuiz"
+              },
+              "description": "Main quiz component instance"
+            },
+            {
+              "kind": "field",
+              "name": "dialog",
+              "type": {
+                "text": "TimelineDialog"
+              },
+              "description": "Timeline dialog component for creating/editing events"
+            },
+            {
+              "kind": "field",
+              "name": "timelinePanel",
+              "type": {
+                "text": "SlTab"
+              },
+              "description": "Timeline panel tab element"
+            },
+            {
+              "kind": "field",
+              "name": "quizPanel",
+              "type": {
+                "text": "SlTab"
+              },
+              "description": "Quiz panel tab element"
+            },
+            {
+              "kind": "field",
+              "name": "quizToggle",
+              "type": {
+                "text": "SlSwitch"
+              },
+              "description": "Toggle switch for enabling/disabling quiz functionality"
+            },
+            {
+              "kind": "field",
+              "name": "feedbackError",
+              "type": {
+                "text": "HTMLDivElement"
+              },
+              "description": "Error message container for quiz feedback validation"
+            },
+            {
+              "kind": "field",
+              "name": "addToolTip",
+              "type": {
+                "text": "SlTooltip"
+              },
+              "description": "Tooltip for the add event button"
+            },
+            {
+              "kind": "field",
+              "name": "tabGroup",
+              "type": {
+                "text": "SlTabGroup"
+              },
+              "description": "Tab group container for switching between panels"
+            },
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "eventManager",
+              "privacy": "private",
+              "default": "new EventManager()",
+              "description": "Event manager instance for handling timeline event operations"
+            },
+            {
+              "kind": "method",
+              "name": "checkSelectedTab",
+              "parameters": [
+                {
+                  "name": "selectedTab",
+                  "description": "The name of the selected tab ('quiz' or 'timeline')"
+                }
+              ],
+              "description": "Handles tab selection changes between timeline and quiz panels.\r\nAutomatically starts quiz mode when quiz panel is selected and initializes \r\nthe current panel state."
+            },
+            {
+              "kind": "method",
+              "name": "openingTLDialog",
+              "description": "Opens the timeline dialog for creating or editing events.\r\nThis method triggers the timeline dialog to become visible,\r\nallowing users to add new events to the timeline."
+            },
+            {
+              "kind": "method",
+              "name": "startQuiz",
+              "description": "Initializes and starts the quiz with current timeline events.\r\nCollects all child event elements and passes them to the quiz component\r\nfor creating quiz questions."
+            },
+            {
+              "kind": "method",
+              "name": "saveQuizSelection",
+              "description": "Saves the selected quiz feedback option and validates the selection.\r\nUpdates the quiz feedback display based on user selection and shows/hides\r\nvalidation errors as appropriate."
+            }
+          ],
+          "events": [
+            {
+              "description": "Fired when a new event should be added to the timeline",
+              "name": "request-add"
+            },
+            {
+              "description": "Fired when an event should be removed from the timeline",
+              "name": "request-remove"
+            },
+            {
+              "description": "Fired when quiz feedback validation fails",
+              "name": "show-quiz-feedback-error"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "tab-index",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "fieldName": "tabIndex"
+            },
+            {
+              "name": "current-panel",
+              "type": {
+                "text": "string"
+              },
+              "description": "Currently active panel ('timeline' or 'quiz').",
+              "fieldName": "currentPanel"
+            },
+            {
+              "name": "panelvisibility",
+              "type": {
+                "text": "string"
+              },
+              "description": "Controls which panels are visible in the interface.",
+              "fieldName": "_panelVisibility",
+              "attribute": "panelvisibility"
+            },
+            {
+              "name": "quiz-feedback-option",
+              "description": "Selected quiz feedback option (1-4).\r\nDetermines what feedback is shown after quiz completion:\r\n- 1: Show correct answers only\r\n- 2: Show score and correct answers\r\n- 3: Show detailed explanations\r\n- 4: Show progress tracking",
+              "fieldName": "quizFeedbackOption"
+            },
+            {
+              "name": "tabIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "description": "Tab index for keyboard navigation accessibility.",
+              "attribute": "tab-index",
+              "fieldName": "tabIndex"
+            },
+            {
+              "name": "currentPanel",
+              "type": {
+                "text": "string"
+              },
+              "description": "Currently active panel ('timeline' or 'quiz').",
+              "attribute": "current-panel",
+              "fieldName": "currentPanel"
+            },
+            {
+              "name": "quizFeedbackOption",
+              "description": "Selected quiz feedback option (1-4).\r\nDetermines what feedback is shown after quiz completion:\r\n- 1: Show correct answers only\r\n- 2: Show score and correct answers\r\n- 3: Show detailed explanations\r\n- 4: Show progress tracking",
+              "attribute": "quiz-feedback-option",
+              "fieldName": "quizFeedbackOption"
+            }
+          ],
+          "superclass": {
+            "name": "LitElementWw",
+            "package": "@webwriter/lit"
+          },
+          "tagName": "webwriter-timeline",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "WebWriterTimeline",
+          "declaration": {
+            "name": "WebWriterTimeline",
+            "module": "widgets/webwriter-timeline.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "webwriter-timeline",
+          "declaration": {
+            "name": "WebWriterTimeline",
+            "module": "widgets/webwriter-timeline.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "event-container.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./event-container.component"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "EventContainer",
+            "module": "event-container.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "event-container",
+          "declaration": {
+            "name": "EventContainer",
+            "module": "/event-container.component"
+          }
+        }
+      ]
+    }
+  ]
+}

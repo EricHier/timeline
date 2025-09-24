@@ -3,9 +3,52 @@ import { LitElementWw } from "@webwriter/lit";
 import { customElement, property } from "lit/decorators.js";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 
+/**
+ * Toggle switch component for timeline dialog forms.
+ * 
+ * A custom toggle switch specifically designed for switching between single date
+ * and time period modes in timeline event creation. Features smooth animations
+ * and responsive design.
+ * 
+ * Features:
+ * - **Smooth Animation**: CSS transitions for toggle movement
+ * - **Dual Labels**: Shows "Single Date" and "Time Period" options
+ * - **Responsive Design**: Adapts to different screen sizes
+ * - **Custom Styling**: Matches timeline dialog theme
+ * - **Accessibility**: Proper keyboard navigation support
+ * 
+ * The toggle automatically updates the parent dialog's time period mode
+ * and enables/disables the end date picker accordingly.
+ * 
+ * @example
+ * ```html
+ * <!-- Basic toggle -->
+ * <dialog-toggle></dialog-toggle>
+ * 
+ * <!-- Pre-selected time period mode -->
+ * <dialog-toggle useTimePeriod="true"></dialog-toggle>
+ * ```
+ * 
+ * @fires toggle-change - Fired when the toggle state changes
+ * 
+ * @cssproperty --toggle-background - Background color of the toggle
+ * @cssproperty --toggle-border - Border style for the toggle
+ * @cssproperty --toggle-active-background - Background color of active state
+ * @cssproperty --toggle-active-border - Border color of active state
+ */
 @customElement("dialog-toggle")
 export class DialogToggle extends LitElementWw {
+  /**
+   * Whether the toggle is in time period mode.
+   * When true, shows "Time Period" as selected; when false, shows "Single Date".
+   * @attr use-time-period
+   */
   @property({ type: Boolean }) accessor useTimePeriod = false;
+
+  /**
+   * Tab index for keyboard navigation accessibility.
+   * @attr tab-index
+   */
   @property({ type: Number, attribute: true, reflect: true }) accessor tabIndex = -1;
 
   static styles = css`
@@ -98,7 +141,13 @@ export class DialogToggle extends LitElementWw {
     `;
   }
 
-  // on toggle change useTimePeriod value
+  /**
+   * Handles toggle state changes and dispatches custom event.
+   * Called when the user clicks the toggle to switch between single date
+   * and time period modes.
+   * 
+   * @fires toggle-change - Custom event with the new useTimePeriod state
+   */
   toggleChange() {
     this.useTimePeriod = !this.useTimePeriod;
     this.dispatchEvent(

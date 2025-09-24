@@ -4,21 +4,129 @@ import IconCalendarMonth from "@tabler/icons/outline/calendar-month.svg";
 import { LitElement, css, html } from "lit";
 import { customElement, property, query, queryAll } from "lit/decorators.js";
 
+/**
+ * Date picker component for timeline event dates.
+ * 
+ * A specialized date input component that provides separate fields for day, month, and year
+ * with comprehensive validation. Designed specifically for timeline events which may include
+ * historical dates including BCE (negative years).
+ * 
+ * Features:
+ * - **Separate Input Fields**: Day, month, year inputs for precise control
+ * - **Historical Date Support**: Handles BCE dates with negative years
+ * - **Real-time Validation**: Validates day/month ranges and date logic
+ * - **Format Validation**: Ensures proper date formatting
+ * - **Visual Feedback**: Error states and validation messages
+ * - **Disabled State Support**: Can be disabled for end dates in single-date mode
+ * - **Accessibility**: Proper labeling and keyboard navigation
+ * 
+ * The component automatically validates input as users type and provides
+ * immediate feedback for invalid entries.
+ * 
+ * @example
+ * ```html
+ * <!-- Basic date picker -->
+ * <dialog-date-picker 
+ *   label="Event Date"
+ *   day="20" 
+ *   month="07" 
+ *   year="1969">
+ * </dialog-date-picker>
+ * 
+ * <!-- BCE date -->
+ * <dialog-date-picker 
+ *   label="Ancient Event" 
+ *   day="15" 
+ *   month="03" 
+ *   year="-44">
+ * </dialog-date-picker>
+ * 
+ * <!-- Disabled end date -->
+ * <dialog-date-picker 
+ *   label="End Date" 
+ *   useEndDate="true"
+ *   useTimePeriod="false">
+ * </dialog-date-picker>
+ * ```
+ * 
+ * @fires show-day-validation-error - Fired when day validation fails
+ * @fires hide-day-validation-error - Fired when day validation passes
+ * @fires show-month-validation-error - Fired when month validation fails
+ * @fires hide-month-validation-error - Fired when month validation passes
+ * @fires show-year-validation-error - Fired when year validation fails
+ * @fires hide-year-validation-error - Fired when year validation passes
+ * @fires show-format-validation-error - Fired when date format validation fails
+ * @fires hide-format-validation-error - Fired when date format validation passes
+ * 
+ * @cssproperty --date-input-background - Background color of date inputs
+ * @cssproperty --date-input-border - Border style for date inputs
+ * @cssproperty --date-input-error-border - Border style for validation errors
+ * @cssproperty --disabled-background - Background color when disabled
+ */
 @customElement("dialog-date-picker")
 export class DialogDatePicker extends LitElement {
+  /**
+   * Day component of the date (1-31).
+   * Automatically zero-padded to 2 digits on input.
+   * @attr day
+   */
   @property({ type: String }) day = "";
+
+  /**
+   * Month component of the date (1-12).
+   * January = 1, December = 12.
+   * @attr month
+   */
   @property({ type: String }) month = "";
+
+  /**
+   * Year component of the date.
+   * Supports negative values for BCE dates.
+   * @attr year
+   * @example "2024" - 2024 CE
+   * @example "-44" - 44 BCE
+   */
   @property({ type: String }) year = "";
+
+  /**
+   * Complete date string (currently unused).
+   * @attr date
+   */
   @property({ type: String }) date = "";
+
+  /**
+   * Label text displayed above the date picker.
+   * @attr label
+   */
   @property({ type: String }) label = "";
+
+  /**
+   * Whether this is an end date picker in time period mode.
+   * @attr use-end-date
+   */
   @property({ type: Boolean }) accessor useEndDate;
+
+  /**
+   * Whether the parent dialog is in time period mode.
+   * When false and useEndDate is true, this picker is disabled.
+   * @attr use-time-period
+   */
   @property({ type: Boolean }) accessor useTimePeriod = false;
+
+  /**
+   * Whether the date picker has validation errors.
+   * @attr invalid
+   */
   @property({ type: Boolean }) accessor invalid = false;
 
+  /** All date input elements */
   @queryAll("sl-input") accessor dates;
 
+  /** Day input element */
   @query("#day") accessor dayInput: SlInput;
+  /** Month input element */
   @query("#month") accessor monthInput: SlInput;
+  /** Year input element */
   @query("#year") accessor yearInput: SlInput;
 
   static styles = css`
