@@ -44,9 +44,6 @@
     "lit": "^3.2.1",
     "moment": "^2.30.1"
   },
-  "devDependencies": {
-    "@custom-elements-manifest/analyzer": "^0.10.6"
-  },
   "exports": {
     "./widgets/webwriter-timeline.*": {
       "source": "./widgets/webwriter-timeline.ts",
