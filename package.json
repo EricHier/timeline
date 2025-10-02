@@ -33,8 +33,7 @@
   "author": "Nura Zimmermann <nura.zimmermann@rwth-aachen.de>",
   "scripts": {
     "prepublishOnly": "npx @webwriter/build",
-    "dev": "npx @webwriter/build dev",
-    "analyze": "npx @custom-elements-manifest/analyzer analyze --globs \"**/*.ts\" --exclude \"node_modules/**\" --outdir ."
+    "dev": "npx @webwriter/build dev"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
