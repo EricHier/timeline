@@ -35,7 +35,7 @@ import { TimelineDialog } from "../tl-dialog";
  * 1. **Timeline Panel**: For creating and editing timeline events
  * 2. **Quiz Panel**: For testing knowledge with interactive quiz features
  * 
- * @example
+ * **Usage Examples:**
  * ```html
  * <!-- Basic timeline widget -->
  * <webwriter-timeline></webwriter-timeline>

@@ -4,11 +4,42 @@
   "modules": [
     {
       "kind": "javascript-module",
+      "path": "event-container.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./event-container.component"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "EventContainer",
+            "module": "event-container.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "event-container",
+          "declaration": {
+            "name": "EventContainer",
+            "module": "/event-container.component"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "widgets/webwriter-timeline.ts",
       "declarations": [
         {
           "kind": "class",
-          "description": "Interactive timeline widget for WebWriter applications.\r\n\r\nThis web component creates an interactive timeline that allows users to:\r\n- Create and manage timeline events with dates and descriptions\r\n- Switch between timeline creation and quiz modes\r\n- Test knowledge with drag-and-drop quiz functionality\r\n- Customize panel visibility (timeline only, quiz only, or both)\r\n- Configure quiz feedback options\r\n\r\nThe component consists of two main panels:\r\n1. **Timeline Panel**: For creating and editing timeline events\r\n2. **Quiz Panel**: For testing knowledge with interactive quiz features",
+          "description": "Interactive timeline widget for WebWriter applications.\r\n\r\nThis web component creates an interactive timeline that allows users to:\r\n- Create and manage timeline events with dates and descriptions\r\n- Switch between timeline creation and quiz modes\r\n- Test knowledge with drag-and-drop quiz functionality\r\n- Customize panel visibility (timeline only, quiz only, or both)\r\n- Configure quiz feedback options\r\n\r\nThe component consists of two main panels:\r\n1. **Timeline Panel**: For creating and editing timeline events\r\n2. **Quiz Panel**: For testing knowledge with interactive quiz features\r\n\r\n**Usage Examples:**\r\n```html\r\n<!-- Basic timeline widget -->\r\n<webwriter-timeline></webwriter-timeline>\r\n\r\n<!-- Timeline with quiz panel visible -->\r\n<webwriter-timeline panelvisibility=\"both\">\r\n  <event-container \r\n    slot=\"event-slot\" \r\n    event_title=\"World War II Begins\" \r\n    event_startDate='[1939, 9, 1]'>\r\n    <p>Germany invades Poland, starting World War II.</p>\r\n  </event-container>\r\n</webwriter-timeline>\r\n\r\n<!-- Quiz-focused configuration -->\r\n<webwriter-timeline \r\n  panelvisibility=\"quiz\" \r\n  quizFeedbackOption=\"2\">\r\n</webwriter-timeline>\r\n```",
           "name": "WebWriterTimeline",
           "cssProperties": [
             {
@@ -270,7 +301,9 @@
             "package": "@webwriter/lit"
           },
           "tagName": "webwriter-timeline",
-          "customElement": true
+          "customElement": true,
+          "modulePath": "widgets/webwriter-timeline.ts",
+          "definitionPath": "widgets/webwriter-timeline.ts"
         }
       ],
       "exports": [
@@ -288,37 +321,6 @@
           "declaration": {
             "name": "WebWriterTimeline",
             "module": "widgets/webwriter-timeline.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "event-container.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "*",
-          "declaration": {
-            "name": "*",
-            "package": "./event-container.component"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "EventContainer",
-            "module": "event-container.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "event-container",
-          "declaration": {
-            "name": "EventContainer",
-            "module": "/event-container.component"
           }
         }
       ]

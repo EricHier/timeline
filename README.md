@@ -8,8 +8,8 @@ Create/learn with a digital timeline and test your knowledge.
 
 | Name | Import Path |
 | :--: | :---------: |
-| Women In Tech | @webwriter/timeline/snippets/women-in-tech.html |
-| History Of Olympic Games | @webwriter/timeline/snippets/history-of-olympic-games.html |
+| Women In Tech | `@webwriter/timeline/snippets/women-in-tech.html` |
+| History Of Olympic Games | `@webwriter/timeline/snippets/history-of-olympic-games.html` |
 
 
 
@@ -26,6 +26,28 @@ This web component creates an interactive timeline that allows users to:
 The component consists of two main panels:
 1. **Timeline Panel**: For creating and editing timeline events
 2. **Quiz Panel**: For testing knowledge with interactive quiz features
+
+**Usage Examples:**
+```html
+<!-- Basic timeline widget -->
+<webwriter-timeline></webwriter-timeline>
+
+<!-- Timeline with quiz panel visible -->
+<webwriter-timeline panelvisibility="both">
+  <event-container 
+    slot="event-slot" 
+    event_title="World War II Begins" 
+    event_startDate='[1939, 9, 1]'>
+    <p>Germany invades Poland, starting World War II.</p>
+  </event-container>
+</webwriter-timeline>
+
+<!-- Quiz-focused configuration -->
+<webwriter-timeline 
+  panelvisibility="quiz" 
+  quizFeedbackOption="2">
+</webwriter-timeline>
+```
 
 ### Usage
 
@@ -150,4 +172,4 @@ npm install @webwriter/timeline
 
 
 ---
-*Generated with @webwriter/build@1.8.1*
+*Generated with @webwriter/build@1.9.0*
